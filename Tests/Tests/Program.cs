@@ -1,7 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Net;
 using WebDAVClient;
+using NAudio.Wave;
+using System.IO;
 
 namespace Tests
 {
@@ -32,7 +35,21 @@ namespace Tests
 
 			foreach (var file in files)
 			{
-				Console.WriteLine(file.DisplayName);
+				Console.WriteLine("Found file: " + file.DisplayName);
+				FileStream f = File.OpenWrite("C:\\Users\\Abel\\Desktop\\song.mp3");
+				Stream s = await c.Download(file.Href);
+				s.CopyTo(f);
+
+				using (var audioFile = new AudioFileReader("C:\\Users\\Abel\\Desktop\\song.mp3"))
+				using (var outputDevice = new WaveOutEvent())
+				{
+					outputDevice.Init(audioFile);
+					outputDevice.Play();
+					while (outputDevice.PlaybackState == PlaybackState.Playing)
+					{
+						Thread.Sleep(1000);
+					}
+				}
 			}
 		}
 	}
