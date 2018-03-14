@@ -16,7 +16,11 @@
   $url = $_GET['url'];
 
   if ($pass !== "AblosStream00") {
-    die("Wrong password!");
+    die("ERROR:Wrong password!");
+  }
+
+  if (empty($url)) {
+    die("ERROR:Url empty!");
   }
 
   $id = generateRandomString(30);
@@ -35,5 +39,12 @@
   );
 
   $client = new Client($settings);
+  $response = $client->request('GET', $url);
+  $filepath = __DIR__ . "/streams/" . $id . ".mp3";
+  $fh = fopen($filepath, 'w');
+  fwrite($fh, $response['body']);
+  fclose($fh);
+
+  echo "StreamID:" . $id;
 
 ?>
