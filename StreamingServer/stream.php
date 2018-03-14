@@ -25,6 +25,7 @@
     $id = generateRandomString(30);
   }
 
+  use Sabre\DAV\Client;
   include("SabreDAV/vendor/autoload.php");
 
   $settings = array(
