@@ -16,11 +16,11 @@
   $url = $_GET['url'];
 
   if ($pass !== "AblosStream00") {
-    die("ERROR:Wrong password!");
+    die("ERROR:401");
   }
 
   if (empty($url)) {
-    die("ERROR:Url empty!");
+    die("ERROR:404");
   }
 
   $id = generateRandomString(30);
@@ -40,11 +40,18 @@
 
   $client = new Client($settings);
   $response = $client->request('GET', $url);
-  $filepath = __DIR__ . "/streams/" . $id . ".mp3";
-  $fh = fopen($filepath, 'w');
-  fwrite($fh, $response['body']);
-  fclose($fh);
+  if ($response['statusCode'] === 200) {
+    $filepath = __DIR__ . "/streams/" . $id . ".mp3";
+    $fh = fopen($filepath, 'w');
+    fwrite($fh, $response['body']);
+    fclose($fh);
 
-  echo "StreamID:" . $id;
+    echo "StreamID:" . $id;
+  }else if ($response['statusCode'] === 404) {
+    echo "ERROR:404";
+  }else {
+    echo "ERROR:" . $response['statusCode'];
+  }
+
 
 ?>
