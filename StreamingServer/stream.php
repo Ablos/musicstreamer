@@ -29,6 +29,8 @@
     $id = generateRandomString(30);
   }
 
+  copy("https://ablos.stackstorage.com/remote.php/webdav/test.mp3", __DIR__ . "test.mp3");
+
   use Sabre\DAV\Client;
   include("SabreDAV/vendor/autoload.php");
 
