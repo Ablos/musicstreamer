@@ -42,9 +42,12 @@
   $response = $client->request('GET', $url);
   if ($response['statusCode'] === 200) {
     $filepath = __DIR__ . "/streams/" . $id . ".mp3";
+    file_put_contents($filepath, $response['body']);
+    /*
     $fh = fopen($filepath, 'w');
     fwrite($fh, $response['body']);
     fclose($fh);
+    */
 
     echo "StreamID:" . $id;
   }else if ($response['statusCode'] === 404) {
@@ -52,6 +55,5 @@
   }else {
     echo "ERROR:" . $response['statusCode'];
   }
-
 
 ?>
