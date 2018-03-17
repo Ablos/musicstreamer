@@ -5,7 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using AudioStreamer;
 
@@ -23,6 +23,8 @@ namespace Windows
 		private void button1_Click(object sender, EventArgs e)
 		{
 			s.InitiateWebStream("Music/DJ_Paul_Elstak/Demons/ultra.mp3");
+			Thread.Sleep(1000);
+			TotalTime.Text = s.GetTotalTime().ToString(@"m\:ss");
 		}
 
 		private void button2_Click(object sender, EventArgs e)
@@ -33,6 +35,11 @@ namespace Windows
 		private void button3_Click(object sender, EventArgs e)
 		{
 			s.StopStream();
+		}
+
+		private void TotalTime_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

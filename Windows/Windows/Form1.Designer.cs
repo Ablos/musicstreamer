@@ -109,6 +109,7 @@ namespace Windows
 			this.TotalTime.Size = new System.Drawing.Size(40, 20);
 			this.TotalTime.TabIndex = 8;
 			this.TotalTime.Text = "0:00";
+			this.TotalTime.Click += new System.EventHandler(this.TotalTime_Click);
 			// 
 			// VolumeLabel
 			// 
@@ -128,6 +129,7 @@ namespace Windows
 			this.trackBar1.Size = new System.Drawing.Size(309, 45);
 			this.trackBar1.TabIndex = 10;
 			this.trackBar1.TickFrequency = 5;
+			this.trackBar1.Value = 100;
 			// 
 			// Form1
 			// 
