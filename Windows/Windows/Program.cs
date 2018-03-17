@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AudioStreamer;
 
 namespace Windows
 {
@@ -17,6 +18,8 @@ namespace Windows
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new Form1());
+			Streamer s = new Streamer();
+			s.InitiateLocalStream("C:\\Users\\Abel\\Desktop\\test.mp3");
 		}
 	}
 }

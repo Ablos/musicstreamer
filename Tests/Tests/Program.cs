@@ -7,8 +7,8 @@ namespace Tests
 	{
 		static void Main(string[] args)
 		{
-			Streaming s = new Streaming();
-			s.Initialize();
+			AudioStreamer a = new AudioStreamer();
+			a.InitiateLocalStream("C:\\Users\\Abel\\Desktop\\test.mp3");
 			Console.WriteLine("End of script.");
 			Console.ReadLine();
 		}
