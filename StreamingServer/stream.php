@@ -15,6 +15,9 @@
   $pass = $_GET['pass'];
   $url = $_GET['url'];
 
+  $url = str_replace("%20", " ", $url);
+  $url = str_replace("%26", "&", $url);
+
   if ($pass !== "AblosStream00") {
     die("ERROR:401");
   }
@@ -29,31 +32,8 @@
     $id = generateRandomString(30);
   }
 
-  use Sabre\DAV\Client;
-  include("SabreDAV/vendor/autoload.php");
+  copy("https://ablos:AblosStack00@ablos.stackstorage.com/remote.php/webdav/" . $url, __DIR__ . "/streams/" . $id . ".mp3");
 
-  $settings = array(
-    'baseUri' => "https://ablos.stackstorage.com/remote.php/webdav/",
-    'userName' => 'ablos',
-    'password' => 'AblosStack00'
-  );
-
-  $client = new Client($settings);
-  $response = $client->request('GET', $url);
-  if ($response['statusCode'] === 200) {
-    $filepath = __DIR__ . "/streams/" . $id . ".mp3";
-    file_put_contents($filepath, $response['body']);
-    /*
-    $fh = fopen($filepath, 'w');
-    fwrite($fh, $response['body']);
-    fclose($fh);
-    */
-
-    echo "StreamID:" . $id;
-  }else if ($response['statusCode'] === 404) {
-    echo "ERROR:404";
-  }else {
-    echo "ERROR:" . $response['statusCode'];
-  }
+  echo "StreamID:" . $id;
 
 ?>

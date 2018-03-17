@@ -17,7 +17,6 @@ namespace Windows
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			new Streamer().InitiateWebStream("test.mp3");
 			Application.Run(new Form1());
 		}
 	}
