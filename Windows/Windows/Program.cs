@@ -17,7 +17,7 @@ namespace Windows
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			new Streamer().InitiateLocalStream("C:\\Users\\Abel\\Desktop\\test.mp3");
+			new Streamer().InitiateWebStream("test.mp3");
 			Application.Run(new Form1());
 		}
 	}
