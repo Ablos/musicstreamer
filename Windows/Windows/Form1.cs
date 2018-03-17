@@ -18,6 +18,26 @@ namespace Windows
 		{
 			InitializeComponent();
 			s = new Streamer();
+			new Thread(() =>
+			{
+				while (true)
+				{
+					loop();
+					Thread.Sleep(100);
+				}
+			}).Start();
+		}
+
+		private void loop()
+		{
+			CurrentTime.BeginInvoke(new Action(() =>
+			{
+				CurrentTime.Text = s.GetCurrentTime().ToString(@"m\:ss");
+			}));
+			Time.BeginInvoke(new Action(() =>
+			{
+				Time.Value = s.GetCurrentTime().Seconds + (s.GetCurrentTime().Minutes * 60);
+			}));
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -25,6 +45,7 @@ namespace Windows
 			s.InitiateWebStream("Music/DJ_Paul_Elstak/Demons/ultra.mp3");
 			Thread.Sleep(1000);
 			TotalTime.Text = s.GetTotalTime().ToString(@"m\:ss");
+			Time.Maximum = s.GetTotalTime().Seconds + (s.GetTotalTime().Minutes * 60);
 		}
 
 		private void button2_Click(object sender, EventArgs e)
@@ -40,6 +61,11 @@ namespace Windows
 		private void TotalTime_Click(object sender, EventArgs e)
 		{
 
+		}
+
+		private void CurrentTime_Click(object sender, EventArgs e)
+		{
+			
 		}
 	}
 }

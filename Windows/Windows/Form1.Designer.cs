@@ -90,6 +90,7 @@ namespace Windows
 			this.CurrentTime.Size = new System.Drawing.Size(40, 20);
 			this.CurrentTime.TabIndex = 4;
 			this.CurrentTime.Text = "0:00";
+			this.CurrentTime.Click += new System.EventHandler(this.CurrentTime_Click);
 			// 
 			// Time
 			// 
