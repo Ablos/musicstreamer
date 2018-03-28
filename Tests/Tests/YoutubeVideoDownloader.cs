@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using Newtonsoft.Json;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Tests
 {
@@ -46,17 +47,29 @@ namespace Tests
 			return video.urls[0].id;
 		}
 
+		private string CleanPath(string directory, string filename)
+		{
+			filename = Regex.Unescape(filename);
+
+			foreach (char c in Path.GetInvalidFileNameChars())
+			{
+				filename = filename.Replace(c, ' ');
+			}
+
+			return directory + "/" + filename + ".mp4";
+		}
+
 		public string DownloadVideo(string youtubeURL, string directory)
 		{
 			if (!ValidateYoutubeURL(youtubeURL))
-				return "invalid_url";
+				return "invalid|url";
 			if (!Directory.Exists(directory))
-				return "invalid_path";
+				return "invalid|path";
 
 			WebClient wc = new WebClient();
-			wc.DownloadFile(new Uri(GetVideoURL(youtubeURL)), directory + "/" + video.title + ".mp4");
+			wc.DownloadFile(new Uri(GetVideoURL(youtubeURL)), CleanPath(directory, video.title));
 
-			return "success";
+			return "success|" + CleanPath(directory, video.title);
 		}
 	}
 }
