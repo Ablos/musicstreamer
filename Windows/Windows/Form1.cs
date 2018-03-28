@@ -22,7 +22,10 @@ namespace Windows
 			{
 				while (true)
 				{
-					loop();
+					try
+					{
+						loop();
+					}catch { }
 					Thread.Sleep(100);
 				}
 			}).Start();
