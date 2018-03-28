@@ -7,7 +7,7 @@ namespace Tests
 	{
 		static void Main(string[] args)
 		{
-			YoutubeVideoDownloader dl = new YoutubeVideoDownloader();
+			YoutubeAudioDownloader dl = new YoutubeAudioDownloader();
 			Console.WriteLine(dl.DownloadVideo(Console.ReadLine(), "C:\\Users\\Abel\\Desktop"));
 			Console.WriteLine("End of script.");
 			Console.ReadLine();

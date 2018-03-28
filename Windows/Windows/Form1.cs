@@ -70,5 +70,19 @@ namespace Windows
 		{
 			
 		}
+
+		private void button4_Click(object sender, EventArgs e)
+		{
+			if (!string.IsNullOrEmpty(textBox1.Text))
+			{
+				YoutubeAudioDownloader dl = new YoutubeAudioDownloader();
+				label2.Text = dl.DownloadAudio(textBox1.Text, "C:/Users/Abel/Desktop");
+			}
+		}
+
+		private void label2_Click(object sender, EventArgs e)
+		{
+
+		}
 	}
 }

@@ -37,6 +37,9 @@ namespace Windows
 			this.TotalTime = new System.Windows.Forms.Label();
 			this.VolumeLabel = new System.Windows.Forms.Label();
 			this.trackBar1 = new System.Windows.Forms.TrackBar();
+			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.button4 = new System.Windows.Forms.Button();
+			this.label2 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.Time)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
 			this.SuspendLayout();
@@ -132,11 +135,41 @@ namespace Windows
 			this.trackBar1.TickFrequency = 5;
 			this.trackBar1.Value = 100;
 			// 
+			// textBox1
+			// 
+			this.textBox1.Location = new System.Drawing.Point(12, 223);
+			this.textBox1.Name = "textBox1";
+			this.textBox1.Size = new System.Drawing.Size(776, 20);
+			this.textBox1.TabIndex = 11;
+			// 
+			// button4
+			// 
+			this.button4.Location = new System.Drawing.Point(12, 250);
+			this.button4.Name = "button4";
+			this.button4.Size = new System.Drawing.Size(776, 23);
+			this.button4.TabIndex = 12;
+			this.button4.Text = "button4";
+			this.button4.UseVisualStyleBackColor = true;
+			this.button4.Click += new System.EventHandler(this.button4_Click);
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(377, 276);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(35, 13);
+			this.label2.TabIndex = 13;
+			this.label2.Text = "label2";
+			this.label2.Click += new System.EventHandler(this.label2_Click);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.Controls.Add(this.label2);
+			this.Controls.Add(this.button4);
+			this.Controls.Add(this.textBox1);
 			this.Controls.Add(this.trackBar1);
 			this.Controls.Add(this.VolumeLabel);
 			this.Controls.Add(this.TotalTime);
@@ -166,6 +199,9 @@ namespace Windows
 		private System.Windows.Forms.Label TotalTime;
 		private System.Windows.Forms.Label VolumeLabel;
 		private System.Windows.Forms.TrackBar trackBar1;
+		private System.Windows.Forms.TextBox textBox1;
+		private System.Windows.Forms.Button button4;
+		private System.Windows.Forms.Label label2;
 	}
 }
 
