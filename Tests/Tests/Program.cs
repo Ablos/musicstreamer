@@ -7,8 +7,8 @@ namespace Tests
 	{
 		static void Main(string[] args)
 		{
-			AudioStreamer a = new AudioStreamer();
-			a.InitiateLocalStream("C:\\Users\\Abel\\Desktop\\test.mp3");
+			YoutubeVideoDownloader dl = new YoutubeVideoDownloader();
+			Console.WriteLine(dl.DownloadVideo(Console.ReadLine(), "C:\\Users\\Abel\\Desktop"));
 			Console.WriteLine("End of script.");
 			Console.ReadLine();
 		}
