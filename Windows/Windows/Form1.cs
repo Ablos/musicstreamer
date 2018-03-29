@@ -84,5 +84,11 @@ namespace Windows
 		{
 
 		}
-	}
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Form2 form = new Form2();
+            form.Show();
+        }
+    }
 }
