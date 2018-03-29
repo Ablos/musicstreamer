@@ -1,11 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -80,31 +73,13 @@ namespace Windows
 					YoutubeAudioDownloader dl = new YoutubeAudioDownloader();
 					dl.DownloadAudio(textBox1.Text, "C:/Users/Abel/Desktop");
 					dl.onStateChanged += UpdateDownloadState;
-					dl.wc.DownloadProgressChanged += UpdateDownloadProgress;
-					dl.wc.DownloadFileCompleted += FinishedDownloadProgress;
 				}).Start();
 			}
-		}
-
-		private void UpdateConvertProgress(object sender, NReco.VideoConverter.ConvertProgressEventArgs e)
-		{
-			progressBar1.Value = (int)e.TotalDuration.TotalSeconds - (int)e.Processed.TotalSeconds;
 		}
 
 		private void label2_Click(object sender, EventArgs e)
 		{
 
-		}
-
-<<<<<<< HEAD
-		private void UpdateDownloadProgress(object sender, DownloadProgressChangedEventArgs e)
-		{
-			progressBar1.Value = e.ProgressPercentage;
-		}
-
-		private void FinishedDownloadProgress(object sender, AsyncCompletedEventArgs e)
-		{
-			progressBar1.Value = 0;
 		}
 
 		private void UpdateDownloadState(YoutubeAudioDownloader.State state)
@@ -151,17 +126,10 @@ namespace Windows
 			}
 		}
 
-		private void progressBar1_Click(object sender, EventArgs e)
-		{
-
-		}
-	}
-=======
         private void button5_Click(object sender, EventArgs e)
         {
             Form2 form = new Form2();
             form.Show();
         }
     }
->>>>>>> 1534013d8e4915cde7334590be9eac1b9b689574
 }
