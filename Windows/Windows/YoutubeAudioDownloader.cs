@@ -1,3 +1,7 @@
+/*
+ * (c) HotkeyCode Inc.
+ */
+
 using System;
 using System.Net;
 using Newtonsoft.Json;
