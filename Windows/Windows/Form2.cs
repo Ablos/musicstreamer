@@ -143,5 +143,28 @@ namespace Windows
             pictureBox1.Image = null;
             pictureBox2.Image = null;
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            panel1.Visible = true;
+            panel2.Visible = true;
+            panel3.Visible = false;
+
+        }
     }
 }
