@@ -97,6 +97,7 @@ namespace Windows
 
 		}
 
+<<<<<<< HEAD
 		private void UpdateDownloadProgress(object sender, DownloadProgressChangedEventArgs e)
 		{
 			progressBar1.Value = e.ProgressPercentage;
@@ -156,4 +157,12 @@ namespace Windows
 
 		}
 	}
+=======
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Form2 form = new Form2();
+            form.Show();
+        }
+    }
+>>>>>>> 1534013d8e4915cde7334590be9eac1b9b689574
 }
