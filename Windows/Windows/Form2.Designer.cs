@@ -48,6 +48,9 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.button3 = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.label7 = new System.Windows.Forms.Label();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -207,33 +210,38 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.pictureBox1.BackColor = System.Drawing.Color.Black;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(400, 400);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
             // pictureBox2
             // 
-            this.pictureBox2.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.pictureBox2.BackColor = System.Drawing.Color.Black;
             this.pictureBox2.Location = new System.Drawing.Point(406, 220);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(180, 180);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox2.TabIndex = 1;
             this.pictureBox2.TabStop = false;
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(592, 292);
+            this.button3.Location = new System.Drawing.Point(635, 272);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(184, 108);
+            this.button3.Size = new System.Drawing.Size(109, 62);
             this.button3.TabIndex = 2;
             this.button3.Text = "Finish";
             this.button3.UseVisualStyleBackColor = true;
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.button6);
+            this.panel3.Controls.Add(this.button5);
+            this.panel3.Controls.Add(this.label7);
             this.panel3.Controls.Add(this.button3);
             this.panel3.Controls.Add(this.pictureBox2);
             this.panel3.Controls.Add(this.pictureBox1);
@@ -242,6 +250,35 @@
             this.panel3.Size = new System.Drawing.Size(776, 400);
             this.panel3.TabIndex = 15;
             this.panel3.Visible = false;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(437, 60);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(314, 62);
+            this.label7.TabIndex = 3;
+            this.label7.Text = "This cover is found on the internet. If it\'s not the right one, add a different c" +
+    "over or leave it blank.";
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(428, 102);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(160, 39);
+            this.button5.TabIndex = 4;
+            this.button5.Text = "Add Different Cover";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(594, 102);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(160, 39);
+            this.button6.TabIndex = 5;
+            this.button6.Text = "Leave Cover Blank";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // Form2
             // 
@@ -287,5 +324,8 @@
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button5;
     }
 }
