@@ -115,7 +115,14 @@ namespace Windows
 
         private void Form2_Load(object sender, EventArgs e)
         {
-
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MusicStreamer\\OutgoingTemp"))
+            {
+                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MusicStreamer\\OutgoingTemp");
+            }
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MusicStreamer\\YoutubeTemp"))
+            {
+                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MusicStreamer\\YoutubeTemp");
+            }
         }
 
         private void button5_Click(object sender, EventArgs e)
