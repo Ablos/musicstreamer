@@ -1,8 +1,7 @@
-<<<<<<< HEAD
-=======
-﻿using NAudio.Lame;
-using NAudio.Wave;
->>>>>>> c5d66c1e5e8d1db8e3057430f3e7978ba8a9a077
+/*
+ * (c) HotkeyCode Inc.
+ */
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +15,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NAudio.Lame;
+using NAudio.Wave;
 using WebDav;
 using WebDAVClient;
 using WebDAVClient.Model;
