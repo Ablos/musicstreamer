@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WebDav;
 using WebDAVClient;
 using WebDAVClient.Model;
 
@@ -292,11 +293,15 @@ namespace Windows
 
             try
             {
-                IClient c = new Client(new NetworkCredential { UserName = "ablos", Password = "AblosStack00" });
-                c.Server = "https://ablos.stackstorage.com";
-                c.BasePath = "/remote.php/webdav/";
+                WebDavClientParams clientParams = new WebDavClientParams()
+                {
+                    BaseAddress = new Uri("https://ablos.stackstorage.com/remote.php/webdav/"),
+                    Credentials = new NetworkCredential("ablos", "AblosStack00")
+                };
+                WebDavClient wClient = new WebDavClient();
+                await wClient.PutFile("/music/" + firstArtist + "/" + saveName + "/cover.png", File.OpenRead(outgoingTemp + title + "\\cover.png"));
 
-                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\cover.png"), "cover.png");
+                /*await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\cover.png"), "cover.png");
                 Console.WriteLine("1");
                 await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\covericon.png"), "covericon.png");
                 Console.WriteLine("2");
@@ -306,7 +311,7 @@ namespace Windows
                 Console.WriteLine("4");
                 await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\high.mp3"), "high.mp3");
                 Console.WriteLine("5");
-                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\ultra.mp3"), "ultra.mp3");
+                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\ultra.mp3"), "ultra.mp3");*/
 
                 WebClient client = new WebClient();
                 string feedback = client.DownloadString("http://ablos.square7.ch/upload.php/?title=" + title + "&artists=" + artists + "&genre=" + genre + "&album=" + album + "&duration=" + duration + "&path=" + "/music/" + firstArtist + "/" + saveName + "/");
