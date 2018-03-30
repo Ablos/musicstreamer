@@ -33,6 +33,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button9 = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
@@ -48,12 +49,12 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.button3 = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.label7 = new System.Windows.Forms.Label();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
-            this.button9 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -115,6 +116,16 @@
             this.panel1.Size = new System.Drawing.Size(776, 322);
             this.panel1.TabIndex = 4;
             this.panel1.Visible = false;
+            // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(0, 243);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(776, 23);
+            this.button9.TabIndex = 16;
+            this.button9.Text = "Cancel";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // label6
             // 
@@ -234,7 +245,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(635, 264);
+            this.button3.Location = new System.Drawing.Point(634, 264);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(109, 62);
             this.button3.TabIndex = 2;
@@ -244,6 +255,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.label8);
             this.panel3.Controls.Add(this.button8);
             this.panel3.Controls.Add(this.button7);
             this.panel3.Controls.Add(this.button6);
@@ -258,34 +270,15 @@
             this.panel3.TabIndex = 15;
             this.panel3.Visible = false;
             // 
-            // label7
+            // button8
             // 
-            this.label7.Location = new System.Drawing.Point(437, 60);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(314, 62);
-            this.label7.TabIndex = 3;
-            this.label7.Text = "This cover is found on the internet. If it\'s not the right one, add a different c" +
-    "over or leave it blank.";
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(428, 102);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(160, 39);
-            this.button5.TabIndex = 4;
-            this.button5.Text = "Add Different Cover";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
-            // 
-            // button6
-            // 
-            this.button6.Location = new System.Drawing.Point(594, 102);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(160, 39);
-            this.button6.TabIndex = 5;
-            this.button6.Text = "Leave Cover Blank";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.button8.Location = new System.Drawing.Point(687, 375);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(89, 25);
+            this.button8.TabIndex = 7;
+            this.button8.Text = "Cancel";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button7
             // 
@@ -297,25 +290,42 @@
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
-            // button8
+            // button6
             // 
-            this.button8.Location = new System.Drawing.Point(687, 375);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(89, 25);
-            this.button8.TabIndex = 7;
-            this.button8.Text = "Cancel";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.button6.Location = new System.Drawing.Point(594, 102);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(160, 39);
+            this.button6.TabIndex = 5;
+            this.button6.Text = "Leave Cover Blank";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
-            // button9
+            // button5
             // 
-            this.button9.Location = new System.Drawing.Point(0, 243);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(776, 23);
-            this.button9.TabIndex = 16;
-            this.button9.Text = "Cancel";
-            this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
+            this.button5.Location = new System.Drawing.Point(428, 102);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(160, 39);
+            this.button5.TabIndex = 4;
+            this.button5.Text = "Add Different Cover";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(437, 60);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(314, 62);
+            this.label7.TabIndex = 3;
+            this.label7.Text = "This cover is found on the internet. If it\'s not the right one, add a different c" +
+    "over or leave it blank.";
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(592, 329);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(184, 23);
+            this.label8.TabIndex = 8;
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Form2
             // 
@@ -367,5 +377,6 @@
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Label label8;
     }
 }
