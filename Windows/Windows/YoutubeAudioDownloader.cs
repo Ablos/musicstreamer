@@ -32,7 +32,7 @@ namespace Windows
 		public WebClient wc;
 		Video video;
 		public FFMpegConverter ffmpeg;
-		public enum State { INACTIVE, VALIDATING_URL, VALIDATING_PATH, COLLECTING_URL, CREATING_DIR, DOWNLOADING_VIDEO, CREATING_LOW, CREATING_NORMAL, CREATING_HIGH, CREATING_ULTRA, CLEANING, DONE };
+		public enum State { INACTIVE, VALIDATING_URL, VALIDATING_PATH, COLLECTING_URL, CREATING_DIR, DOWNLOADING_VIDEO, CREATING_LOW, CREATING_HIGH, CLEANING, DONE };
 		public delegate void OnStateChanged(State state);
 		public OnStateChanged onStateChanged;
 
@@ -80,21 +80,13 @@ namespace Windows
 
 		public void CreateMP3s(string dir)
 		{
-			onStateChanged?.Invoke(State.CREATING_ULTRA);
-			ffmpeg.ConvertMedia(dir + "/video.mp4", null, dir + "/ultra.mp3", "mp3", new ConvertSettings()
+			onStateChanged?.Invoke(State.CREATING_HIGH);
+			ffmpeg.ConvertMedia(dir + "/video.mp4", null, dir + "/high.mp3", "mp3", new ConvertSettings()
 			{
-				CustomOutputArgs = " -b:a 320k -bufsize 320k "
+				CustomOutputArgs = " -b:a 128k -bufsize 128k "
 			});
 
-			Mp3FileReader reader = new Mp3FileReader(dir + "/ultra.mp3");
-
-			onStateChanged?.Invoke(State.CREATING_HIGH);
-			LameMP3FileWriter high = new LameMP3FileWriter(dir + "/high.mp3", reader.WaveFormat, 256);
-			reader.CopyTo(high);
-
-			onStateChanged?.Invoke(State.CREATING_NORMAL);
-			LameMP3FileWriter normal = new LameMP3FileWriter(dir + "/normal.mp3", reader.WaveFormat, 128);
-			reader.CopyTo(normal);
+			Mp3FileReader reader = new Mp3FileReader(dir + "/high.mp3");
 
 			onStateChanged?.Invoke(State.CREATING_LOW);
 			LameMP3FileWriter low = new LameMP3FileWriter(dir + "/low.mp3", reader.WaveFormat, 64);

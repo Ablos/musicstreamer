@@ -105,14 +105,8 @@ namespace Windows
 				case YoutubeAudioDownloader.State.CREATING_LOW:
 					label2.Text = "Creating low quality MP3...";
 					break;
-				case YoutubeAudioDownloader.State.CREATING_NORMAL:
-					label2.Text = "Creating normal quality MP3...";
-					break;
 				case YoutubeAudioDownloader.State.CREATING_HIGH:
 					label2.Text = "Creating high quality MP3...";
-					break;
-				case YoutubeAudioDownloader.State.CREATING_ULTRA:
-					label2.Text = "Creating ultra quality MP3...";
 					break;
 				case YoutubeAudioDownloader.State.CLEANING:
 					label2.Text = "Cleaning up...";
