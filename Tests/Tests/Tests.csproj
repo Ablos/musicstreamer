@@ -35,6 +35,9 @@
     <Reference Include="Alvas.Audio">
       <HintPath>..\..\Custom DLLs\Alvas.Audio.dll</HintPath>
     </Reference>
+    <Reference Include="InputSimulator">
+      <HintPath>..\..\..\..\That Folder\Custom Libraries C#\InputSimulator.0.1.0.0-bin\Release\InputSimulator.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio, Version=1.8.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.8.4\lib\net35\NAudio.dll</HintPath>
     </Reference>
