@@ -28,182 +28,117 @@ namespace Windows
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.button1 = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.button2 = new System.Windows.Forms.Button();
-			this.button3 = new System.Windows.Forms.Button();
-			this.CurrentTime = new System.Windows.Forms.Label();
-			this.Time = new System.Windows.Forms.TrackBar();
-			this.TotalTime = new System.Windows.Forms.Label();
-			this.VolumeLabel = new System.Windows.Forms.Label();
-			this.trackBar1 = new System.Windows.Forms.TrackBar();
-			this.textBox1 = new System.Windows.Forms.TextBox();
-			this.button4 = new System.Windows.Forms.Button();
-			this.label2 = new System.Windows.Forms.Label();
-			((System.ComponentModel.ISupportInitialize)(this.Time)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+			this.TopBar_BG = new System.Windows.Forms.Panel();
+			this.Title = new System.Windows.Forms.Label();
+			this.LeftResizer = new System.Windows.Forms.Panel();
+			this.RightResizer = new System.Windows.Forms.Panel();
+			this.BottomResizer = new System.Windows.Forms.Panel();
+			this.TopResizer = new System.Windows.Forms.Panel();
+			this.TopBar_BG.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// button1
+			// TopBar_BG
 			// 
-			this.button1.Location = new System.Drawing.Point(299, 43);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(75, 23);
-			this.button1.TabIndex = 0;
-			this.button1.Text = "Play";
-			this.button1.UseVisualStyleBackColor = true;
-			this.button1.Click += new System.EventHandler(this.button1_Click);
+			this.TopBar_BG.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
+			this.TopBar_BG.Controls.Add(this.Title);
+			this.TopBar_BG.Cursor = System.Windows.Forms.Cursors.Default;
+			this.TopBar_BG.Dock = System.Windows.Forms.DockStyle.Top;
+			this.TopBar_BG.Location = new System.Drawing.Point(0, 0);
+			this.TopBar_BG.Name = "TopBar_BG";
+			this.TopBar_BG.Size = new System.Drawing.Size(1098, 19);
+			this.TopBar_BG.TabIndex = 5;
 			// 
-			// label1
+			// Title
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F);
-			this.label1.Location = new System.Drawing.Point(261, 9);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(315, 31);
-			this.label1.TabIndex = 1;
-			this.label1.Text = "DJ Paul Elstak - Demons";
+			this.Title.Dock = System.Windows.Forms.DockStyle.Top;
+			this.Title.Font = new System.Drawing.Font("Roboto", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Title.ForeColor = System.Drawing.Color.White;
+			this.Title.Location = new System.Drawing.Point(0, 0);
+			this.Title.Name = "Title";
+			this.Title.Size = new System.Drawing.Size(1098, 19);
+			this.Title.TabIndex = 0;
+			this.Title.Text = "VIBES";
+			this.Title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.Title.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Mover);
 			// 
-			// button2
+			// LeftResizer
 			// 
-			this.button2.Location = new System.Drawing.Point(380, 43);
-			this.button2.Name = "button2";
-			this.button2.Size = new System.Drawing.Size(75, 23);
-			this.button2.TabIndex = 2;
-			this.button2.Text = "Pause";
-			this.button2.UseVisualStyleBackColor = true;
-			this.button2.Click += new System.EventHandler(this.button2_Click);
+			this.LeftResizer.BackColor = System.Drawing.Color.Transparent;
+			this.LeftResizer.Cursor = System.Windows.Forms.Cursors.SizeWE;
+			this.LeftResizer.Dock = System.Windows.Forms.DockStyle.Left;
+			this.LeftResizer.Location = new System.Drawing.Point(0, 19);
+			this.LeftResizer.Name = "LeftResizer";
+			this.LeftResizer.Size = new System.Drawing.Size(3, 592);
+			this.LeftResizer.TabIndex = 0;
+			this.LeftResizer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Resizer_Mouse_Down);
+			this.LeftResizer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Resizer_Left);
 			// 
-			// button3
+			// RightResizer
 			// 
-			this.button3.Location = new System.Drawing.Point(461, 43);
-			this.button3.Name = "button3";
-			this.button3.Size = new System.Drawing.Size(75, 23);
-			this.button3.TabIndex = 3;
-			this.button3.Text = "Stop";
-			this.button3.UseVisualStyleBackColor = true;
-			this.button3.Click += new System.EventHandler(this.button3_Click);
+			this.RightResizer.BackColor = System.Drawing.Color.Transparent;
+			this.RightResizer.Cursor = System.Windows.Forms.Cursors.SizeWE;
+			this.RightResizer.Dock = System.Windows.Forms.DockStyle.Right;
+			this.RightResizer.Location = new System.Drawing.Point(1095, 19);
+			this.RightResizer.Name = "RightResizer";
+			this.RightResizer.Size = new System.Drawing.Size(3, 592);
+			this.RightResizer.TabIndex = 0;
+			this.RightResizer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Resizer_Mouse_Down);
+			this.RightResizer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Resizer_Right);
 			// 
-			// CurrentTime
+			// BottomResizer
 			// 
-			this.CurrentTime.AutoSize = true;
-			this.CurrentTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-			this.CurrentTime.Location = new System.Drawing.Point(221, 72);
-			this.CurrentTime.Name = "CurrentTime";
-			this.CurrentTime.Size = new System.Drawing.Size(40, 20);
-			this.CurrentTime.TabIndex = 4;
-			this.CurrentTime.Text = "0:00";
-			this.CurrentTime.Click += new System.EventHandler(this.CurrentTime_Click);
+			this.BottomResizer.BackColor = System.Drawing.Color.Transparent;
+			this.BottomResizer.Cursor = System.Windows.Forms.Cursors.SizeNS;
+			this.BottomResizer.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.BottomResizer.Location = new System.Drawing.Point(3, 608);
+			this.BottomResizer.Name = "BottomResizer";
+			this.BottomResizer.Size = new System.Drawing.Size(1092, 3);
+			this.BottomResizer.TabIndex = 0;
+			this.BottomResizer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Resizer_Mouse_Down);
+			this.BottomResizer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Resizer_Down);
 			// 
-			// Time
+			// TopResizer
 			// 
-			this.Time.Location = new System.Drawing.Point(267, 72);
-			this.Time.Name = "Time";
-			this.Time.Size = new System.Drawing.Size(309, 45);
-			this.Time.TabIndex = 7;
-			this.Time.TickFrequency = 0;
-			this.Time.TickStyle = System.Windows.Forms.TickStyle.None;
-			// 
-			// TotalTime
-			// 
-			this.TotalTime.AutoSize = true;
-			this.TotalTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-			this.TotalTime.Location = new System.Drawing.Point(582, 72);
-			this.TotalTime.Name = "TotalTime";
-			this.TotalTime.Size = new System.Drawing.Size(40, 20);
-			this.TotalTime.TabIndex = 8;
-			this.TotalTime.Text = "0:00";
-			this.TotalTime.Click += new System.EventHandler(this.TotalTime_Click);
-			// 
-			// VolumeLabel
-			// 
-			this.VolumeLabel.AutoSize = true;
-			this.VolumeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-			this.VolumeLabel.Location = new System.Drawing.Point(391, 100);
-			this.VolumeLabel.Name = "VolumeLabel";
-			this.VolumeLabel.Size = new System.Drawing.Size(55, 17);
-			this.VolumeLabel.TabIndex = 9;
-			this.VolumeLabel.Text = "Volume";
-			// 
-			// trackBar1
-			// 
-			this.trackBar1.Location = new System.Drawing.Point(267, 123);
-			this.trackBar1.Maximum = 100;
-			this.trackBar1.Name = "trackBar1";
-			this.trackBar1.Size = new System.Drawing.Size(309, 45);
-			this.trackBar1.TabIndex = 10;
-			this.trackBar1.TickFrequency = 5;
-			this.trackBar1.Value = 100;
-			// 
-			// textBox1
-			// 
-			this.textBox1.Location = new System.Drawing.Point(12, 223);
-			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(776, 20);
-			this.textBox1.TabIndex = 11;
-			this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			// 
-			// button4
-			// 
-			this.button4.Location = new System.Drawing.Point(12, 250);
-			this.button4.Name = "button4";
-			this.button4.Size = new System.Drawing.Size(776, 23);
-			this.button4.TabIndex = 12;
-			this.button4.Text = "Download";
-			this.button4.UseVisualStyleBackColor = true;
-			this.button4.Click += new System.EventHandler(this.button4_Click);
-			// 
-			// label2
-			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(377, 276);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(50, 13);
-			this.label2.TabIndex = 14;
-			this.label2.Text = "No video";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.TopResizer.BackColor = System.Drawing.Color.Transparent;
+			this.TopResizer.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.TopResizer.Cursor = System.Windows.Forms.Cursors.SizeNS;
+			this.TopResizer.Location = new System.Drawing.Point(3, 0);
+			this.TopResizer.Name = "TopResizer";
+			this.TopResizer.Size = new System.Drawing.Size(1095, 3);
+			this.TopResizer.TabIndex = 3;
+			this.TopResizer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Resizer_Mouse_Down);
+			this.TopResizer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Resizer_Up);
 			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(800, 450);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.button4);
-			this.Controls.Add(this.textBox1);
-			this.Controls.Add(this.trackBar1);
-			this.Controls.Add(this.VolumeLabel);
-			this.Controls.Add(this.TotalTime);
-			this.Controls.Add(this.Time);
-			this.Controls.Add(this.CurrentTime);
-			this.Controls.Add(this.button3);
-			this.Controls.Add(this.button2);
-			this.Controls.Add(this.label1);
-			this.Controls.Add(this.button1);
+			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.ClientSize = new System.Drawing.Size(1098, 611);
+			this.Controls.Add(this.TopResizer);
+			this.Controls.Add(this.BottomResizer);
+			this.Controls.Add(this.RightResizer);
+			this.Controls.Add(this.LeftResizer);
+			this.Controls.Add(this.TopBar_BG);
+			this.DoubleBuffered = true;
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "Form1";
-			this.Text = "Form1";
-			((System.ComponentModel.ISupportInitialize)(this.Time)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+			this.Text = "VIBES";
+			this.TopBar_BG.ResumeLayout(false);
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
 		#endregion
-
-		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button button2;
-		private System.Windows.Forms.Button button3;
-		private System.Windows.Forms.Label CurrentTime;
-		private System.Windows.Forms.TrackBar Time;
-		private System.Windows.Forms.Label TotalTime;
-		private System.Windows.Forms.Label VolumeLabel;
-		private System.Windows.Forms.TrackBar trackBar1;
-		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.Button button4;
-		private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button5;
-    }
+		private System.Windows.Forms.Panel TopResizer;
+		private System.Windows.Forms.Panel TopBar_BG;
+		private System.Windows.Forms.Panel LeftResizer;
+		private System.Windows.Forms.Panel RightResizer;
+		private System.Windows.Forms.Panel BottomResizer;
+		private System.Windows.Forms.Label Title;
+	}
 }
 
