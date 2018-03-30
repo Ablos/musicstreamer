@@ -1,14 +1,20 @@
-﻿using System;
+﻿using NAudio.Lame;
+using NAudio.Wave;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WebDAVClient;
+using WebDAVClient.Model;
 
 namespace Windows
 {
@@ -18,6 +24,17 @@ namespace Windows
         {
             InitializeComponent();
         }
+
+        string fileLocation = "";
+        string saveName = "";
+        string firstArtist = "";
+        string outgoingTemp = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicStreamer\\OutgoingTemp\\";
+        string title = "";
+        string artists = "";
+        string album = "";
+        string genre = "";
+        string duration = "";
+
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -32,13 +49,16 @@ namespace Windows
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string fileLocation = textBox1.Text.Trim();
+             fileLocation = textBox1.Text.Trim();
 
             if (File.Exists(fileLocation))
             {
                 TagLib.File f = TagLib.File.Create(fileLocation);
 
-                string artists = "";
+                if (f.Tag.Genres.Length > 0)
+                {
+                    genre = f.Tag.Genres[0];
+                }
                 foreach (string s in f.Tag.Performers)
                 {
                     if (artists == "")
@@ -49,10 +69,14 @@ namespace Windows
                         artists += "," + s;
                     }
                 }
+                artists = artists.Replace(" & ", ",").Replace("&", ",");
+                title = f.Tag.Title;
+                album = f.Tag.Album;
+                duration = f.Properties.Duration.TotalSeconds.ToString();
 
-                textBox2.Text = f.Tag.Title;
-                textBox3.Text = f.Tag.Album;
-                textBox4.Text = f.Tag.Genres[0];
+                textBox2.Text = title;
+                textBox3.Text = album;
+                textBox4.Text = genre;
                 textBox5.Text = artists;
 
                 panel1.Visible = true;
@@ -61,13 +85,18 @@ namespace Windows
 
         private void button4_Click(object sender, EventArgs e)
         {
-            if(textBox2.Text != "" && textBox3.Text != "" && textBox4.Text != "" && textBox5.Text != "")
+            title = textBox2.Text.Trim();
+            album = textBox3.Text.Trim();
+            genre = textBox4.Text.Trim();
+            artists = textBox5.Text.Trim();
+
+            if (title != "" && album != "" && genre != "" && artists != "")
             {
                 panel1.Visible = false;
                 panel2.Visible = false;
                 panel3.Visible = true;
 
-                byte[] image = GetImage(GetCoverImageUrl(textBox2.Text, textBox5.Text));
+                byte[] image = GetImage(GetCoverImageUrl(title, artists));
                 using (var ms = new MemoryStream(image))
                 {
                     pictureBox1.Image = Image.FromStream(ms);
@@ -115,13 +144,13 @@ namespace Windows
 
         private void Form2_Load(object sender, EventArgs e)
         {
-            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MusicStreamer\\OutgoingTemp"))
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicStreamer\\OutgoingTemp"))
             {
-                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MusicStreamer\\OutgoingTemp");
+                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicStreamer\\OutgoingTemp");
             }
-            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MusicStreamer\\YoutubeTemp"))
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicStreamer\\YoutubeTemp"))
             {
-                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MusicStreamer\\YoutubeTemp");
+                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicStreamer\\YoutubeTemp");
             }
         }
 
@@ -146,17 +175,177 @@ namespace Windows
 
         private void button3_Click(object sender, EventArgs e)
         {
+            Directory.CreateDirectory(outgoingTemp + title);
 
+            Bitmap bitmap = new Bitmap(400, 400);
+            pictureBox1.DrawToBitmap(bitmap, pictureBox1.ClientRectangle);
+            bitmap.Save(outgoingTemp + title + "\\cover.png", ImageFormat.Png);
+            bitmap = new Bitmap(180, 180);
+            pictureBox2.DrawToBitmap(bitmap, pictureBox1.ClientRectangle);
+            bitmap.Save(outgoingTemp + title + "\\covericon.png", ImageFormat.Png);
+
+            Task.Run((Action)ConvertMp3);
+            label8.Text = "Converting MP3 File...";
+            button3.Enabled = false;
+            button5.Enabled = false;
+            button6.Enabled = false;
+            button7.Enabled = false;
+            button8.Enabled = false;
+        }
+
+        void ConvertMp3()
+        {
+            ID3TagData empty = new ID3TagData();
+
+            Mp3FileReader reader = new Mp3FileReader(fileLocation);
+            LameMP3FileWriter writer = new LameMP3FileWriter(outgoingTemp + title + "\\low.mp3", reader.WaveFormat, 64, empty);
+            reader.CopyTo(writer);
+            reader.Dispose();
+            writer.Dispose();
+
+            reader = new Mp3FileReader(fileLocation);
+            writer = new LameMP3FileWriter(outgoingTemp + title + "\\normal.mp3", reader.WaveFormat, 128, empty);
+            reader.CopyTo(writer);
+            reader.Dispose();
+            writer.Dispose();
+
+            reader = new Mp3FileReader(fileLocation);
+            writer = new LameMP3FileWriter(outgoingTemp + title + "\\high.mp3", reader.WaveFormat, 256, empty);
+            reader.CopyTo(writer);
+            reader.Dispose();
+            writer.Dispose();
+
+            reader = new Mp3FileReader(fileLocation);
+            writer = new LameMP3FileWriter(outgoingTemp + title + "\\ultra.mp3", reader.WaveFormat, 320, empty);
+            reader.CopyTo(writer);
+            reader.Dispose();
+            writer.Dispose();
+
+            if (label8.InvokeRequired)
+            {
+                label8.Invoke(new Action(() => label8.Text = "Connecting To Server..."));
+            }
+            else
+            {
+                label8.Text = "Connecting To Server...";
+            }
+
+            GetFolder();
+        }
+
+        async void GetFolder()
+        {
+            IClient c = new Client(new NetworkCredential { UserName = "ablos", Password = "AblosStack00" });
+            c.Server = "https://ablos.stackstorage.com";
+            c.BasePath = "/remote.php/webdav/";
+
+            bool artistExist = false;
+            firstArtist = artists.Split(',')[0].Trim().Replace(" ", "_").ToLower();
+            IEnumerable<Item> files = await c.List("/music/");
+            foreach (Item folder in files.ToList())
+            {
+                if (folder.DisplayName == firstArtist)
+                {
+                    artistExist = true;
+                }
+            }
+            if (!artistExist)
+            {
+                await c.CreateDir("/music/", firstArtist);
+            }
+
+            bool songExist = false;
+            saveName = title.Trim().Replace(" ", "_").ToLower();
+            files = await c.List("/music/" + firstArtist + "/");
+            while (!songExist)
+            {
+                bool nameChange = false;
+                foreach (Item folder in files.ToList())
+                {
+                    if (folder.DisplayName == saveName)
+                    {
+                        saveName += "1";
+                        nameChange = true;
+                    }
+                }
+                if (!nameChange)
+                {
+                    songExist = true;
+                }
+            }
+            await c.CreateDir("/music/" + firstArtist + "/", saveName);
+
+            if (label8.InvokeRequired)
+            {
+                label8.Invoke(new Action(() => label8.Text = "Uploading To Server..."));
+            }
+            else
+            {
+                label8.Text = "Uploading To Server...";
+            }
+
+            Upload();
+        }
+
+        async void Upload()
+        {
+
+            try
+            {
+                IClient c = new Client(new NetworkCredential { UserName = "ablos", Password = "AblosStack00" });
+                c.Server = "https://ablos.stackstorage.com";
+                c.BasePath = "/remote.php/webdav/";
+
+                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\cover.png"), "cover.png");
+                Console.WriteLine("1");
+                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\covericon.png"), "covericon.png");
+                Console.WriteLine("2");
+                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\low.mp3"), "low.mp3");
+                Console.WriteLine("3");
+                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\normal.mp3"), "normal.mp3");
+                Console.WriteLine("4");
+                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\high.mp3"), "high.mp3");
+                Console.WriteLine("5");
+                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\ultra.mp3"), "ultra.mp3");
+
+                WebClient client = new WebClient();
+                string feedback = client.DownloadString("http://ablos.square7.ch/upload.php/?title=" + title + "&artists=" + artists + "&genre=" + genre + "&album=" + album + "&duration=" + duration + "&path=" + "/music/" + firstArtist + "/" + saveName + "/");
+
+                if (feedback.Trim() == "affirmative")
+                {
+                    NotifyIcon notifyIcon12 = new NotifyIcon();
+                    notifyIcon12.Visible = true;
+                    notifyIcon12.Icon = Properties.Resources.MainIcon;
+                    notifyIcon12.ShowBalloonTip(3000, "Upload", title + " was uploaded successfully.", ToolTipIcon.Info);
+                }
+            }
+            catch
+            {
+                NotifyIcon notifyIcon1 = new NotifyIcon();
+                notifyIcon1.Visible = true;
+                notifyIcon1.Icon = Properties.Resources.MainIcon;
+                notifyIcon1.ShowBalloonTip(3000, "Upload", title + " has failed uploading.", ToolTipIcon.Error);
+            }
+
+            Directory.Delete(outgoingTemp + title, true);
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => Close()));
+            }
+            else
+            {
+                Close();
+            }
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
-
+            Close();
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-
+            Close();
         }
 
         private void button7_Click(object sender, EventArgs e)

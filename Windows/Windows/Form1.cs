@@ -1,3 +1,4 @@
+using AudioStreamer;
 using System;
 using System.Threading;
 using System.Windows.Forms;
@@ -130,6 +131,11 @@ namespace Windows
         {
             Form2 form = new Form2();
             form.Show();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
