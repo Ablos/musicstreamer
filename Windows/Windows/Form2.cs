@@ -185,7 +185,7 @@ namespace Windows
             pictureBox2.DrawToBitmap(bitmap, pictureBox1.ClientRectangle);
             bitmap.Save(outgoingTemp + title + "\\covericon.png", ImageFormat.Png);
 
-            Task.Run((Action)ConvertMp3);
+            Task.Run((Action)CreateLocal);
             label8.Text = "Converting MP3 File...";
             button3.Enabled = false;
             button5.Enabled = false;
@@ -194,7 +194,7 @@ namespace Windows
             button8.Enabled = false;
         }
 
-        void ConvertMp3()
+        void CreateLocal()
         {
             ID3TagData empty = new ID3TagData();
 
@@ -205,19 +205,7 @@ namespace Windows
             writer.Dispose();
 
             reader = new Mp3FileReader(fileLocation);
-            writer = new LameMP3FileWriter(outgoingTemp + title + "\\normal.mp3", reader.WaveFormat, 128, empty);
-            reader.CopyTo(writer);
-            reader.Dispose();
-            writer.Dispose();
-
-            reader = new Mp3FileReader(fileLocation);
-            writer = new LameMP3FileWriter(outgoingTemp + title + "\\high.mp3", reader.WaveFormat, 256, empty);
-            reader.CopyTo(writer);
-            reader.Dispose();
-            writer.Dispose();
-
-            reader = new Mp3FileReader(fileLocation);
-            writer = new LameMP3FileWriter(outgoingTemp + title + "\\ultra.mp3", reader.WaveFormat, 320, empty);
+            writer = new LameMP3FileWriter(outgoingTemp + title + "\\high.mp3", reader.WaveFormat, 128, empty);
             reader.CopyTo(writer);
             reader.Dispose();
             writer.Dispose();
@@ -231,60 +219,6 @@ namespace Windows
                 label8.Text = "Connecting To Server...";
             }
 
-            GetFolder();
-        }
-
-        async void GetFolder()
-        {
-            IClient c = new Client(new NetworkCredential { UserName = "ablos", Password = "AblosStack00" });
-            c.Server = "https://ablos.stackstorage.com";
-            c.BasePath = "/remote.php/webdav/";
-
-            bool artistExist = false;
-            firstArtist = artists.Split(',')[0].Trim().Replace(" ", "_").ToLower();
-            IEnumerable<Item> files = await c.List("/music/");
-            foreach (Item folder in files.ToList())
-            {
-                if (folder.DisplayName == firstArtist)
-                {
-                    artistExist = true;
-                }
-            }
-            if (!artistExist)
-            {
-                await c.CreateDir("/music/", firstArtist);
-            }
-
-            bool songExist = false;
-            saveName = title.Trim().Replace(" ", "_").ToLower();
-            files = await c.List("/music/" + firstArtist + "/");
-            while (!songExist)
-            {
-                bool nameChange = false;
-                foreach (Item folder in files.ToList())
-                {
-                    if (folder.DisplayName == saveName)
-                    {
-                        saveName += "1";
-                        nameChange = true;
-                    }
-                }
-                if (!nameChange)
-                {
-                    songExist = true;
-                }
-            }
-            await c.CreateDir("/music/" + firstArtist + "/", saveName);
-
-            if (label8.InvokeRequired)
-            {
-                label8.Invoke(new Action(() => label8.Text = "Uploading To Server..."));
-            }
-            else
-            {
-                label8.Text = "Uploading To Server...";
-            }
-
             Upload();
         }
 
@@ -295,33 +229,73 @@ namespace Windows
             {
                 WebDavClientParams clientParams = new WebDavClientParams()
                 {
-                    BaseAddress = new Uri("https://ablos.stackstorage.com/remote.php/webdav/"),
+                    BaseAddress = new Uri("https://ablos.stackstorage.com/remote.php/webdav/music/"),
                     Credentials = new NetworkCredential("ablos", "AblosStack00")
                 };
-                WebDavClient wClient = new WebDavClient();
-                await wClient.PutFile("/music/" + firstArtist + "/" + saveName + "/cover.png", File.OpenRead(outgoingTemp + title + "\\cover.png"));
+                WebDavClient wClient = new WebDavClient(clientParams);
 
-                /*await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\cover.png"), "cover.png");
-                Console.WriteLine("1");
-                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\covericon.png"), "covericon.png");
-                Console.WriteLine("2");
-                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\low.mp3"), "low.mp3");
-                Console.WriteLine("3");
-                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\normal.mp3"), "normal.mp3");
-                Console.WriteLine("4");
-                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\high.mp3"), "high.mp3");
-                Console.WriteLine("5");
-                await c.Upload("/music/" + firstArtist + "/" + saveName + "/", File.OpenRead(outgoingTemp + title + "\\ultra.mp3"), "ultra.mp3");*/
+                bool artistExist = false;
+                firstArtist = artists.Split(',')[0].Trim().Replace(" ", "_").ToLower();
+
+                PropfindResponse artist = await wClient.Propfind("/");
+                foreach (WebDavResource folder in artist.Resources)
+                {
+                    if (folder.DisplayName == firstArtist)
+                    {
+                        artistExist = true;
+                    }
+                }
+                if (!artistExist)
+                {
+                    await wClient.Mkcol(firstArtist);
+                }
+
+                bool songExist = false;
+                saveName = title.Trim().Replace(" ", "_").ToLower();
+                PropfindResponse song = await wClient.Propfind(firstArtist + "/");
+                while (!songExist)
+                {
+                    bool nameChange = false;
+                    foreach (WebDavResource folder in song.Resources)
+                    {
+                        if (folder.DisplayName == saveName)
+                        {
+                            saveName += "1";
+                            nameChange = true;
+                        }
+                    }
+                    if (!nameChange)
+                    {
+                        songExist = true;
+                    }
+                }
+                await wClient.Mkcol(firstArtist + "/" + saveName);
+
+
+                if (label8.InvokeRequired)
+                {
+                    label8.Invoke(new Action(() => label8.Text = "Uploading To Server..."));
+                }
+                else
+                {
+                    label8.Text = "Uploading To Server...";
+                }
+
+                await wClient.PutFile(firstArtist + "/" + saveName + "/cover.png", File.OpenRead(outgoingTemp + title + "\\cover.png"));
+                await wClient.PutFile(firstArtist + "/" + saveName + "/covericon.png", File.OpenRead(outgoingTemp + title + "\\covericon.png"));
+                await wClient.PutFile(firstArtist + "/" + saveName + "/low.mp3", File.OpenRead(outgoingTemp + title + "\\low.mp3"));
+                await wClient.PutFile(firstArtist + "/" + saveName + "/high.mp3", File.OpenRead(outgoingTemp + title + "\\high.mp3"));
 
                 WebClient client = new WebClient();
                 string feedback = client.DownloadString("http://ablos.square7.ch/upload.php/?title=" + title + "&artists=" + artists + "&genre=" + genre + "&album=" + album + "&duration=" + duration + "&path=" + "/music/" + firstArtist + "/" + saveName + "/");
 
                 if (feedback.Trim() == "affirmative")
                 {
-                    NotifyIcon notifyIcon12 = new NotifyIcon();
-                    notifyIcon12.Visible = true;
-                    notifyIcon12.Icon = Properties.Resources.MainIcon;
-                    notifyIcon12.ShowBalloonTip(3000, "Upload", title + " was uploaded successfully.", ToolTipIcon.Info);
+                    NotifyIcon notifyIcon1 = new NotifyIcon();
+                    notifyIcon1.Visible = true;
+                    notifyIcon1.Icon = Properties.Resources.MainIcon;
+                    notifyIcon1.Text = "VIBES";
+                    notifyIcon1.ShowBalloonTip(3000, "Upload", title + " was uploaded successfully.", ToolTipIcon.Info);
                 }
             }
             catch
@@ -329,6 +303,7 @@ namespace Windows
                 NotifyIcon notifyIcon1 = new NotifyIcon();
                 notifyIcon1.Visible = true;
                 notifyIcon1.Icon = Properties.Resources.MainIcon;
+                notifyIcon1.Text = "VIBES";
                 notifyIcon1.ShowBalloonTip(3000, "Upload", title + " has failed uploading.", ToolTipIcon.Error);
             }
 
