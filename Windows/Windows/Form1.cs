@@ -1,86 +1,75 @@
-using AudioStreamer;
 using System;
 using System.Threading;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace Windows
 {
 	public partial class Form1 : Form
 	{
-		Streamer s;
+		public const int WM_NCLBUTTONDOWN = 0xA1;
+		public const int HT_CAPTION = 0x2;
+
+		[DllImport("user32.dll")]
+		public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+		[DllImport("user32.dll")]
+		public static extern bool ReleaseCapture();
+
+		int start_x = 0;
+		int start_y = 0;
+
 		public Form1()
 		{
 			InitializeComponent();
-			s = new Streamer();
-			new Thread(() =>
+		}
+
+		private void Mover(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
 			{
-				while (true)
-				{
-					try
-					{
-						loop();
-					}catch { }
-					Thread.Sleep(100);
-				}
-			}).Start();
-		}
-
-		private void loop()
-		{
-			CurrentTime.BeginInvoke(new Action(() =>
-			{
-				CurrentTime.Text = s.GetCurrentTime().ToString(@"m\:ss");
-			}));
-			Time.BeginInvoke(new Action(() =>
-			{
-				Time.Value = s.GetCurrentTime().Seconds + (s.GetCurrentTime().Minutes * 60);
-			}));
-		}
-
-		private void button1_Click(object sender, EventArgs e)
-		{
-			s.InitiateWebStream("Music/DJ_Paul_Elstak/Demons/ultra.mp3");
-			Thread.Sleep(1000);
-			TotalTime.Text = s.GetTotalTime().ToString(@"m\:ss");
-			Time.Maximum = s.GetTotalTime().Seconds + (s.GetTotalTime().Minutes * 60);
-		}
-
-		private void button2_Click(object sender, EventArgs e)
-		{
-			s.PauseStream();
-		}
-
-		private void button3_Click(object sender, EventArgs e)
-		{
-			s.StopStream();
-		}
-
-		private void TotalTime_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void CurrentTime_Click(object sender, EventArgs e)
-		{
-			
-		}
-
-		private void button4_Click(object sender, EventArgs e)
-		{
-			if (!string.IsNullOrEmpty(textBox1.Text))
-			{
-				new Thread(() =>
-				{
-					YoutubeAudioDownloader dl = new YoutubeAudioDownloader();
-					dl.DownloadAudio(textBox1.Text, "C:/Users/Abel/Desktop");
-					dl.onStateChanged += UpdateDownloadState;
-				}).Start();
+				ReleaseCapture();
+				SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
 			}
 		}
 
-		private void label2_Click(object sender, EventArgs e)
+		private void Resizer_Mouse_Down(object sender, MouseEventArgs e)
 		{
+			start_x = e.X;
+			start_y = e.Y;
+		}
 
+		private void Resizer_Up(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				ActiveForm.Height += start_y - e.Y;
+				ActiveForm.Location = new System.Drawing.Point(ActiveForm.Location.X, ActiveForm.Location.Y - (start_y - e.Y));
+			}
+		}
+
+		private void Resizer_Down(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				ActiveForm.Height += e.Y - start_y;
+			}
+		}
+
+		private void Resizer_Right(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				ActiveForm.Width += e.X - start_x;
+			}
+		}
+
+		private void Resizer_Left(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				ActiveForm.Width += start_x - e.X;
+				ActiveForm.Location = new System.Drawing.Point(ActiveForm.Location.X - (start_x - e.X), ActiveForm.Location.Y);
+			}
 		}
 
 		private void UpdateDownloadState(YoutubeAudioDownloader.State state)
@@ -89,34 +78,34 @@ namespace Windows
 			switch (state)
 			{
 				case YoutubeAudioDownloader.State.VALIDATING_URL:
-					label2.Text = "Validating URL...";
+					//label2.Text = "Validating URL...";
 					break;
 				case YoutubeAudioDownloader.State.VALIDATING_PATH:
-					label2.Text = "Validating path...";
+					//label2.Text = "Validating path...";
 					break;
 				case YoutubeAudioDownloader.State.COLLECTING_URL:
-					label2.Text = "Collecting URL...";
+					//label2.Text = "Collecting URL...";
 					break;
 				case YoutubeAudioDownloader.State.CREATING_DIR:
-					label2.Text = "Creating directory...";
+					//label2.Text = "Creating directory...";
 					break;
 				case YoutubeAudioDownloader.State.DOWNLOADING_VIDEO:
-					label2.Text = "Downloading video...";
+					//label2.Text = "Downloading video...";
 					break;
 				case YoutubeAudioDownloader.State.CREATING_LOW:
-					label2.Text = "Creating low quality MP3...";
+					//label2.Text = "Creating low quality MP3...";
 					break;
 				case YoutubeAudioDownloader.State.CREATING_HIGH:
-					label2.Text = "Creating high quality MP3...";
+					//label2.Text = "Creating high quality MP3...";
 					break;
 				case YoutubeAudioDownloader.State.CLEANING:
-					label2.Text = "Cleaning up...";
+					//label2.Text = "Cleaning up...";
 					break;
 				case YoutubeAudioDownloader.State.DONE:
-					label2.Text = "DONE!";
+					//label2.Text = "DONE!";
 					break;
 				default:
-					label2.Text = "Invactive";
+					//label2.Text = "Invactive";
 					break;
 			}
 		}
@@ -126,5 +115,5 @@ namespace Windows
             Form2 form = new Form2();
             form.Show();
         }
-    }
+	}
 }

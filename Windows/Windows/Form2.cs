@@ -1,5 +1,8 @@
+<<<<<<< HEAD
+=======
 ﻿using NAudio.Lame;
 using NAudio.Wave;
+>>>>>>> c5d66c1e5e8d1db8e3057430f3e7978ba8a9a077
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
