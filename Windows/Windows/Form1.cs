@@ -33,48 +33,56 @@ namespace Windows
 				System.Drawing.Point pos = new System.Drawing.Point(m.LParam.ToInt32());
 				pos = this.PointToClient(pos);
 
+				// Right bottom corner
 				if (pos.X >= this.ClientSize.Width - cGrip && pos.Y >= this.ClientSize.Height - cGrip)
 				{
 					m.Result = (IntPtr)17;
 					return;
 				}
 
+				// Left bottom corner
 				if (pos.X <= cGrip && pos.Y >= this.ClientSize.Height - cGrip)
 				{
 					m.Result = (IntPtr)16;
 					return;
 				}
 
+				// Right top corner
 				if (pos.X >= this.ClientSize.Width - cGrip && pos.Y <= cGrip)
 				{
 					m.Result = (IntPtr)14;
 					return;
 				}
 
+				// Left top corner
 				if (pos.X <= cGrip && pos.Y <= cGrip)
 				{
 					m.Result = (IntPtr)13;
 					return;
 				}
 
+				// Left side
 				if (pos.X <= cGrip)
 				{
 					m.Result = (IntPtr)10;
 					return;
 				}
 
+				// Right side
 				if (pos.X >= this.ClientSize.Width - cGrip)
 				{
 					m.Result = (IntPtr)11;
 					return;
 				}
 
+				// Top side
 				if (pos.Y <= cGrip)
 				{
 					m.Result = (IntPtr)12;
 					return;
 				}
 
+				// Bottom side
 				if (pos.Y >= this.ClientSize.Height - cGrip)
 				{
 					m.Result = (IntPtr)15;
