@@ -3,45 +3,60 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NAudio.Lame;
 using NAudio.Wave;
 using WebDav;
-using WebDAVClient;
-using WebDAVClient.Model;
 
 namespace Windows
 {
     public partial class Form2 : Form
     {
-        public Form2()
-        {
-            InitializeComponent();
-        }
+        #region SharedVars
+        bool isYT = false;
+        bool sameBitrate = false;
 
+        string TempName = "";
         string fileLocation = "";
         string saveName = "";
         string firstArtist = "";
         string outgoingTemp = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicStreamer\\OutgoingTemp\\";
+        string MP3Temp = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicStreamer\\MP3Temp\\";
         string title = "";
         string artists = "";
         string album = "";
         string genre = "";
         string duration = "";
+        #endregion
 
 
-        private void button1_Click(object sender, EventArgs e)
+
+        public Form2()
+        {
+            InitializeComponent();
+        }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            if (!Directory.Exists(outgoingTemp))
+            {
+                Directory.CreateDirectory(outgoingTemp);
+            }
+            if (!Directory.Exists(MP3Temp))
+            {
+                Directory.CreateDirectory(MP3Temp);
+            }
+        }
+
+
+
+
+        private void ButtonBrowseMP3_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "MP3 music files|*.mp3";
@@ -52,79 +67,47 @@ namespace Windows
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void ButtonProcess_Click(object sender, EventArgs e)
         {
-             fileLocation = textBox1.Text.Trim();
+            fileLocation = textBox1.Text.Trim();
+            TempName = DateTime.Now.Ticks.ToString() + ".mp3";
+
+            isYT = fileLocation.StartsWith("https://www.youtube.com/");
+            if (isYT)
+            {
+                button1.Click -= ButtonBrowseMP3_Click;
+                button2.Click -= ButtonProcess_Click;
+                textBox1.ReadOnly = true;
+
+                Task.Run((Action)DownloadYT);
+            }
 
             if (File.Exists(fileLocation))
             {
-                TagLib.File f = TagLib.File.Create(fileLocation);
+                button1.Click -= ButtonBrowseMP3_Click;
+                button2.Click -= ButtonProcess_Click;
+                textBox1.ReadOnly = true;
 
-                if (f.Tag.Genres.Length > 0)
-                {
-                    genre = f.Tag.Genres[0];
-                }
-                foreach (string s in f.Tag.Performers)
-                {
-                    if (artists == "")
-                    {
-                        artists += s;
-                    } else
-                    {
-                        artists += "," + s;
-                    }
-                }
-                artists = artists.Replace(" & ", ",").Replace("&", ",");
-                title = f.Tag.Title;
-                album = f.Tag.Album;
-                duration = f.Properties.Duration.TotalSeconds.ToString();
-
-                textBox2.Text = title;
-                textBox3.Text = album;
-                textBox4.Text = genre;
-                textBox5.Text = artists;
-
-                panel1.Visible = true;
+                ProcessFile();
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void ButtonSubmit_Click(object sender, EventArgs e)
         {
-            title = textBox2.Text.Trim();
-            album = textBox3.Text.Trim();
-            genre = textBox4.Text.Trim();
-            artists = textBox5.Text.Trim();
+            title = textBox2.Text.Trim().ToLower();
+            album = textBox3.Text.Trim().ToLower();
+            genre = textBox4.Text.Trim().ToLower();
+            artists = textBox5.Text.Trim().ToLower();
 
             if (title != "" && album != "" && genre != "" && artists != "")
             {
-                panel1.Visible = false;
-                panel2.Visible = false;
-                panel3.Visible = true;
-
-                byte[] image = GetImage(GetCoverImageUrl(title, artists));
-                using (var ms = new MemoryStream(image))
-                {
-                    pictureBox1.Image = Image.FromStream(ms);
-                    pictureBox2.Image = Image.FromStream(ms);
-                }
-            }
-
-        }
-
-
-        private void Form2_Load(object sender, EventArgs e)
-        {
-            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicStreamer\\OutgoingTemp"))
-            {
-                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicStreamer\\OutgoingTemp");
-            }
-            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicStreamer\\YoutubeTemp"))
-            {
-                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicStreamer\\YoutubeTemp");
+                Task.Run((Action)FindCover);
+                label10.Text = "Please Wait...";
+                button4.Click -= ButtonSubmit_Click;
             }
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void ButtonBrowseCover_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "Supported Images|*.bmp;*.jpg;*.jpeg;*.png";
@@ -134,35 +117,30 @@ namespace Windows
                 pictureBox1.Image = Image.FromFile(dialog.FileName);
                 pictureBox2.Image = Image.FromFile(dialog.FileName);
             }
-
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void ButtonClearCover_Click(object sender, EventArgs e)
         {
             pictureBox1.Image = null;
             pictureBox2.Image = null;
         }
 
-        private void button9_Click(object sender, EventArgs e)
+        private void ButtonCancel_Click(object sender, EventArgs e)
         {
             CloseForm();
         }
 
-        private void button8_Click(object sender, EventArgs e)
-        {
-            CloseForm();
-        }
-
-        private void button7_Click(object sender, EventArgs e)
+        private void ButtonBack_Click(object sender, EventArgs e)
         {
             panel1.Visible = true;
             panel2.Visible = true;
             panel3.Visible = false;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void ButtonFinish_Click(object sender, EventArgs e)
         {
-            button3.Click -= button3_Click;
+            button3.Click -= ButtonFinish_Click;
+
             button5.Enabled = false;
             button6.Enabled = false;
             button7.Enabled = false;
@@ -172,17 +150,168 @@ namespace Windows
             Task.Run((Action)ManageUpload);
         }
 
-        void ManageUpload()
+
+
+
+        void DownloadYT()
         {
+            UpdateYTStatus("Downloading Youtube Audio...");
+
             try
             {
-                ConvertMp3();
-                CreateFolder();
-                Upload();
+                WebClient client = new WebClient();
+                client.DownloadFile(new Uri("https://www.convertmp3.io/fetch/?video=" + fileLocation), MP3Temp + TempName);
+                fileLocation = MP3Temp + TempName;
+                client.Dispose();
+
+
+                if (new FileInfo(fileLocation).Length > 2000)
+                {
+                    TagLib.File f = TagLib.File.Create(MP3Temp + TempName);
+
+                    string titleYT = f.Tag.Title;
+                    string[] tmp = titleYT.Split(new string[] { " - " }, StringSplitOptions.None);
+                    artists = tmp[0].Replace(" & ", ",").Replace("&", ",").Trim();
+                    title = tmp[tmp.Length == 1 ? 0 : 1].Split("(".ToCharArray())[0].Trim();
+                    duration = f.Properties.Duration.TotalSeconds.ToString();
+
+                    sameBitrate = f.Properties.AudioBitrate == 128;
+
+                    f.RemoveTags(TagLib.TagTypes.AllTags);
+                    f.Save();
+                    f.Dispose();
+
+                    textBox2.Invoke(new Action(() => textBox2.Text = title));
+                    textBox5.Invoke(new Action(() => textBox5.Text = artists));
+
+                    panel1.Invoke(new Action(() => panel1.Visible = true));
+
+                    UpdateYTStatus("Youtube Audio Downloaded");
+                }
+                else
+                {
+                    Notify("Download from YouTube went wrong. If you keep getting this error, try another youtube video of the same song.", false);
+                    UpdateYTStatus("");
+
+                    button1.Invoke(new Action(() => button1.Click += ButtonBrowseMP3_Click));
+                    button2.Invoke(new Action(() => button2.Click += ButtonProcess_Click));
+                    button2.Invoke(new Action(() => textBox1.ReadOnly = false));
+                }
             }
             catch
             {
-                Notify(title + " has failed uploading.", false);
+                Notify("Download from YouTube went wrong. If you keep getting this error, try another youtube video of the same song.", false);
+                UpdateYTStatus("");
+
+                button1.Invoke(new Action(() => button1.Click += ButtonBrowseMP3_Click));
+                button2.Invoke(new Action(() => button2.Click += ButtonProcess_Click));
+                button2.Invoke(new Action(() => textBox1.ReadOnly = false));
+            }
+        }
+
+        void ProcessFile()
+        {
+            TagLib.File f = TagLib.File.Create(fileLocation);
+
+            if (f.Tag.Genres.Length > 0)
+            {
+                genre = f.Tag.Genres[0];
+            }
+            foreach (string s in f.Tag.Performers)
+            {
+                if (artists == "")
+                {
+                    artists += s;
+                }
+                else
+                {
+                    artists += "," + s;
+                }
+            }
+            artists = artists.Replace(" & ", ",").Replace("&", ",");
+            title = f.Tag.Title;
+            album = f.Tag.Album;
+            duration = f.Properties.Duration.TotalSeconds.ToString();
+
+            if (f.Properties.AudioBitrate == 128)
+            {
+                sameBitrate = true;
+
+                File.Copy(fileLocation, MP3Temp + TempName);
+                fileLocation = MP3Temp + TempName;
+
+                f = TagLib.File.Create(fileLocation);
+                f.RemoveTags(TagLib.TagTypes.AllTags);
+                f.Save();
+            }
+
+            f.Dispose();
+
+
+
+            textBox2.Text = title;
+            textBox3.Text = album;
+            textBox4.Text = genre;
+            textBox5.Text = artists;
+
+            panel1.Visible = true;
+        }
+
+        void FindCover()
+        {
+            try
+            {
+                byte[] image = GetImage(GetCoverImageUrl(title, artists));
+
+                using (MemoryStream ms = new MemoryStream(image))
+                {
+                    pictureBox1.Invoke(new Action(() => pictureBox1.Image = Image.FromStream(ms)));
+                    pictureBox2.Invoke(new Action(() => pictureBox2.Image = Image.FromStream(ms)));
+                }
+
+                panel1.Invoke(new Action(() => panel1.Visible = false));
+                panel2.Invoke(new Action(() => panel2.Visible = false));
+                panel3.Invoke(new Action(() => panel3.Visible = true));
+
+                label10.Invoke(new Action(() => label10.Text = ""));
+                button4.Invoke(new Action(() => button4.Click += ButtonSubmit_Click));
+            }
+            catch { }
+        }
+
+        private string GetCoverImageUrl(string title, string artists)
+        {
+            string googleUrl = "https://www.google.com/search?q=" + title + " " + artists.Replace(",", " ") + " cover&tbm=isch";
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(googleUrl);
+            request.Accept = "text/html, application/xhtml+xml, */*";
+            request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko";
+
+            string html = new StreamReader(request.GetResponse().GetResponseStream()).ReadToEnd();
+
+            int ndx = html.IndexOf("\"ou\"", StringComparison.Ordinal);
+            ndx = html.IndexOf("\"", ndx + 4, StringComparison.Ordinal);
+            ndx++;
+            int ndx2 = html.IndexOf("\"", ndx, StringComparison.Ordinal);
+            string url = html.Substring(ndx, ndx2 - ndx);
+            return url;
+        }
+
+        private byte[] GetImage(string url)
+        {
+            var request = (HttpWebRequest)WebRequest.Create(url);
+            var response = (HttpWebResponse)request.GetResponse();
+
+            using (Stream dataStream = response.GetResponseStream())
+            {
+                if (dataStream == null)
+                    return null;
+                using (var sr = new BinaryReader(dataStream))
+                {
+                    byte[] bytes = sr.ReadBytes(100000000);
+
+                    return bytes;
+                }
             }
         }
 
@@ -200,6 +329,19 @@ namespace Windows
             UpdateStatus("Converting File: 10%");
         }
 
+        void ManageUpload()
+        {
+            try
+            {
+                ConvertMp3();
+                Upload();
+            }
+            catch
+            {
+                Notify(title + " has failed uploading.", false);
+            }
+        }
+
         void ConvertMp3()
         {
             ID3TagData empty = new ID3TagData();
@@ -209,17 +351,33 @@ namespace Windows
             reader.CopyTo(writer);
             reader.Dispose();
             writer.Dispose();
-            UpdateStatus("Converting File: 40%");
 
-            reader = new Mp3FileReader(fileLocation);
-            writer = new LameMP3FileWriter(outgoingTemp + title + "\\high.mp3", reader.WaveFormat, 128, empty);
-            reader.CopyTo(writer);
-            reader.Dispose();
-            writer.Dispose();
+            if (sameBitrate)
+            {
+                UpdateStatus("Converting File: 90%");
+
+                File.Move(fileLocation, outgoingTemp + title + "\\high.mp3");
+            }
+            else
+            {
+                UpdateStatus("Converting File: 40%");
+
+                reader = new Mp3FileReader(fileLocation);
+                writer = new LameMP3FileWriter(outgoingTemp + title + "\\high.mp3", reader.WaveFormat, 128, empty);
+                reader.CopyTo(writer);
+                reader.Dispose();
+                writer.Dispose();
+
+                if (isYT)
+                {
+                    File.Delete(fileLocation);
+                }
+            }
+
             UpdateStatus("Converting File: 100%");
         }
 
-        async void CreateFolder()
+        async void Upload()
         {
             WebDavClientParams clientParams = new WebDavClientParams()
             {
@@ -227,6 +385,8 @@ namespace Windows
                 Credentials = new NetworkCredential("ablos", "AblosStack00")
             };
             WebDavClient wClient = new WebDavClient(clientParams);
+
+
 
             bool artistExist = false;
             firstArtist = artists.Split(',')[0].Trim().Replace(" ", "_").ToLower();
@@ -267,16 +427,8 @@ namespace Windows
                 }
             }
             await wClient.Mkcol(firstArtist + "/" + saveName);
-        }
 
-        async void Upload()
-        {
-            WebDavClientParams clientParams = new WebDavClientParams()
-            {
-                BaseAddress = new Uri("https://ablos.stackstorage.com/remote.php/webdav/music/"),
-                Credentials = new NetworkCredential("ablos", "AblosStack00")
-            };
-            WebDavClient wClient = new WebDavClient(clientParams);
+
 
             UpdateStatus("Uploading To Server: 0%");
             await wClient.PutFile(firstArtist + "/" + saveName + "/cover.png", File.OpenRead(outgoingTemp + title + "\\cover.png"));
@@ -323,39 +475,15 @@ namespace Windows
             }
         }
 
-        private string GetCoverImageUrl(string title, string artists)
+        void UpdateYTStatus(string status)
         {
-            string googleUrl = "https://www.google.com/search?q=" + title + " " + artists.Replace(",", " ") + " cover&tbm=isch";
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(googleUrl);
-            request.Accept = "text/html, application/xhtml+xml, */*";
-            request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko";
-
-            string html = new StreamReader(request.GetResponse().GetResponseStream()).ReadToEnd();
-
-            int ndx = html.IndexOf("\"ou\"", StringComparison.Ordinal);
-            ndx = html.IndexOf("\"", ndx + 4, StringComparison.Ordinal);
-            ndx++;
-            int ndx2 = html.IndexOf("\"", ndx, StringComparison.Ordinal);
-            string url = html.Substring(ndx, ndx2 - ndx);
-            return url;
-        }
-
-        private byte[] GetImage(string url)
-        {
-            var request = (HttpWebRequest)WebRequest.Create(url);
-            var response = (HttpWebResponse)request.GetResponse();
-
-            using (Stream dataStream = response.GetResponseStream())
+            if (label9.InvokeRequired)
             {
-                if (dataStream == null)
-                    return null;
-                using (var sr = new BinaryReader(dataStream))
-                {
-                    byte[] bytes = sr.ReadBytes(100000000);
-
-                    return bytes;
-                }
+                label9.Invoke(new Action(() => label9.Text = status));
+            }
+            else
+            {
+                label9.Text = status;
             }
         }
 
