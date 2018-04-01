@@ -21,6 +21,67 @@ namespace Windows
 		public Form1()
 		{
 			InitializeComponent();
+			this.SetStyle(ControlStyles.ResizeRedraw, true);
+		}
+
+		private const int cGrip = 5;
+
+		protected override void WndProc(ref Message m)
+		{
+			if (m.Msg == 0x84)
+			{
+				System.Drawing.Point pos = new System.Drawing.Point(m.LParam.ToInt32());
+				pos = this.PointToClient(pos);
+
+				if (pos.X >= this.ClientSize.Width - cGrip && pos.Y >= this.ClientSize.Height - cGrip)
+				{
+					m.Result = (IntPtr)17;
+					return;
+				}
+
+				if (pos.X <= cGrip && pos.Y >= this.ClientSize.Height - cGrip)
+				{
+					m.Result = (IntPtr)16;
+					return;
+				}
+
+				if (pos.X >= this.ClientSize.Width - cGrip && pos.Y <= cGrip)
+				{
+					m.Result = (IntPtr)14;
+					return;
+				}
+
+				if (pos.X <= cGrip && pos.Y <= cGrip)
+				{
+					m.Result = (IntPtr)13;
+					return;
+				}
+
+				if (pos.X <= cGrip)
+				{
+					m.Result = (IntPtr)10;
+					return;
+				}
+
+				if (pos.X >= this.ClientSize.Width - cGrip)
+				{
+					m.Result = (IntPtr)11;
+					return;
+				}
+
+				if (pos.Y <= cGrip)
+				{
+					m.Result = (IntPtr)12;
+					return;
+				}
+
+				if (pos.Y >= this.ClientSize.Height - cGrip)
+				{
+					m.Result = (IntPtr)15;
+					return;
+				}
+			}
+			base.WndProc(ref m);
 		}
 
 		private void Mover(object sender, MouseEventArgs e)
