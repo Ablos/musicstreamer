@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D4FA432B-E922-4500-BA1B-DDDE6441BAAC}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Windows</RootNamespace>
-    <AssemblyName>Windows</AssemblyName>
+    <RootNamespace>VIBES_Windows</RootNamespace>
+    <AssemblyName>VIBES</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -30,6 +30,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>MainIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AudioStreamer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -129,6 +132,7 @@
     <Content Include="libmp3lame.64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="MainIcon.ico" />
     <None Include="Resources\MainIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
