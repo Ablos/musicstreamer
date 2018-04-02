@@ -31,12 +31,16 @@ namespace Windows
         string firstArtist = "";
         string outgoingTemp = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicStreamer\\OutgoingTemp\\";
         string MP3Temp = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\musicStreamer\\MP3Temp\\";
+
         //strings for in mysql
         string title = "";
         string artists = "";
         string album = "";
         string genre = "";
         string duration = "";
+
+        //notify icon for the messages
+        NotifyIcon notifyIcon1 = new NotifyIcon();
         #endregion
 
 
@@ -535,7 +539,6 @@ namespace Windows
         private void Notify(string text, bool state)
         {
             //creates the notify icon
-            NotifyIcon notifyIcon1 = new NotifyIcon();
             notifyIcon1.Visible = true;
             notifyIcon1.Icon = VIBES_Windows.Properties.Resources.MainIcon;
             notifyIcon1.Text = "VIBES";
