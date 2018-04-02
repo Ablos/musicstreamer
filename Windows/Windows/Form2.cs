@@ -537,7 +537,7 @@ namespace Windows
             //creates the notify icon
             NotifyIcon notifyIcon1 = new NotifyIcon();
             notifyIcon1.Visible = true;
-            notifyIcon1.Icon = Properties.Resources.MainIcon;
+            notifyIcon1.Icon = VIBES_Windows.Properties.Resources.MainIcon;
             notifyIcon1.Text = "VIBES";
 
             //displays the notification
