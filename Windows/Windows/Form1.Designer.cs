@@ -35,14 +35,15 @@ namespace Windows
 			this.MaximizeButton = new System.Windows.Forms.Button();
 			this.NormalWindowButton = new System.Windows.Forms.Button();
 			this.MinimizeButton = new System.Windows.Forms.Button();
+			this.PlayButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(499, 302);
+			this.button1.Location = new System.Drawing.Point(516, 305);
 			this.button1.Margin = new System.Windows.Forms.Padding(2);
 			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(56, 19);
+			this.button1.Size = new System.Drawing.Size(56, 31);
 			this.button1.TabIndex = 6;
 			this.button1.Text = "Upload";
 			this.button1.UseVisualStyleBackColor = true;
@@ -134,6 +135,22 @@ namespace Windows
 			this.MinimizeButton.UseVisualStyleBackColor = false;
 			this.MinimizeButton.Click += new System.EventHandler(this.MinimizeButton_Click);
 			// 
+			// PlayButton
+			// 
+			this.PlayButton.BackColor = System.Drawing.Color.Transparent;
+			this.PlayButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("PlayButton.BackgroundImage")));
+			this.PlayButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.PlayButton.FlatAppearance.BorderSize = 0;
+			this.PlayButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.PlayButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.PlayButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.PlayButton.Location = new System.Drawing.Point(516, 512);
+			this.PlayButton.Name = "PlayButton";
+			this.PlayButton.Size = new System.Drawing.Size(50, 50);
+			this.PlayButton.TabIndex = 12;
+			this.PlayButton.UseVisualStyleBackColor = false;
+			this.PlayButton.MouseEnter += new System.EventHandler(this.PlayPauseMouseEnter);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -141,6 +158,7 @@ namespace Windows
 			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.ClientSize = new System.Drawing.Size(1098, 611);
+			this.Controls.Add(this.PlayButton);
 			this.Controls.Add(this.MinimizeButton);
 			this.Controls.Add(this.NormalWindowButton);
 			this.Controls.Add(this.MaximizeButton);
@@ -164,6 +182,7 @@ namespace Windows
 		private System.Windows.Forms.Button MaximizeButton;
 		private System.Windows.Forms.Button NormalWindowButton;
 		private System.Windows.Forms.Button MinimizeButton;
+		private System.Windows.Forms.Button PlayButton;
 	}
 }
 
