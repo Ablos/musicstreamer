@@ -41,6 +41,9 @@ namespace Windows
 
         //notify icon for the messages
         NotifyIcon notifyIcon1 = new NotifyIcon();
+
+        //image holding the original downloaded cover file
+        Image cover = null;
         #endregion
 
 
@@ -133,8 +136,8 @@ namespace Windows
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                pictureBox1.Image = Image.FromFile(dialog.FileName);
-                pictureBox2.Image = Image.FromFile(dialog.FileName);
+                cover = Image.FromFile(dialog.FileName);
+                UpdatePictureboxes();
             }
         }
 
@@ -172,6 +175,12 @@ namespace Windows
             //upload
             SaveCover();
             Task.Run((Action)ManageUpload);
+        }
+
+        //changes the cover image to how the user wants it
+        private void SelectCoverFitMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdatePictureboxes();
         }
         #endregion
 
@@ -304,12 +313,15 @@ namespace Windows
                 //gets the image
                 byte[] image = GetImage(GetCoverImageUrl(title, artists));
 
-                //put the image to the pictureboxes
+                //converts the image from the filestream
                 using (MemoryStream ms = new MemoryStream(image))
                 {
-                    pictureBox1.Invoke(new Action(() => pictureBox1.Image = Image.FromStream(ms)));
-                    pictureBox2.Invoke(new Action(() => pictureBox2.Image = Image.FromStream(ms)));
+                    cover = Image.FromStream(ms);
                 }
+
+                //puts the image to the pictureboxes
+                pictureBox1.Invoke(new Action(() => pictureBox1.Image = cover));
+                pictureBox2.Invoke(new Action(() => pictureBox2.Image = cover));
 
                 //displays the next dialog with the pictureboxes
                 panel1.Invoke(new Action(() => panel1.Visible = false));
@@ -319,6 +331,8 @@ namespace Windows
                 //resets the previous dialog, for when user presses the previous button
                 label10.Invoke(new Action(() => label10.Text = ""));
                 button4.Invoke(new Action(() => button4.Click += ButtonSubmit_Click));
+
+                comboBox1.Invoke(new Action(() => comboBox1.SelectedIndex = 0));
             }
             catch { }
         }
@@ -395,13 +409,14 @@ namespace Windows
             {
                 //converts the mp3-files to get a 64 and 128 kbps file
                 ConvertMp3();
+
                 //uploads the mp3-files and the cover files and adds all data to mysql
                 Upload();
             }
             catch
             {
                 //something went wrong
-                Notify(title + " has failed uploading.", false);
+                Notify("\"" + title + "\" has failed uploading.", false);
             }
         }
 
@@ -525,7 +540,7 @@ namespace Windows
             //notifies the user that the upload was done
             if (feedback.Trim() == "affirmative")
             {
-                Notify(title + " was uploaded successfully.", true);
+                Notify("\"" + title + "\" was uploaded successfully.", true);
             }
 
             //deletes the local directory
@@ -591,6 +606,59 @@ namespace Windows
                 Close();
             }
 
+        }
+
+        //updates the image in the pictureboxes, using the option selected by the user
+        void UpdatePictureboxes()
+        {
+            switch (comboBox1.SelectedIndex)
+            {
+                //selected add bars
+                case 0:
+                    pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+                    pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
+
+                    //applies cover image to the pictureboxes
+                    pictureBox1.Image = cover;
+                    pictureBox2.Image = cover;
+                    break;
+
+
+                //selected zoom
+                case 1:
+                    //creates temp image
+                    Image tmpImage = new Bitmap(400, 400);
+
+                    //cuts edges from the temp image
+                    Graphics g = Graphics.FromImage(tmpImage);
+                    g.FillRectangle(new SolidBrush(Color.White), 0, 0, 400, 400);
+                    int t = 0, l = 0;
+                    if (cover.Height > cover.Width)
+                        t = (cover.Height - cover.Width) / 2;
+                    else
+                        l = (cover.Width - cover.Height) / 2;
+                    g.DrawImage(cover, new Rectangle(0, 0, 400, 400), new Rectangle(l, t, cover.Width - l * 2, cover.Height - t * 2), GraphicsUnit.Pixel);
+                    g.Dispose();
+
+                    pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+                    pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                    //applies temp image to the pictureboxes
+                    pictureBox1.Image = tmpImage;
+                    pictureBox2.Image = tmpImage;
+                    break;
+
+
+                //selected stretch
+                case 2:
+                    pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+                    pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                    //applies cover image to the pictureboxes
+                    pictureBox1.Image = cover;
+                    pictureBox2.Image = cover;
+                    break;
+            }
         }
         #endregion
     }

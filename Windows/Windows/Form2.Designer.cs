@@ -295,11 +295,17 @@
             // 
             // comboBox1
             // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Add bars to fit",
+            "Zoom in to fit",
+            "Stretch to fit"});
             this.comboBox1.Location = new System.Drawing.Point(428, 147);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(326, 24);
             this.comboBox1.TabIndex = 16;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.SelectCoverFitMode_SelectedIndexChanged);
             // 
             // label8
             // 
