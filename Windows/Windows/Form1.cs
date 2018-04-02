@@ -117,13 +117,13 @@ namespace Windows
 
 			// Resize the skip button
 			SkipButton.Size = new Size(SkipBackButtonSize + SkipBackResize, SkipBackButtonSize + SkipBackResize);
-			SkipButton.Location = new Point(PlayButton.Location.X + PlayButton.Width + SkipBackOffset, PlayButton.Location.Y + ((PlayButton.Height - SkipButton.Height) / 2));
+			SkipButton.Location = new Point(PlayButton.Location.X + PlayButton.Width + SkipBackOffset - (SkipBackResize / 2), PlayButton.Location.Y + ((PlayButton.Height - SkipButton.Height) / 2));
 			SkipButtonUnhovered.Size = new Size(SkipBackButtonSize, SkipBackButtonSize);
 			SkipButtonUnhovered.Location = new Point(PlayButton.Location.X +PlayButton.Width + SkipBackOffset, PlayButton.Location.Y + ((PlayButton.Height - SkipButtonUnhovered.Height) / 2));
 
 			// Resize the back button
 			BackButton.Size = new Size(SkipBackButtonSize + SkipBackResize, SkipBackButtonSize + SkipBackResize);
-			BackButton.Location = new Point(PlayButton.Location.X - BackButton.Width - SkipBackOffset, PlayButton.Location.Y + ((PlayButton.Height - BackButton.Height) / 2));
+			BackButton.Location = new Point(PlayButton.Location.X - BackButton.Width - SkipBackOffset + (SkipBackResize / 2), PlayButton.Location.Y + ((PlayButton.Height - BackButton.Height) / 2));
 			BackButtonUnhovered.Size = new Size(SkipBackButtonSize, SkipBackButtonSize);
 			BackButtonUnhovered.Location = new Point(PlayButton.Location.X - BackButtonUnhovered.Width - SkipBackOffset, PlayButton.Location.Y + ((PlayButton.Height - BackButtonUnhovered.Height) / 2));
 
