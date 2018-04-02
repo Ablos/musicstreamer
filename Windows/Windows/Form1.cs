@@ -26,18 +26,7 @@ namespace Windows
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
 		}
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-			// Draw the top bar
-			e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(22, 22, 22)), TopBar);
-
-			// Fill rectangles for resizing (DEBUG ONLY)
-			//e.Graphics.FillRectangle(Brushes.Green, _Top);
-			//e.Graphics.FillRectangle(Brushes.Green, _Left);
-			//e.Graphics.FillRectangle(Brushes.Green, _Right);
-			//e.Graphics.FillRectangle(Brushes.Green, _Bottom);
-		}
-
+		#region Controls
 		private const int
 			HTLEFT = 10,
 			HTRIGHT = 11,
@@ -48,12 +37,18 @@ namespace Windows
 			HTBOTTOMLEFT = 16,
 			HTBOTTOMRIGHT = 17,
 			HTTOPBARMOVE = 2;
+		#endregion
 
-		const int TopSize = 20;
-		const int BorderSize = 5;
-		const int TitleOffset = 3;
+		#region Sizes
+		const int TopSize = 20;                         // Size of the top bar
+		const int ControlButtonsOffset = 2;             // Offset of controlbuttons
+		const int ControlButtonsResize = 4;				// How much pixels the control buttons should be smaller
+		const int BorderSize = 5;						// Size of the border, witch is used to resize
+		const int TitleOffset = 3;                      // How far the title should be off the top of the window
+		const int MusicControlSize = 100;				// How big the MusicControl background should be
+		#endregion
 
-		Rectangle TopBar { get { return new Rectangle(0, 0, this.ClientSize.Width, TopSize); } }
+		#region Control Rectangles
 		Rectangle _Top { get { return new Rectangle(0, 0, this.ClientSize.Width, BorderSize); } }
 		Rectangle _Left { get { return new Rectangle(0, 0, BorderSize, this.ClientSize.Height); } }
 		Rectangle _Bottom { get { return new Rectangle(0, this.ClientSize.Height - BorderSize, this.ClientSize.Width, BorderSize); } }
@@ -64,10 +59,57 @@ namespace Windows
 		Rectangle BottomLeft { get { return new Rectangle(0, this.ClientSize.Height - BorderSize, BorderSize, BorderSize); } }
 		Rectangle BottomRight { get { return new Rectangle(this.ClientSize.Width - BorderSize, this.ClientSize.Height - BorderSize, BorderSize, BorderSize); } }
 
+		Rectangle TopBar { get { return new Rectangle(0, 0, this.ClientSize.Width, TopSize); } }
+		#endregion
+
+		#region Rectangles
+		Rectangle MusicControl { get { return new Rectangle(0, this.ClientSize.Height - MusicControlSize, this.ClientSize.Width, MusicControlSize); } }
+		#endregion
+
+		#region Colors
+		Color cTopBar = Color.FromArgb(22, 22, 22);
+		Color cMusicControl = Color.FromArgb(53, 53, 53);
+		#endregion
+
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			// Draw the top bar
+			e.Graphics.FillRectangle(new SolidBrush(cTopBar), TopBar);
+
+			// Draw the music control background
+			e.Graphics.FillRectangle(new SolidBrush(cMusicControl), MusicControl);
+
+			// Resize the quit button to fit the top bar
+			QuitButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
+			QuitButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - ControlButtonsOffset, ControlButtonsOffset);
+
+			// Update title location, to keep it in the center
+			Title.Location = new Point(this.ClientSize.Width / 2 - Title.Width / 2, TitleOffset);
+
+			// Resize the maximize button to fit the top bar
+			MaximizeButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
+			MaximizeButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - ControlButtonsOffset - QuitButton.Width, ControlButtonsOffset);
+
+			// Resize the normal window button to fit the top bar
+			NormalWindowButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
+			NormalWindowButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - ControlButtonsOffset - QuitButton.Width, ControlButtonsOffset);
+
+			// Resize the minimize button to fit the top bar
+			MinimizeButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
+			MinimizeButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - MaximizeButton.Width - ControlButtonsOffset - MinimizeButton.Width, ControlButtonsOffset);
+
+			// Fill rectangles for resizing (DEBUG ONLY)
+			//e.Graphics.FillRectangle(Brushes.Green, _Top);
+			//e.Graphics.FillRectangle(Brushes.Green, _Left);
+			//e.Graphics.FillRectangle(Brushes.Green, _Right);
+			//e.Graphics.FillRectangle(Brushes.Green, _Bottom);
+		}
+
 		protected override void WndProc(ref Message message)
 		{
 			base.WndProc(ref message);
 
+			// Process controls
 			if (message.Msg == 0x84)
 			{
 				Point cursor = this.PointToClient(Cursor.Position);
@@ -84,8 +126,23 @@ namespace Windows
 
 				else if (TopBar.Contains(cursor)) message.Result = (IntPtr)HTTOPBARMOVE;
 
+				// Update title location, to keep it in the center
 				Title.Location = new Point(this.ClientSize.Width / 2 - Title.Width / 2, TitleOffset);
+
+				// Update control buttons locations
+				QuitButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - ControlButtonsOffset, ControlButtonsOffset);
+				MaximizeButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - ControlButtonsOffset - QuitButton.Width, ControlButtonsOffset);
+				NormalWindowButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - ControlButtonsOffset - QuitButton.Width, ControlButtonsOffset);
+				MinimizeButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - MaximizeButton.Width - ControlButtonsOffset - MinimizeButton.Width, ControlButtonsOffset);
 			}
+		}
+
+		protected override void OnResizeBegin(EventArgs e)
+		{
+			this.WindowState = FormWindowState.Normal;
+			NormalWindowButton.Visible = false;
+			MaximizeButton.Visible = true;
+			base.OnResizeBegin(e);
 		}
 
 		private void Mover(object sender, MouseEventArgs e)
@@ -135,10 +192,37 @@ namespace Windows
 			}
 		}
 
-        private void button1_Click(object sender, EventArgs e)
+		#region Buttons
+		#region ControlButtons
+		private void QuitButton_Click(object sender, EventArgs e)
+		{
+			Application.Exit();
+		}
+
+		private void MaximizeButton_Click(object sender, EventArgs e)
+		{
+			this.WindowState = FormWindowState.Maximized;
+			MaximizeButton.Visible = false;
+			NormalWindowButton.Visible = true;
+		}
+
+		private void NormalWindowButton_Click(object sender, EventArgs e)
+		{
+			this.WindowState = FormWindowState.Normal;
+			NormalWindowButton.Visible = false;
+			MaximizeButton.Visible = true;
+		}
+
+		private void MinimizeButton_Click(object sender, EventArgs e)
+		{
+			this.WindowState = FormWindowState.Minimized;
+		}
+		#endregion
+		private void button1_Click(object sender, EventArgs e)
         {
             Form2 form = new Form2();
             form.Show();
         }
-    }
+		#endregion
+	}
 }
