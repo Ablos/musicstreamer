@@ -45,7 +45,10 @@ namespace Windows
 		const int MusicControlSize = 100;               // How big the MusicControl background should be
 		const int PlayPauseSize = 50;                   // How big should the Play/Pause button be
 		const int PlayPauseTopOffset = 10;              // How far should the Play/Pause button be from the top
-		const int PlayPauseResize = 5;					// How far the button will stretch on hover
+		const int PlayPauseResize = 5;                  // How far the button will stretch on hover
+		const int SkipBackButtonSize = 40;              // How big should the skip/back button be
+		const int SkipBackOffset = 10;                  // How far should the skip and back button be from the play/pause button
+		const int SkipBackResize = 5;					// How far the button will stretch on hover
 		#endregion
 
 		#region Control Rectangles
@@ -111,6 +114,18 @@ namespace Windows
 			PauseButton.Location = new Point(this.ClientSize.Width / 2 - PauseButton.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset - (PlayPauseResize / 2));
 			PauseButtonUnhovered.Size = new Size(PlayPauseSize, PlayPauseSize);
 			PauseButtonUnhovered.Location = new Point(this.ClientSize.Width / 2 - PauseButtonUnhovered.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset);
+
+			// Resize the skip button
+			SkipButton.Size = new Size(SkipBackButtonSize + SkipBackResize, SkipBackButtonSize + SkipBackResize);
+			SkipButton.Location = new Point(PlayButton.Location.X + PlayButton.Width + SkipBackOffset, PlayButton.Location.Y + ((PlayButton.Height - SkipButton.Height) / 2));
+			SkipButtonUnhovered.Size = new Size(SkipBackButtonSize, SkipBackButtonSize);
+			SkipButtonUnhovered.Location = new Point(PlayButton.Location.X +PlayButton.Width + SkipBackOffset, PlayButton.Location.Y + ((PlayButton.Height - SkipButtonUnhovered.Height) / 2));
+
+			// Resize the back button
+			BackButton.Size = new Size(SkipBackButtonSize + SkipBackResize, SkipBackButtonSize + SkipBackResize);
+			BackButton.Location = new Point(PlayButton.Location.X - BackButton.Width - SkipBackOffset, PlayButton.Location.Y + ((PlayButton.Height - BackButton.Height) / 2));
+			BackButtonUnhovered.Size = new Size(SkipBackButtonSize, SkipBackButtonSize);
+			BackButtonUnhovered.Location = new Point(PlayButton.Location.X - BackButtonUnhovered.Width - SkipBackOffset, PlayButton.Location.Y + ((PlayButton.Height - BackButtonUnhovered.Height) / 2));
 
 			// Fill rectangles for resizing (DEBUG ONLY)
 			//e.Graphics.FillRectangle(Brushes.Green, _Top);
@@ -199,6 +214,34 @@ namespace Windows
 			PauseButton.Visible = false;
 			PauseButtonUnhovered.Visible = true;
 		}
+
+		// Mouse enters skip button
+		private void SkipMouseEnter(object sender, EventArgs e)
+		{
+			SkipButtonUnhovered.Visible = false;
+			SkipButton.Visible = true;
+		}
+
+		// Mouse leaves skip button
+		private void SkipMouseLeave(object sender, EventArgs e)
+		{
+			SkipButton.Visible = false;
+			SkipButtonUnhovered.Visible = true;
+		}
+
+		// Mouse enters back button
+		private void BackMouseEnter(object sender, EventArgs e)
+		{
+			BackButtonUnhovered.Visible = false;
+			BackButton.Visible = true;
+		}
+
+		// Mouse leaves back button
+		private void BackMouseLeave(object sender, EventArgs e)
+		{
+			BackButton.Visible = false;
+			BackButtonUnhovered.Visible = true;
+		}
 		#endregion
 
 		#region Buttons
@@ -231,6 +274,18 @@ namespace Windows
 			this.WindowState = FormWindowState.Minimized;
 		}
 		#endregion
+
+		// Press on the skip button
+		private void SkipButton_Click(object sender, EventArgs e)
+		{
+			Console.WriteLine("Skip");
+		}
+
+		// Press on the back button
+		private void BackButton_Click(object sender, EventArgs e)
+		{
+			Console.WriteLine("Back");
+		}
 
 		// Press on the play button
 		private void PlayButton_Click(object sender, EventArgs e)

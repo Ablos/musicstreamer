@@ -39,6 +39,10 @@ namespace Windows
 			this.PlayButtonUnhovered = new System.Windows.Forms.Button();
 			this.PauseButton = new System.Windows.Forms.Button();
 			this.PauseButtonUnhovered = new System.Windows.Forms.Button();
+			this.SkipButton = new System.Windows.Forms.Button();
+			this.SkipButtonUnhovered = new System.Windows.Forms.Button();
+			this.BackButtonUnhovered = new System.Windows.Forms.Button();
+			this.BackButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// button1
@@ -211,6 +215,79 @@ namespace Windows
 			this.PauseButtonUnhovered.Visible = false;
 			this.PauseButtonUnhovered.MouseEnter += new System.EventHandler(this.PauseMouseEnter);
 			// 
+			// SkipButton
+			// 
+			this.SkipButton.BackColor = System.Drawing.Color.Transparent;
+			this.SkipButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("SkipButton.BackgroundImage")));
+			this.SkipButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.SkipButton.Cursor = System.Windows.Forms.Cursors.Default;
+			this.SkipButton.FlatAppearance.BorderSize = 0;
+			this.SkipButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.SkipButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.SkipButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.SkipButton.Location = new System.Drawing.Point(581, 517);
+			this.SkipButton.Name = "SkipButton";
+			this.SkipButton.Size = new System.Drawing.Size(40, 40);
+			this.SkipButton.TabIndex = 16;
+			this.SkipButton.UseVisualStyleBackColor = false;
+			this.SkipButton.Visible = false;
+			this.SkipButton.Click += new System.EventHandler(this.SkipButton_Click);
+			this.SkipButton.MouseEnter += new System.EventHandler(this.SkipMouseEnter);
+			this.SkipButton.MouseLeave += new System.EventHandler(this.SkipMouseLeave);
+			// 
+			// SkipButtonUnhovered
+			// 
+			this.SkipButtonUnhovered.BackColor = System.Drawing.Color.Transparent;
+			this.SkipButtonUnhovered.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("SkipButtonUnhovered.BackgroundImage")));
+			this.SkipButtonUnhovered.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.SkipButtonUnhovered.Cursor = System.Windows.Forms.Cursors.Default;
+			this.SkipButtonUnhovered.FlatAppearance.BorderSize = 0;
+			this.SkipButtonUnhovered.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.SkipButtonUnhovered.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.SkipButtonUnhovered.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.SkipButtonUnhovered.Location = new System.Drawing.Point(627, 517);
+			this.SkipButtonUnhovered.Name = "SkipButtonUnhovered";
+			this.SkipButtonUnhovered.Size = new System.Drawing.Size(40, 40);
+			this.SkipButtonUnhovered.TabIndex = 17;
+			this.SkipButtonUnhovered.UseVisualStyleBackColor = false;
+			this.SkipButtonUnhovered.MouseEnter += new System.EventHandler(this.SkipMouseEnter);
+			// 
+			// BackButtonUnhovered
+			// 
+			this.BackButtonUnhovered.BackColor = System.Drawing.Color.Transparent;
+			this.BackButtonUnhovered.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("BackButtonUnhovered.BackgroundImage")));
+			this.BackButtonUnhovered.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.BackButtonUnhovered.Cursor = System.Windows.Forms.Cursors.Default;
+			this.BackButtonUnhovered.FlatAppearance.BorderSize = 0;
+			this.BackButtonUnhovered.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.BackButtonUnhovered.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.BackButtonUnhovered.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.BackButtonUnhovered.Location = new System.Drawing.Point(627, 471);
+			this.BackButtonUnhovered.Name = "BackButtonUnhovered";
+			this.BackButtonUnhovered.Size = new System.Drawing.Size(40, 40);
+			this.BackButtonUnhovered.TabIndex = 18;
+			this.BackButtonUnhovered.UseVisualStyleBackColor = false;
+			this.BackButtonUnhovered.MouseEnter += new System.EventHandler(this.BackMouseEnter);
+			// 
+			// BackButton
+			// 
+			this.BackButton.BackColor = System.Drawing.Color.Transparent;
+			this.BackButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("BackButton.BackgroundImage")));
+			this.BackButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.BackButton.Cursor = System.Windows.Forms.Cursors.Default;
+			this.BackButton.FlatAppearance.BorderSize = 0;
+			this.BackButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.BackButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.BackButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.BackButton.Location = new System.Drawing.Point(581, 471);
+			this.BackButton.Name = "BackButton";
+			this.BackButton.Size = new System.Drawing.Size(40, 40);
+			this.BackButton.TabIndex = 19;
+			this.BackButton.UseVisualStyleBackColor = false;
+			this.BackButton.Visible = false;
+			this.BackButton.Click += new System.EventHandler(this.BackButton_Click);
+			this.BackButton.MouseLeave += new System.EventHandler(this.BackMouseLeave);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -218,6 +295,10 @@ namespace Windows
 			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.ClientSize = new System.Drawing.Size(1098, 611);
+			this.Controls.Add(this.BackButton);
+			this.Controls.Add(this.BackButtonUnhovered);
+			this.Controls.Add(this.SkipButtonUnhovered);
+			this.Controls.Add(this.SkipButton);
 			this.Controls.Add(this.PauseButtonUnhovered);
 			this.Controls.Add(this.PauseButton);
 			this.Controls.Add(this.PlayButtonUnhovered);
@@ -249,6 +330,10 @@ namespace Windows
 		private System.Windows.Forms.Button PlayButtonUnhovered;
 		private System.Windows.Forms.Button PauseButton;
 		private System.Windows.Forms.Button PauseButtonUnhovered;
+		private System.Windows.Forms.Button SkipButton;
+		private System.Windows.Forms.Button SkipButtonUnhovered;
+		private System.Windows.Forms.Button BackButtonUnhovered;
+		private System.Windows.Forms.Button BackButton;
 	}
 }
 
