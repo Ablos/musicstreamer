@@ -1,5 +1,5 @@
 using System;
-using System.Threading;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
@@ -21,75 +21,71 @@ namespace Windows
 		public Form1()
 		{
 			InitializeComponent();
+			this.FormBorderStyle = FormBorderStyle.None;
+			this.DoubleBuffered = true;
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
 		}
 
-		private const int cGrip = 5;
-
-		protected override void WndProc(ref Message m)
+		protected override void OnPaint(PaintEventArgs e)
 		{
-			if (m.Msg == 0x84)
+			// Draw the top bar
+			e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(22, 22, 22)), TopBar);
+
+			// Fill rectangles for resizing (DEBUG ONLY)
+			//e.Graphics.FillRectangle(Brushes.Green, _Top);
+			//e.Graphics.FillRectangle(Brushes.Green, _Left);
+			//e.Graphics.FillRectangle(Brushes.Green, _Right);
+			//e.Graphics.FillRectangle(Brushes.Green, _Bottom);
+		}
+
+		private const int
+			HTLEFT = 10,
+			HTRIGHT = 11,
+			HTTOP = 12,
+			HTTOPLEFT = 13,
+			HTTOPRIGHT = 14,
+			HTBOTTOM = 15,
+			HTBOTTOMLEFT = 16,
+			HTBOTTOMRIGHT = 17,
+			HTTOPBARMOVE = 2;
+
+		const int TopSize = 20;
+		const int BorderSize = 5;
+		const int TitleOffset = 3;
+
+		Rectangle TopBar { get { return new Rectangle(0, 0, this.ClientSize.Width, TopSize); } }
+		Rectangle _Top { get { return new Rectangle(0, 0, this.ClientSize.Width, BorderSize); } }
+		Rectangle _Left { get { return new Rectangle(0, 0, BorderSize, this.ClientSize.Height); } }
+		Rectangle _Bottom { get { return new Rectangle(0, this.ClientSize.Height - BorderSize, this.ClientSize.Width, BorderSize); } }
+		Rectangle _Right { get { return new Rectangle(this.ClientSize.Width - BorderSize, 0, BorderSize, this.ClientSize.Height); } }
+
+		Rectangle TopLeft { get { return new Rectangle(0, 0, BorderSize, BorderSize); } }
+		Rectangle TopRight { get { return new Rectangle(this.ClientSize.Width - BorderSize, 0, BorderSize, BorderSize); } }
+		Rectangle BottomLeft { get { return new Rectangle(0, this.ClientSize.Height - BorderSize, BorderSize, BorderSize); } }
+		Rectangle BottomRight { get { return new Rectangle(this.ClientSize.Width - BorderSize, this.ClientSize.Height - BorderSize, BorderSize, BorderSize); } }
+
+		protected override void WndProc(ref Message message)
+		{
+			base.WndProc(ref message);
+
+			if (message.Msg == 0x84)
 			{
-				System.Drawing.Point pos = new System.Drawing.Point(m.LParam.ToInt32());
-				pos = this.PointToClient(pos);
+				Point cursor = this.PointToClient(Cursor.Position);
 
-				// Right bottom corner
-				if (pos.X >= this.ClientSize.Width - cGrip && pos.Y >= this.ClientSize.Height - cGrip)
-				{
-					m.Result = (IntPtr)17;
-					return;
-				}
+				if (TopLeft.Contains(cursor)) message.Result = (IntPtr)HTTOPLEFT;
+				else if (TopRight.Contains(cursor)) message.Result = (IntPtr)HTTOPRIGHT;
+				else if (BottomLeft.Contains(cursor)) message.Result = (IntPtr)HTBOTTOMLEFT;
+				else if (BottomRight.Contains(cursor)) message.Result = (IntPtr)HTBOTTOMRIGHT;
 
-				// Left bottom corner
-				if (pos.X <= cGrip && pos.Y >= this.ClientSize.Height - cGrip)
-				{
-					m.Result = (IntPtr)16;
-					return;
-				}
+				else if (_Top.Contains(cursor)) message.Result = (IntPtr)HTTOP;
+				else if (_Left.Contains(cursor)) message.Result = (IntPtr)HTLEFT;
+				else if (_Right.Contains(cursor)) message.Result = (IntPtr)HTRIGHT;
+				else if (_Bottom.Contains(cursor)) message.Result = (IntPtr)HTBOTTOM;
 
-				// Right top corner
-				if (pos.X >= this.ClientSize.Width - cGrip && pos.Y <= cGrip)
-				{
-					m.Result = (IntPtr)14;
-					return;
-				}
+				else if (TopBar.Contains(cursor)) message.Result = (IntPtr)HTTOPBARMOVE;
 
-				// Left top corner
-				if (pos.X <= cGrip && pos.Y <= cGrip)
-				{
-					m.Result = (IntPtr)13;
-					return;
-				}
-
-				// Left side
-				if (pos.X <= cGrip)
-				{
-					m.Result = (IntPtr)10;
-					return;
-				}
-
-				// Right side
-				if (pos.X >= this.ClientSize.Width - cGrip)
-				{
-					m.Result = (IntPtr)11;
-					return;
-				}
-
-				// Top side
-				if (pos.Y <= cGrip)
-				{
-					m.Result = (IntPtr)12;
-					return;
-				}
-
-				// Bottom side
-				if (pos.Y >= this.ClientSize.Height - cGrip)
-				{
-					m.Result = (IntPtr)15;
-					return;
-				}
+				Title.Location = new Point(this.ClientSize.Width / 2 - Title.Width / 2, TitleOffset);
 			}
-			base.WndProc(ref m);
 		}
 
 		private void Mover(object sender, MouseEventArgs e)
@@ -98,46 +94,6 @@ namespace Windows
 			{
 				ReleaseCapture();
 				SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-			}
-		}
-
-		private void Resizer_Mouse_Down(object sender, MouseEventArgs e)
-		{
-			start_x = e.X;
-			start_y = e.Y;
-		}
-
-		private void Resizer_Up(object sender, MouseEventArgs e)
-		{
-			if (e.Button == MouseButtons.Left)
-			{
-				ActiveForm.Height += start_y - e.Y;
-				ActiveForm.Location = new System.Drawing.Point(ActiveForm.Location.X, ActiveForm.Location.Y - (start_y - e.Y));
-			}
-		}
-
-		private void Resizer_Down(object sender, MouseEventArgs e)
-		{
-			if (e.Button == MouseButtons.Left)
-			{
-				ActiveForm.Height += e.Y - start_y;
-			}
-		}
-
-		private void Resizer_Right(object sender, MouseEventArgs e)
-		{
-			if (e.Button == MouseButtons.Left)
-			{
-				ActiveForm.Width += e.X - start_x;
-			}
-		}
-
-		private void Resizer_Left(object sender, MouseEventArgs e)
-		{
-			if (e.Button == MouseButtons.Left)
-			{
-				ActiveForm.Width += start_x - e.X;
-				ActiveForm.Location = new System.Drawing.Point(ActiveForm.Location.X - (start_x - e.X), ActiveForm.Location.Y);
 			}
 		}
 

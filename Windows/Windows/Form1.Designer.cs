@@ -29,35 +29,9 @@ namespace Windows
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-			this.TopBar_BG = new System.Windows.Forms.Panel();
-			this.Title = new System.Windows.Forms.Label();
 			this.button1 = new System.Windows.Forms.Button();
-			this.TopBar_BG.SuspendLayout();
+			this.Title = new System.Windows.Forms.Label();
 			this.SuspendLayout();
-			// 
-			// TopBar_BG
-			// 
-			this.TopBar_BG.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
-			this.TopBar_BG.Controls.Add(this.Title);
-			this.TopBar_BG.Cursor = System.Windows.Forms.Cursors.Default;
-			this.TopBar_BG.Dock = System.Windows.Forms.DockStyle.Top;
-			this.TopBar_BG.Location = new System.Drawing.Point(0, 0);
-			this.TopBar_BG.Name = "TopBar_BG";
-			this.TopBar_BG.Size = new System.Drawing.Size(1098, 19);
-			this.TopBar_BG.TabIndex = 5;
-			// 
-			// Title
-			// 
-			this.Title.Dock = System.Windows.Forms.DockStyle.Top;
-			this.Title.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.Title.ForeColor = System.Drawing.Color.White;
-			this.Title.Location = new System.Drawing.Point(0, 0);
-			this.Title.Name = "Title";
-			this.Title.Size = new System.Drawing.Size(1098, 19);
-			this.Title.TabIndex = 0;
-			this.Title.Text = "VIBES";
-			this.Title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.Title.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Mover);
 			// 
 			// button1
 			// 
@@ -70,6 +44,22 @@ namespace Windows
 			this.button1.UseVisualStyleBackColor = true;
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
+			// Title
+			// 
+			this.Title.Anchor = System.Windows.Forms.AnchorStyles.Top;
+			this.Title.AutoSize = true;
+			this.Title.BackColor = System.Drawing.Color.Transparent;
+			this.Title.Font = new System.Drawing.Font("Roboto", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Title.ForeColor = System.Drawing.Color.White;
+			this.Title.Location = new System.Drawing.Point(516, 9);
+			this.Title.Name = "Title";
+			this.Title.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+			this.Title.Size = new System.Drawing.Size(42, 15);
+			this.Title.TabIndex = 7;
+			this.Title.Text = "VIBES";
+			this.Title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.Title.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Mover);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -77,22 +67,21 @@ namespace Windows
 			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.ClientSize = new System.Drawing.Size(1098, 611);
+			this.Controls.Add(this.Title);
 			this.Controls.Add(this.button1);
-			this.Controls.Add(this.TopBar_BG);
 			this.DoubleBuffered = true;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "Form1";
 			this.Text = "VIBES";
-			this.TopBar_BG.ResumeLayout(false);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
 		#endregion
-		private System.Windows.Forms.Panel TopBar_BG;
-		private System.Windows.Forms.Label Title;
         private System.Windows.Forms.Button button1;
-    }
+		private System.Windows.Forms.Label Title;
+	}
 }
 
