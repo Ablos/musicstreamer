@@ -39,13 +39,15 @@ namespace Windows
 			HTTOPBARMOVE = 2;
 		#endregion
 
-		#region Sizes
+		#region Sizes and offsets
 		const int TopSize = 20;                         // Size of the top bar
 		const int ControlButtonsOffset = 2;             // Offset of controlbuttons
 		const int ControlButtonsResize = 4;				// How much pixels the control buttons should be smaller
 		const int BorderSize = 5;						// Size of the border, witch is used to resize
 		const int TitleOffset = 3;                      // How far the title should be off the top of the window
-		const int MusicControlSize = 100;				// How big the MusicControl background should be
+		const int MusicControlSize = 100;               // How big the MusicControl background should be
+		const int PlayPauseSize = 50;                   // How big should the Play/Pause button be
+		const int PlayPauseTopOffset = 5;				// How far should the Play/Pause button be from the top
 		#endregion
 
 		#region Control Rectangles
@@ -98,6 +100,10 @@ namespace Windows
 			// Resize the minimize button to fit the top bar
 			MinimizeButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
 			MinimizeButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - MaximizeButton.Width - ControlButtonsOffset - MinimizeButton.Width, ControlButtonsOffset);
+
+			// Resize the play button
+			PlayButton.Size = new Size(50, 50);
+			PlayButton.Location = new Point(this.ClientSize.Width / 2 - PlayButton.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset);
 
 			// Fill rectangles for resizing (DEBUG ONLY)
 			//e.Graphics.FillRectangle(Brushes.Green, _Top);
@@ -195,6 +201,13 @@ namespace Windows
 					break;
 			}
 		}
+
+		#region Hover events
+		private void PlayPauseMouseEnter(object sender, EventArgs e)
+		{
+			
+		}
+		#endregion
 
 		#region Buttons
 		#region ControlButtons
