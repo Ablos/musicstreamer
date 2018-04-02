@@ -71,6 +71,7 @@ namespace Windows
 		Color cMusicControl = Color.FromArgb(53, 53, 53);
 		#endregion
 
+		// Draw graphics
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			// Draw the top bar
@@ -105,6 +106,7 @@ namespace Windows
 			//e.Graphics.FillRectangle(Brushes.Green, _Bottom);
 		}
 
+		// Window control
 		protected override void WndProc(ref Message message)
 		{
 			base.WndProc(ref message);
@@ -137,6 +139,7 @@ namespace Windows
 			}
 		}
 
+		// Event when window gets resized
 		protected override void OnResizeBegin(EventArgs e)
 		{
 			this.WindowState = FormWindowState.Normal;
@@ -145,6 +148,7 @@ namespace Windows
 			base.OnResizeBegin(e);
 		}
 
+		// Move the window
 		private void Mover(object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left)

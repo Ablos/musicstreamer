@@ -39,12 +39,12 @@ namespace Windows
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(9, 50);
+			this.button1.Location = new System.Drawing.Point(499, 302);
 			this.button1.Margin = new System.Windows.Forms.Padding(2);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(56, 19);
 			this.button1.TabIndex = 6;
-			this.button1.Text = "button1";
+			this.button1.Text = "Upload";
 			this.button1.UseVisualStyleBackColor = true;
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
@@ -108,6 +108,7 @@ namespace Windows
 			this.NormalWindowButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
 			this.NormalWindowButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gray;
 			this.NormalWindowButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.NormalWindowButton.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.NormalWindowButton.Location = new System.Drawing.Point(1045, 1);
 			this.NormalWindowButton.Name = "NormalWindowButton";
 			this.NormalWindowButton.Size = new System.Drawing.Size(30, 30);
