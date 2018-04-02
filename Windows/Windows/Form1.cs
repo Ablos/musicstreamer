@@ -15,9 +15,6 @@ namespace Windows
 		[DllImport("user32.dll")]
 		public static extern bool ReleaseCapture();
 
-		int start_x = 0;
-		int start_y = 0;
-
 		public Form1()
 		{
 			InitializeComponent();
@@ -47,10 +44,12 @@ namespace Windows
 		const int TitleOffset = 3;                      // How far the title should be off the top of the window
 		const int MusicControlSize = 100;               // How big the MusicControl background should be
 		const int PlayPauseSize = 50;                   // How big should the Play/Pause button be
-		const int PlayPauseTopOffset = 5;				// How far should the Play/Pause button be from the top
+		const int PlayPauseTopOffset = 10;              // How far should the Play/Pause button be from the top
+		const int PlayPauseResize = 5;					// How far the button will stretch on hover
 		#endregion
 
 		#region Control Rectangles
+		// Rectangles that will resize or move the window (these are all invisible except for the top bar)
 		Rectangle _Top { get { return new Rectangle(0, 0, this.ClientSize.Width, BorderSize); } }
 		Rectangle _Left { get { return new Rectangle(0, 0, BorderSize, this.ClientSize.Height); } }
 		Rectangle _Bottom { get { return new Rectangle(0, this.ClientSize.Height - BorderSize, this.ClientSize.Width, BorderSize); } }
@@ -102,8 +101,16 @@ namespace Windows
 			MinimizeButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - MaximizeButton.Width - ControlButtonsOffset - MinimizeButton.Width, ControlButtonsOffset);
 
 			// Resize the play button
-			PlayButton.Size = new Size(50, 50);
-			PlayButton.Location = new Point(this.ClientSize.Width / 2 - PlayButton.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset);
+			PlayButton.Size = new Size(PlayPauseSize + PlayPauseResize, PlayPauseSize + PlayPauseResize);
+			PlayButton.Location = new Point(this.ClientSize.Width / 2 - PlayButton.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset - (PlayPauseResize / 2));
+			PlayButtonUnhovered.Size = new Size(PlayPauseSize, PlayPauseSize);
+			PlayButtonUnhovered.Location = new Point(this.ClientSize.Width / 2 - PlayButtonUnhovered.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset);
+
+			// Resize the pause button
+			PauseButton.Size = new Size(PlayPauseSize + PlayPauseResize, PlayPauseSize + PlayPauseResize);
+			PauseButton.Location = new Point(this.ClientSize.Width / 2 - PauseButton.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset - (PlayPauseResize / 2));
+			PauseButtonUnhovered.Size = new Size(PlayPauseSize, PlayPauseSize);
+			PauseButtonUnhovered.Location = new Point(this.ClientSize.Width / 2 - PauseButtonUnhovered.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset);
 
 			// Fill rectangles for resizing (DEBUG ONLY)
 			//e.Graphics.FillRectangle(Brushes.Green, _Top);
@@ -164,58 +171,45 @@ namespace Windows
 			}
 		}
 
-		private void UpdateDownloadState(YoutubeAudioDownloader.State state)
+		#region Hover events
+		// Mouse enters the play button
+		private void PlayMouseEnter(object sender, EventArgs e)
 		{
-			Console.WriteLine("Working");
-			switch (state)
-			{
-				case YoutubeAudioDownloader.State.VALIDATING_URL:
-					//label2.Text = "Validating URL...";
-					break;
-				case YoutubeAudioDownloader.State.VALIDATING_PATH:
-					//label2.Text = "Validating path...";
-					break;
-				case YoutubeAudioDownloader.State.COLLECTING_URL:
-					//label2.Text = "Collecting URL...";
-					break;
-				case YoutubeAudioDownloader.State.CREATING_DIR:
-					//label2.Text = "Creating directory...";
-					break;
-				case YoutubeAudioDownloader.State.DOWNLOADING_VIDEO:
-					//label2.Text = "Downloading video...";
-					break;
-				case YoutubeAudioDownloader.State.CREATING_LOW:
-					//label2.Text = "Creating low quality MP3...";
-					break;
-				case YoutubeAudioDownloader.State.CREATING_HIGH:
-					//label2.Text = "Creating high quality MP3...";
-					break;
-				case YoutubeAudioDownloader.State.CLEANING:
-					//label2.Text = "Cleaning up...";
-					break;
-				case YoutubeAudioDownloader.State.DONE:
-					//label2.Text = "DONE!";
-					break;
-				default:
-					//label2.Text = "Invactive";
-					break;
-			}
+			PlayButtonUnhovered.Visible = false;
+			PlayButton.Visible = true;
 		}
 
-		#region Hover events
-		private void PlayPauseMouseEnter(object sender, EventArgs e)
+		// Mouse leaves the play button
+		private void PlayMouseLeave(object sender, EventArgs e)
 		{
-			
+			PlayButton.Visible = false;
+			PlayButtonUnhovered.Visible = true;
+		}
+		
+		// Mouse enters the play button
+		private void PauseMouseEnter(object sender, EventArgs e)
+		{
+			PauseButtonUnhovered.Visible = false;
+			PauseButton.Visible = true;
+		}
+
+		// Mouse leaves the play button
+		private void PauseMouseLeave(object sender, EventArgs e)
+		{
+			PauseButton.Visible = false;
+			PauseButtonUnhovered.Visible = true;
 		}
 		#endregion
 
 		#region Buttons
 		#region ControlButtons
+		// Button to quit the application
 		private void QuitButton_Click(object sender, EventArgs e)
 		{
 			Application.Exit();
 		}
 
+		// Button to maximize the application
 		private void MaximizeButton_Click(object sender, EventArgs e)
 		{
 			this.WindowState = FormWindowState.Maximized;
@@ -223,6 +217,7 @@ namespace Windows
 			NormalWindowButton.Visible = true;
 		}
 
+		// Button to return from maximized view of application
 		private void NormalWindowButton_Click(object sender, EventArgs e)
 		{
 			this.WindowState = FormWindowState.Normal;
@@ -230,11 +225,32 @@ namespace Windows
 			MaximizeButton.Visible = true;
 		}
 
+		// Button to minimize the application
 		private void MinimizeButton_Click(object sender, EventArgs e)
 		{
 			this.WindowState = FormWindowState.Minimized;
 		}
 		#endregion
+
+		// Press on the play button
+		private void PlayButton_Click(object sender, EventArgs e)
+		{
+			PauseButtonUnhovered.BringToFront();
+			PlayButton.BringToFront();
+			PlayButton.Visible = false;
+			PauseButton.Visible = true;
+		}
+
+		// Press on the pause button
+		private void PauseButton_Click(object sender, EventArgs e)
+		{
+			PlayButtonUnhovered.BringToFront();
+			PauseButton.BringToFront();
+			PauseButton.Visible = false;
+			PlayButton.Visible = true;
+		}
+
+		// Upload button
 		private void button1_Click(object sender, EventArgs e)
         {
             Form2 form = new Form2();

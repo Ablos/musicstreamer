@@ -36,6 +36,9 @@ namespace Windows
 			this.NormalWindowButton = new System.Windows.Forms.Button();
 			this.MinimizeButton = new System.Windows.Forms.Button();
 			this.PlayButton = new System.Windows.Forms.Button();
+			this.PlayButtonUnhovered = new System.Windows.Forms.Button();
+			this.PauseButton = new System.Windows.Forms.Button();
+			this.PauseButtonUnhovered = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// button1
@@ -140,6 +143,7 @@ namespace Windows
 			this.PlayButton.BackColor = System.Drawing.Color.Transparent;
 			this.PlayButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("PlayButton.BackgroundImage")));
 			this.PlayButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.PlayButton.FlatAppearance.BorderColor = System.Drawing.Color.Black;
 			this.PlayButton.FlatAppearance.BorderSize = 0;
 			this.PlayButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
 			this.PlayButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
@@ -149,7 +153,63 @@ namespace Windows
 			this.PlayButton.Size = new System.Drawing.Size(50, 50);
 			this.PlayButton.TabIndex = 12;
 			this.PlayButton.UseVisualStyleBackColor = false;
-			this.PlayButton.MouseEnter += new System.EventHandler(this.PlayPauseMouseEnter);
+			this.PlayButton.Visible = false;
+			this.PlayButton.Click += new System.EventHandler(this.PlayButton_Click);
+			this.PlayButton.MouseLeave += new System.EventHandler(this.PlayMouseLeave);
+			// 
+			// PlayButtonUnhovered
+			// 
+			this.PlayButtonUnhovered.BackColor = System.Drawing.Color.Transparent;
+			this.PlayButtonUnhovered.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("PlayButtonUnhovered.BackgroundImage")));
+			this.PlayButtonUnhovered.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.PlayButtonUnhovered.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+			this.PlayButtonUnhovered.FlatAppearance.BorderSize = 0;
+			this.PlayButtonUnhovered.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.PlayButtonUnhovered.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.PlayButtonUnhovered.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.PlayButtonUnhovered.Location = new System.Drawing.Point(516, 512);
+			this.PlayButtonUnhovered.Name = "PlayButtonUnhovered";
+			this.PlayButtonUnhovered.Size = new System.Drawing.Size(50, 50);
+			this.PlayButtonUnhovered.TabIndex = 13;
+			this.PlayButtonUnhovered.UseVisualStyleBackColor = false;
+			this.PlayButtonUnhovered.MouseEnter += new System.EventHandler(this.PlayMouseEnter);
+			// 
+			// PauseButton
+			// 
+			this.PauseButton.BackColor = System.Drawing.Color.Transparent;
+			this.PauseButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("PauseButton.BackgroundImage")));
+			this.PauseButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.PauseButton.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+			this.PauseButton.FlatAppearance.BorderSize = 0;
+			this.PauseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.PauseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.PauseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.PauseButton.Location = new System.Drawing.Point(516, 512);
+			this.PauseButton.Name = "PauseButton";
+			this.PauseButton.Size = new System.Drawing.Size(50, 50);
+			this.PauseButton.TabIndex = 14;
+			this.PauseButton.UseVisualStyleBackColor = false;
+			this.PauseButton.Visible = false;
+			this.PauseButton.Click += new System.EventHandler(this.PauseButton_Click);
+			this.PauseButton.MouseLeave += new System.EventHandler(this.PauseMouseLeave);
+			// 
+			// PauseButtonUnhovered
+			// 
+			this.PauseButtonUnhovered.BackColor = System.Drawing.Color.Transparent;
+			this.PauseButtonUnhovered.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("PauseButtonUnhovered.BackgroundImage")));
+			this.PauseButtonUnhovered.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.PauseButtonUnhovered.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+			this.PauseButtonUnhovered.FlatAppearance.BorderSize = 0;
+			this.PauseButtonUnhovered.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.PauseButtonUnhovered.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.PauseButtonUnhovered.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.PauseButtonUnhovered.Location = new System.Drawing.Point(516, 512);
+			this.PauseButtonUnhovered.Name = "PauseButtonUnhovered";
+			this.PauseButtonUnhovered.Size = new System.Drawing.Size(50, 50);
+			this.PauseButtonUnhovered.TabIndex = 15;
+			this.PauseButtonUnhovered.UseVisualStyleBackColor = false;
+			this.PauseButtonUnhovered.Visible = false;
+			this.PauseButtonUnhovered.MouseEnter += new System.EventHandler(this.PauseMouseEnter);
 			// 
 			// Form1
 			// 
@@ -158,6 +218,9 @@ namespace Windows
 			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.ClientSize = new System.Drawing.Size(1098, 611);
+			this.Controls.Add(this.PauseButtonUnhovered);
+			this.Controls.Add(this.PauseButton);
+			this.Controls.Add(this.PlayButtonUnhovered);
 			this.Controls.Add(this.PlayButton);
 			this.Controls.Add(this.MinimizeButton);
 			this.Controls.Add(this.NormalWindowButton);
@@ -183,6 +246,9 @@ namespace Windows
 		private System.Windows.Forms.Button NormalWindowButton;
 		private System.Windows.Forms.Button MinimizeButton;
 		private System.Windows.Forms.Button PlayButton;
+		private System.Windows.Forms.Button PlayButtonUnhovered;
+		private System.Windows.Forms.Button PauseButton;
+		private System.Windows.Forms.Button PauseButtonUnhovered;
 	}
 }
 
