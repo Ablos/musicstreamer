@@ -43,6 +43,17 @@ namespace Windows
 			this.SkipButtonUnhovered = new System.Windows.Forms.Button();
 			this.BackButtonUnhovered = new System.Windows.Forms.Button();
 			this.BackButton = new System.Windows.Forms.Button();
+			this.ShuffleButton = new System.Windows.Forms.Button();
+			this.ShuffleButtonUnhovered = new System.Windows.Forms.Button();
+			this.EnabledShuffleButton = new System.Windows.Forms.Button();
+			this.EnabledShuffleButtonUnhovered = new System.Windows.Forms.Button();
+			this.RepeatButton = new System.Windows.Forms.Button();
+			this.RepeatButtonUnhovered = new System.Windows.Forms.Button();
+			this.EnabledRepeatButton = new System.Windows.Forms.Button();
+			this.EnabledRepeatButtonUnhovered = new System.Windows.Forms.Button();
+			this.EnabledRepeatOneButton = new System.Windows.Forms.Button();
+			this.EnabledRepeatOneButtonUnhovered = new System.Windows.Forms.Button();
+			this.SliderHandle = new System.Windows.Forms.Panel();
 			this.SuspendLayout();
 			// 
 			// button1
@@ -152,7 +163,7 @@ namespace Windows
 			this.PlayButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
 			this.PlayButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
 			this.PlayButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.PlayButton.Location = new System.Drawing.Point(516, 512);
+			this.PlayButton.Location = new System.Drawing.Point(559, 512);
 			this.PlayButton.Name = "PlayButton";
 			this.PlayButton.Size = new System.Drawing.Size(50, 50);
 			this.PlayButton.TabIndex = 12;
@@ -171,7 +182,7 @@ namespace Windows
 			this.PlayButtonUnhovered.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
 			this.PlayButtonUnhovered.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
 			this.PlayButtonUnhovered.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.PlayButtonUnhovered.Location = new System.Drawing.Point(516, 512);
+			this.PlayButtonUnhovered.Location = new System.Drawing.Point(559, 456);
 			this.PlayButtonUnhovered.Name = "PlayButtonUnhovered";
 			this.PlayButtonUnhovered.Size = new System.Drawing.Size(50, 50);
 			this.PlayButtonUnhovered.TabIndex = 13;
@@ -188,7 +199,7 @@ namespace Windows
 			this.PauseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
 			this.PauseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
 			this.PauseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.PauseButton.Location = new System.Drawing.Point(516, 512);
+			this.PauseButton.Location = new System.Drawing.Point(489, 512);
 			this.PauseButton.Name = "PauseButton";
 			this.PauseButton.Size = new System.Drawing.Size(50, 50);
 			this.PauseButton.TabIndex = 14;
@@ -207,7 +218,7 @@ namespace Windows
 			this.PauseButtonUnhovered.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
 			this.PauseButtonUnhovered.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
 			this.PauseButtonUnhovered.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.PauseButtonUnhovered.Location = new System.Drawing.Point(516, 512);
+			this.PauseButtonUnhovered.Location = new System.Drawing.Point(489, 456);
 			this.PauseButtonUnhovered.Name = "PauseButtonUnhovered";
 			this.PauseButtonUnhovered.Size = new System.Drawing.Size(50, 50);
 			this.PauseButtonUnhovered.TabIndex = 15;
@@ -225,7 +236,7 @@ namespace Windows
 			this.SkipButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
 			this.SkipButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
 			this.SkipButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.SkipButton.Location = new System.Drawing.Point(581, 517);
+			this.SkipButton.Location = new System.Drawing.Point(615, 517);
 			this.SkipButton.Name = "SkipButton";
 			this.SkipButton.Size = new System.Drawing.Size(40, 40);
 			this.SkipButton.TabIndex = 16;
@@ -245,7 +256,7 @@ namespace Windows
 			this.SkipButtonUnhovered.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
 			this.SkipButtonUnhovered.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
 			this.SkipButtonUnhovered.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.SkipButtonUnhovered.Location = new System.Drawing.Point(627, 517);
+			this.SkipButtonUnhovered.Location = new System.Drawing.Point(615, 481);
 			this.SkipButtonUnhovered.Name = "SkipButtonUnhovered";
 			this.SkipButtonUnhovered.Size = new System.Drawing.Size(40, 40);
 			this.SkipButtonUnhovered.TabIndex = 17;
@@ -262,7 +273,7 @@ namespace Windows
 			this.BackButtonUnhovered.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
 			this.BackButtonUnhovered.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
 			this.BackButtonUnhovered.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.BackButtonUnhovered.Location = new System.Drawing.Point(627, 471);
+			this.BackButtonUnhovered.Location = new System.Drawing.Point(443, 522);
 			this.BackButtonUnhovered.Name = "BackButtonUnhovered";
 			this.BackButtonUnhovered.Size = new System.Drawing.Size(40, 40);
 			this.BackButtonUnhovered.TabIndex = 18;
@@ -279,7 +290,7 @@ namespace Windows
 			this.BackButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
 			this.BackButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
 			this.BackButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.BackButton.Location = new System.Drawing.Point(581, 471);
+			this.BackButton.Location = new System.Drawing.Point(443, 483);
 			this.BackButton.Name = "BackButton";
 			this.BackButton.Size = new System.Drawing.Size(40, 40);
 			this.BackButton.TabIndex = 19;
@@ -288,6 +299,195 @@ namespace Windows
 			this.BackButton.Click += new System.EventHandler(this.BackButton_Click);
 			this.BackButton.MouseLeave += new System.EventHandler(this.BackMouseLeave);
 			// 
+			// ShuffleButton
+			// 
+			this.ShuffleButton.BackColor = System.Drawing.Color.Transparent;
+			this.ShuffleButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("ShuffleButton.BackgroundImage")));
+			this.ShuffleButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.ShuffleButton.FlatAppearance.BorderSize = 0;
+			this.ShuffleButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.ShuffleButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.ShuffleButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.ShuffleButton.Location = new System.Drawing.Point(402, 527);
+			this.ShuffleButton.Name = "ShuffleButton";
+			this.ShuffleButton.Size = new System.Drawing.Size(35, 35);
+			this.ShuffleButton.TabIndex = 20;
+			this.ShuffleButton.UseVisualStyleBackColor = false;
+			this.ShuffleButton.Visible = false;
+			this.ShuffleButton.Click += new System.EventHandler(this.ShuffleButton_Click);
+			this.ShuffleButton.MouseLeave += new System.EventHandler(this.ShuffleMouseLeave);
+			// 
+			// ShuffleButtonUnhovered
+			// 
+			this.ShuffleButtonUnhovered.BackColor = System.Drawing.Color.Transparent;
+			this.ShuffleButtonUnhovered.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("ShuffleButtonUnhovered.BackgroundImage")));
+			this.ShuffleButtonUnhovered.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.ShuffleButtonUnhovered.FlatAppearance.BorderSize = 0;
+			this.ShuffleButtonUnhovered.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.ShuffleButtonUnhovered.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.ShuffleButtonUnhovered.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.ShuffleButtonUnhovered.Location = new System.Drawing.Point(402, 486);
+			this.ShuffleButtonUnhovered.Name = "ShuffleButtonUnhovered";
+			this.ShuffleButtonUnhovered.Size = new System.Drawing.Size(35, 35);
+			this.ShuffleButtonUnhovered.TabIndex = 21;
+			this.ShuffleButtonUnhovered.UseVisualStyleBackColor = false;
+			this.ShuffleButtonUnhovered.MouseEnter += new System.EventHandler(this.ShuffleMouseEnter);
+			// 
+			// EnabledShuffleButton
+			// 
+			this.EnabledShuffleButton.BackColor = System.Drawing.Color.Transparent;
+			this.EnabledShuffleButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("EnabledShuffleButton.BackgroundImage")));
+			this.EnabledShuffleButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.EnabledShuffleButton.FlatAppearance.BorderSize = 0;
+			this.EnabledShuffleButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.EnabledShuffleButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.EnabledShuffleButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.EnabledShuffleButton.Location = new System.Drawing.Point(361, 527);
+			this.EnabledShuffleButton.Name = "EnabledShuffleButton";
+			this.EnabledShuffleButton.Size = new System.Drawing.Size(35, 35);
+			this.EnabledShuffleButton.TabIndex = 22;
+			this.EnabledShuffleButton.UseVisualStyleBackColor = false;
+			this.EnabledShuffleButton.Visible = false;
+			this.EnabledShuffleButton.Click += new System.EventHandler(this.EnabledShuffleButton_Click);
+			this.EnabledShuffleButton.MouseLeave += new System.EventHandler(this.EnabledShuffleMouseLeave);
+			// 
+			// EnabledShuffleButtonUnhovered
+			// 
+			this.EnabledShuffleButtonUnhovered.BackColor = System.Drawing.Color.Transparent;
+			this.EnabledShuffleButtonUnhovered.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("EnabledShuffleButtonUnhovered.BackgroundImage")));
+			this.EnabledShuffleButtonUnhovered.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.EnabledShuffleButtonUnhovered.FlatAppearance.BorderSize = 0;
+			this.EnabledShuffleButtonUnhovered.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.EnabledShuffleButtonUnhovered.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.EnabledShuffleButtonUnhovered.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.EnabledShuffleButtonUnhovered.Location = new System.Drawing.Point(361, 488);
+			this.EnabledShuffleButtonUnhovered.Name = "EnabledShuffleButtonUnhovered";
+			this.EnabledShuffleButtonUnhovered.Size = new System.Drawing.Size(35, 35);
+			this.EnabledShuffleButtonUnhovered.TabIndex = 23;
+			this.EnabledShuffleButtonUnhovered.UseVisualStyleBackColor = false;
+			this.EnabledShuffleButtonUnhovered.Visible = false;
+			this.EnabledShuffleButtonUnhovered.MouseEnter += new System.EventHandler(this.EnabledShuffleMouseEnter);
+			// 
+			// RepeatButton
+			// 
+			this.RepeatButton.BackColor = System.Drawing.Color.Transparent;
+			this.RepeatButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("RepeatButton.BackgroundImage")));
+			this.RepeatButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.RepeatButton.FlatAppearance.BorderSize = 0;
+			this.RepeatButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.RepeatButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.RepeatButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.RepeatButton.Location = new System.Drawing.Point(661, 520);
+			this.RepeatButton.Name = "RepeatButton";
+			this.RepeatButton.Size = new System.Drawing.Size(35, 35);
+			this.RepeatButton.TabIndex = 24;
+			this.RepeatButton.UseVisualStyleBackColor = false;
+			this.RepeatButton.Visible = false;
+			this.RepeatButton.Click += new System.EventHandler(this.RepeatButton_Click);
+			this.RepeatButton.MouseLeave += new System.EventHandler(this.RepeatMouseLeave);
+			// 
+			// RepeatButtonUnhovered
+			// 
+			this.RepeatButtonUnhovered.BackColor = System.Drawing.Color.Transparent;
+			this.RepeatButtonUnhovered.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("RepeatButtonUnhovered.BackgroundImage")));
+			this.RepeatButtonUnhovered.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.RepeatButtonUnhovered.FlatAppearance.BorderSize = 0;
+			this.RepeatButtonUnhovered.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.RepeatButtonUnhovered.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.RepeatButtonUnhovered.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.RepeatButtonUnhovered.Location = new System.Drawing.Point(661, 479);
+			this.RepeatButtonUnhovered.Name = "RepeatButtonUnhovered";
+			this.RepeatButtonUnhovered.Size = new System.Drawing.Size(35, 35);
+			this.RepeatButtonUnhovered.TabIndex = 25;
+			this.RepeatButtonUnhovered.UseVisualStyleBackColor = false;
+			this.RepeatButtonUnhovered.MouseEnter += new System.EventHandler(this.RepeatMouseEnter);
+			// 
+			// EnabledRepeatButton
+			// 
+			this.EnabledRepeatButton.BackColor = System.Drawing.Color.Transparent;
+			this.EnabledRepeatButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("EnabledRepeatButton.BackgroundImage")));
+			this.EnabledRepeatButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.EnabledRepeatButton.FlatAppearance.BorderSize = 0;
+			this.EnabledRepeatButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.EnabledRepeatButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.EnabledRepeatButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.EnabledRepeatButton.Location = new System.Drawing.Point(702, 520);
+			this.EnabledRepeatButton.Name = "EnabledRepeatButton";
+			this.EnabledRepeatButton.Size = new System.Drawing.Size(35, 35);
+			this.EnabledRepeatButton.TabIndex = 26;
+			this.EnabledRepeatButton.UseVisualStyleBackColor = false;
+			this.EnabledRepeatButton.Visible = false;
+			this.EnabledRepeatButton.Click += new System.EventHandler(this.EnabledRepeatButton_Click);
+			this.EnabledRepeatButton.MouseLeave += new System.EventHandler(this.EnabledRepeatMouseLeave);
+			// 
+			// EnabledRepeatButtonUnhovered
+			// 
+			this.EnabledRepeatButtonUnhovered.BackColor = System.Drawing.Color.Transparent;
+			this.EnabledRepeatButtonUnhovered.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("EnabledRepeatButtonUnhovered.BackgroundImage")));
+			this.EnabledRepeatButtonUnhovered.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.EnabledRepeatButtonUnhovered.FlatAppearance.BorderSize = 0;
+			this.EnabledRepeatButtonUnhovered.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.EnabledRepeatButtonUnhovered.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.EnabledRepeatButtonUnhovered.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.EnabledRepeatButtonUnhovered.Location = new System.Drawing.Point(702, 479);
+			this.EnabledRepeatButtonUnhovered.Name = "EnabledRepeatButtonUnhovered";
+			this.EnabledRepeatButtonUnhovered.Size = new System.Drawing.Size(35, 35);
+			this.EnabledRepeatButtonUnhovered.TabIndex = 27;
+			this.EnabledRepeatButtonUnhovered.UseVisualStyleBackColor = false;
+			this.EnabledRepeatButtonUnhovered.Visible = false;
+			this.EnabledRepeatButtonUnhovered.MouseEnter += new System.EventHandler(this.EnabledRepeatMouseEnter);
+			// 
+			// EnabledRepeatOneButton
+			// 
+			this.EnabledRepeatOneButton.BackColor = System.Drawing.Color.Transparent;
+			this.EnabledRepeatOneButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("EnabledRepeatOneButton.BackgroundImage")));
+			this.EnabledRepeatOneButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.EnabledRepeatOneButton.FlatAppearance.BorderSize = 0;
+			this.EnabledRepeatOneButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.EnabledRepeatOneButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.EnabledRepeatOneButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.EnabledRepeatOneButton.Location = new System.Drawing.Point(743, 520);
+			this.EnabledRepeatOneButton.Name = "EnabledRepeatOneButton";
+			this.EnabledRepeatOneButton.Size = new System.Drawing.Size(35, 35);
+			this.EnabledRepeatOneButton.TabIndex = 28;
+			this.EnabledRepeatOneButton.UseVisualStyleBackColor = false;
+			this.EnabledRepeatOneButton.Visible = false;
+			this.EnabledRepeatOneButton.Click += new System.EventHandler(this.EnabledRepeatOneButton_Click);
+			this.EnabledRepeatOneButton.MouseLeave += new System.EventHandler(this.EnabledRepeatOneMouseLeave);
+			// 
+			// EnabledRepeatOneButtonUnhovered
+			// 
+			this.EnabledRepeatOneButtonUnhovered.BackColor = System.Drawing.Color.Transparent;
+			this.EnabledRepeatOneButtonUnhovered.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("EnabledRepeatOneButtonUnhovered.BackgroundImage")));
+			this.EnabledRepeatOneButtonUnhovered.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.EnabledRepeatOneButtonUnhovered.FlatAppearance.BorderSize = 0;
+			this.EnabledRepeatOneButtonUnhovered.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+			this.EnabledRepeatOneButtonUnhovered.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+			this.EnabledRepeatOneButtonUnhovered.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.EnabledRepeatOneButtonUnhovered.Location = new System.Drawing.Point(743, 479);
+			this.EnabledRepeatOneButtonUnhovered.Name = "EnabledRepeatOneButtonUnhovered";
+			this.EnabledRepeatOneButtonUnhovered.Size = new System.Drawing.Size(35, 35);
+			this.EnabledRepeatOneButtonUnhovered.TabIndex = 29;
+			this.EnabledRepeatOneButtonUnhovered.UseVisualStyleBackColor = false;
+			this.EnabledRepeatOneButtonUnhovered.Visible = false;
+			this.EnabledRepeatOneButtonUnhovered.MouseEnter += new System.EventHandler(this.EnabledRepeatOneMouseEnter);
+			// 
+			// SliderHandle
+			// 
+			this.SliderHandle.BackColor = System.Drawing.Color.Transparent;
+			this.SliderHandle.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("SliderHandle.BackgroundImage")));
+			this.SliderHandle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.SliderHandle.Location = new System.Drawing.Point(443, 578);
+			this.SliderHandle.Name = "SliderHandle";
+			this.SliderHandle.Size = new System.Drawing.Size(10, 10);
+			this.SliderHandle.TabIndex = 30;
+			this.SliderHandle.Visible = false;
+			this.SliderHandle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SliderHandleMouseDown);
+			this.SliderHandle.MouseEnter += new System.EventHandler(this.SliderHandleMouseEnter);
+			this.SliderHandle.MouseLeave += new System.EventHandler(this.SliderHandleMouseLeave);
+			this.SliderHandle.MouseMove += new System.Windows.Forms.MouseEventHandler(this.SliderHandleMouseMove);
+			this.SliderHandle.MouseUp += new System.Windows.Forms.MouseEventHandler(this.SliderHandleMouseUp);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -295,6 +495,17 @@ namespace Windows
 			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.ClientSize = new System.Drawing.Size(1098, 611);
+			this.Controls.Add(this.SliderHandle);
+			this.Controls.Add(this.EnabledRepeatOneButtonUnhovered);
+			this.Controls.Add(this.EnabledRepeatOneButton);
+			this.Controls.Add(this.EnabledRepeatButtonUnhovered);
+			this.Controls.Add(this.EnabledRepeatButton);
+			this.Controls.Add(this.RepeatButtonUnhovered);
+			this.Controls.Add(this.RepeatButton);
+			this.Controls.Add(this.EnabledShuffleButtonUnhovered);
+			this.Controls.Add(this.EnabledShuffleButton);
+			this.Controls.Add(this.ShuffleButtonUnhovered);
+			this.Controls.Add(this.ShuffleButton);
 			this.Controls.Add(this.BackButton);
 			this.Controls.Add(this.BackButtonUnhovered);
 			this.Controls.Add(this.SkipButtonUnhovered);
@@ -314,6 +525,9 @@ namespace Windows
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "Form1";
 			this.Text = "VIBES";
+			this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.FormMouseClick);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FormMouseMove);
+			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FormMouseUp);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -334,6 +548,17 @@ namespace Windows
 		private System.Windows.Forms.Button SkipButtonUnhovered;
 		private System.Windows.Forms.Button BackButtonUnhovered;
 		private System.Windows.Forms.Button BackButton;
+		private System.Windows.Forms.Button ShuffleButton;
+		private System.Windows.Forms.Button ShuffleButtonUnhovered;
+		private System.Windows.Forms.Button EnabledShuffleButton;
+		private System.Windows.Forms.Button EnabledShuffleButtonUnhovered;
+		private System.Windows.Forms.Button RepeatButton;
+		private System.Windows.Forms.Button RepeatButtonUnhovered;
+		private System.Windows.Forms.Button EnabledRepeatButton;
+		private System.Windows.Forms.Button EnabledRepeatButtonUnhovered;
+		private System.Windows.Forms.Button EnabledRepeatOneButton;
+		private System.Windows.Forms.Button EnabledRepeatOneButtonUnhovered;
+		private System.Windows.Forms.Panel SliderHandle;
 	}
 }
 

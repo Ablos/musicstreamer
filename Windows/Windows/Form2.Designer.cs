@@ -1,4 +1,4 @@
-﻿namespace Windows
+namespace Windows
 {
     partial class Form2
     {
@@ -374,7 +374,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.Name = "Form2";
+            this.Name = "VIBES";
             this.Text = "Add Song";
             this.Load += new System.EventHandler(this.Form2_Load);
             this.panel1.ResumeLayout(false);

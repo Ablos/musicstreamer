@@ -540,7 +540,15 @@ namespace Windows
             //notifies the user that the upload was done
             if (feedback.Trim() == "affirmative")
             {
-                Notify("\"" + title + "\" was uploaded successfully.", true);
+				string[] parts = title.Split(' ');
+				string capTitle = parts[0][0].ToString().ToUpper() + parts[0].Substring(1);
+
+				for (int i = 1; i < parts.Length; i++)
+				{
+					capTitle += " " + parts[i][0].ToString().ToUpper() + parts[i].Substring(1);
+				}
+
+                Notify("\"" + capTitle + "\" was uploaded successfully.", true);
             }
 
             //deletes the local directory
