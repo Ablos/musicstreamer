@@ -30,6 +30,29 @@ namespace Windows
 			timeBarProgress.Location = TimeBar_BG.Location;                             // Set location of panel
 			Controls.Add(timeBarProgress);                                              // Instantiate the time bar progress
 			SliderHandle.BringToFront();                                                // Bring slider handle forward
+
+			// Event for when hovered over the time progress
+			timeBarProgress.MouseEnter += new EventHandler(new Action<object, EventArgs>((object sender, EventArgs args) =>
+			{
+				PlaybackSettings.timeSelected = true;
+				timeBarProgress.BackColor = cSliderSelected;
+				Update();
+
+				if (!PlaybackSettings.edittingTime)
+				{
+					SliderHandle.Location = new Point(timeBarProgress.Location.X + timeBarProgress.Width - (SliderHandle.Width / 2), timeBarProgress.Location.Y - (SliderHandle.Height / 2) + (timeBarProgress.Height / 2));
+					SliderHandle.Visible = true;
+					SliderHandle.BringToFront();
+				}
+			}));
+
+			// Event for when clicked on time progress
+			timeBarProgress.MouseClick += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
+			{
+				timeBarProgress.Size = new Size(args.Location.X, timeBarProgress.Height);
+				SliderHandle.Location = new Point(timeBarProgress.Location.X + timeBarProgress.Width - (SliderHandle.Width / 2), timeBarProgress.Location.Y - (SliderHandle.Height / 2) + (timeBarProgress.Height / 2));
+				OnTimeBarValueChanged?.Invoke();
+			}));
 		}
 
 		#region Controls
@@ -110,6 +133,11 @@ namespace Windows
 		#region Panels
 		Panel timeBarBounds = new Panel();
 		Panel timeBarProgress = new Panel();
+		#endregion
+
+		#region Variables
+		public delegate void _OnTimeBarValueChanged();
+		public _OnTimeBarValueChanged OnTimeBarValueChanged;
 		#endregion
 
 		// Draw graphics
@@ -196,28 +224,6 @@ namespace Windows
 
 			// Draw the timebar
 			e.Graphics.FillRectangle(new SolidBrush(cSliderBG), TimeBar_BG);            // Draw background
-
-			// Event for when hovered over the time progress
-			timeBarProgress.MouseEnter += new EventHandler(new Action<object, EventArgs>((object sender, EventArgs args) => 
-			{
-				PlaybackSettings.timeSelected = true;
-				timeBarProgress.BackColor = cSliderSelected;
-				Update();
-
-				if (!PlaybackSettings.edittingTime)
-				{
-					SliderHandle.Location = new Point(timeBarProgress.Location.X + timeBarProgress.Width - (SliderHandle.Width / 2), timeBarProgress.Location.Y - (SliderHandle.Height / 2) + (timeBarProgress.Height / 2));
-					SliderHandle.Visible = true;
-					SliderHandle.BringToFront();
-				}
-			}));
-
-			// Event for when clicked on time progress
-			timeBarProgress.MouseClick += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
-			{
-				timeBarProgress.Size = new Size(args.Location.X, timeBarProgress.Height);
-				SliderHandle.Location = new Point(timeBarProgress.Location.X + timeBarProgress.Width - (SliderHandle.Width / 2), timeBarProgress.Location.Y - (SliderHandle.Height / 2) + (timeBarProgress.Height / 2));
-			}));
 
 			// Middle line through play/pause button (DEBUG ONLY)
 			//Rectangle middle = new Rectangle(0, PlayButton.Location.Y + (PlayButton.Height / 2) - 1, this.ClientSize.Width, 2);
@@ -461,6 +467,7 @@ namespace Windows
 				if (PlaybackSettings.edittingTime)
 				{
 					PlaybackSettings.edittingTime = false;
+					OnTimeBarValueChanged?.Invoke();
 				}
 			}
 		}
@@ -499,6 +506,7 @@ namespace Windows
 			{
 				PlaybackSettings.edittingTime = false;
 				checkUpSlider = false;
+				OnTimeBarValueChanged?.Invoke();
 			}
 		}
 
@@ -515,6 +523,7 @@ namespace Windows
 			{
 				SliderHandle.Location = new Point((int)Clamp(e.Location.X - (SliderHandle.Width / 2), TimeBar_BG.X - (SliderHandle.Width / 2), TimeBar_BG.X + TimeBar_BG.Width - (SliderHandle.Width / 2)), SliderHandle.Location.Y);
 				timeBarProgress.Size = new Size((SliderHandle.Location.X + (SliderHandle.Width / 2)) - TimeBar_BG.X, timeBarProgress.Height);
+				OnTimeBarValueChanged?.Invoke();
 			}
 		}
 		#endregion
@@ -661,6 +670,15 @@ namespace Windows
 		private float GetTimeBarValue()
 		{
 			return (float)timeBarProgress.Width / (float)TimeBar_BG.Width * (float)100f;
+		}
+
+		private void SetTimeBarProcessPercentage(float percentage)
+		{
+			timeBarProgress.Size = new Size((int)((float)TimeBar_BG.Width * (float)((float)percentage / (float)100f)), timeBarProgress.Height);
+			if (PlaybackSettings.timeSelected)
+			{
+				SliderHandle.Location = new Point(timeBarProgress.Location.X + timeBarProgress.Width - (SliderHandle.Width / 2), timeBarProgress.Location.Y - (SliderHandle.Height / 2) + (timeBarProgress.Height / 2));
+			}
 		}
 		#endregion
 	}
