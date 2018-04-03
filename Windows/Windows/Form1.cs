@@ -604,8 +604,8 @@ namespace Windows
 			EnabledShuffleButton.Visible = true;
 		}
 
-		// Press on the enabled shuffle button
-		private void EnabledShuffleButton_Click(object sender, EventArgs e)
+        // Press on the enabled shuffle button
+        private void EnabledShuffleButton_Click(object sender, EventArgs e)
 		{
 			PlaybackSettings.shuffle = false;
 			ShuffleButtonUnhovered.BringToFront();
@@ -646,18 +646,24 @@ namespace Windows
 			EnabledRepeatOneButton.Visible = false;
 			RepeatButton.Visible = true;
 		}
-		#endregion
+        #endregion
 
-		// Upload button
-		private void button1_Click(object sender, EventArgs e)
+        // Upload button
+        private void button1_Click(object sender, EventArgs e)
         {
             Form2 form = new Form2();
             form.Show();
         }
-		#endregion
 
-		#region Functions
-		private float Clamp(float value, float min, float max)
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Form2 form = new Form2();
+            form.Show();
+        }
+        #endregion
+
+        #region Functions
+        private float Clamp(float value, float min, float max)
 		{
 			if (value < min)
 				return min;
