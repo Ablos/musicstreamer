@@ -315,10 +315,8 @@ namespace Windows
 		// Mouse enters the play button
 		private void PlayMouseEnter(object sender, EventArgs e)
 		{
-			PlayButtonUnhovered.Size = new Size(5, 5);
-			Update();
-			//PlayButtonUnhovered.Visible = false;
-			//PlayButton.Visible = true;
+			PlayButtonUnhovered.Visible = false;
+			PlayButton.Visible = true;
 		}
 
 		// Mouse leaves the play button
