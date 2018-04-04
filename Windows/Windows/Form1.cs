@@ -73,10 +73,10 @@ namespace Windows
 
 			// Timebar settings
 			volumeBarVolume.Size = new Size((int)(VolumeBar_BG.Width * ((float)PlaybackSettings.volume / 100)), VolumeBar_BG.Height);   // Set scale for panel
-			volumeBarVolume.BackColor = cSliderUnselected;                              // Color the timeBarProgress panel
-			volumeBarVolume.Location = VolumeBar_BG.Location;                           // Set location of panel
-			Controls.Add(volumeBarVolume);                                              // Instantiate the volume bar progress
-			SliderHandle.BringToFront();                                                // Bring slider handle forward
+			volumeBarVolume.BackColor = cSliderUnselected;																				// Color the timeBarProgress panel
+			volumeBarVolume.Location = VolumeBar_BG.Location;																			// Set location of panel
+			Controls.Add(volumeBarVolume);																								// Instantiate the volume bar progress
+			SliderHandle.BringToFront();																								// Bring slider handle forward
 
 			// Event for when hovered over the time progress
 			volumeBarVolume.MouseEnter += new EventHandler(new Action<object, EventArgs>((object sender, EventArgs args) =>
