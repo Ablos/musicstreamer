@@ -17,5 +17,8 @@ namespace Windows
 
 		public static bool edittingTime = false;
 		public static bool timeSelected = false;
+
+		public static bool edittingVolume = false;
+		public static bool volumeSelected = false;
 	}
 }

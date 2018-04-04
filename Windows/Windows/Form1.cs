@@ -47,10 +47,74 @@ namespace Windows
 			}));
 
 			// Event for when clicked on time progress
-			timeBarProgress.MouseClick += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
+			timeBarProgress.MouseDown += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
 			{
+				PlaybackSettings.edittingTime = true;
 				timeBarProgress.Size = new Size(args.Location.X, timeBarProgress.Height);
 				SliderHandle.Location = new Point(timeBarProgress.Location.X + timeBarProgress.Width - (SliderHandle.Width / 2), timeBarProgress.Location.Y - (SliderHandle.Height / 2) + (timeBarProgress.Height / 2));
+			}));
+
+			// Event for when mouse moves on time progress
+			timeBarProgress.MouseMove += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
+			{
+				if (PlaybackSettings.edittingTime)
+				{
+					timeBarProgress.Size = new Size((int)Clamp(args.Location.X, 0, TimeBar_BG.Width), timeBarProgress.Height);
+					SliderHandle.Location = new Point(timeBarProgress.Location.X + timeBarProgress.Width - (SliderHandle.Width / 2), timeBarProgress.Location.Y - (SliderHandle.Height / 2) + (timeBarProgress.Height / 2));
+				}
+			}));
+
+			// Event for when mouse up on time progress
+			timeBarProgress.MouseUp += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
+			{
+				PlaybackSettings.edittingTime = false;
+				OnTimeBarValueChanged?.Invoke();
+			}));
+
+			// Timebar settings
+			volumeBarVolume.Size = new Size((int)(VolumeBar_BG.Width * ((float)PlaybackSettings.volume / 100)), VolumeBar_BG.Height);   // Set scale for panel
+			volumeBarVolume.BackColor = cSliderUnselected;                              // Color the timeBarProgress panel
+			volumeBarVolume.Location = VolumeBar_BG.Location;                           // Set location of panel
+			Controls.Add(volumeBarVolume);                                              // Instantiate the volume bar progress
+			SliderHandle.BringToFront();                                                // Bring slider handle forward
+
+			// Event for when hovered over the time progress
+			volumeBarVolume.MouseEnter += new EventHandler(new Action<object, EventArgs>((object sender, EventArgs args) =>
+			{
+				PlaybackSettings.volumeSelected = true;
+				volumeBarVolume.BackColor = cSliderSelected;
+				Update();
+
+				if (!PlaybackSettings.edittingVolume)
+				{
+					SliderHandle.Location = new Point(volumeBarVolume.Location.X + volumeBarVolume.Width - (SliderHandle.Width / 2), volumeBarVolume.Location.Y - (SliderHandle.Height / 2) + (volumeBarVolume.Height / 2));
+					SliderHandle.Visible = true;
+					SliderHandle.BringToFront();
+				}
+			}));
+
+			// Event for when clicked on time progress
+			volumeBarVolume.MouseDown += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
+			{
+				PlaybackSettings.edittingVolume = true;
+				volumeBarVolume.Size = new Size(args.Location.X, volumeBarVolume.Height);
+				SliderHandle.Location = new Point(volumeBarVolume.Location.X + volumeBarVolume.Width - (SliderHandle.Width / 2), volumeBarVolume.Location.Y - (SliderHandle.Height / 2) + (volumeBarVolume.Height / 2));
+			}));
+
+			// Event for when mouse moves on time progress
+			volumeBarVolume.MouseMove += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
+			{
+				if (PlaybackSettings.edittingVolume)
+				{
+					volumeBarVolume.Size = new Size((int)Clamp(args.Location.X, 0, VolumeBar_BG.Width), volumeBarVolume.Height);
+					SliderHandle.Location = new Point(volumeBarVolume.Location.X + volumeBarVolume.Width - (SliderHandle.Width / 2), volumeBarVolume.Location.Y - (SliderHandle.Height / 2) + (volumeBarVolume.Height / 2));
+				}
+			}));
+
+			// Event for when mouse up on time progress
+			volumeBarVolume.MouseUp += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
+			{
+				PlaybackSettings.edittingVolume = false;
 				OnTimeBarValueChanged?.Invoke();
 			}));
 		}
@@ -95,6 +159,9 @@ namespace Windows
 		const int TimeBarPercentage = 35;               // How much percentage the time bar should take from the whole width of the window
 		const int TimeBarOffset = 27;                   // How far the timebar should be off the bottom
 
+		const int VolumeBarWidth = 100;					// How much wide the volume bar should be
+		const int VolumeBarOffset = 20;					// How far the volumebar should be off the right of the window
+
 		const int SliderHeight = 5;						// How high a slider should be
 		const int SliderHandleRadius = 12;				// Radius of slider handle
 		#endregion
@@ -120,6 +187,8 @@ namespace Windows
 		
 		// Timebar of where the music is currently
 		Rectangle TimeBar_BG { get { return new Rectangle((this.ClientSize.Width / 2) - (int)((this.ClientSize.Width * ((float)TimeBarPercentage / 100)) / 2), this.ClientSize.Height - TimeBarOffset, (int)(this.ClientSize.Width * ((float)TimeBarPercentage / 100)), SliderHeight); } }
+		// Volumebar of what sound level the music is currently
+		Rectangle VolumeBar_BG { get { return new Rectangle(this.ClientSize.Width - VolumeBarOffset - VolumeBarWidth, MusicControl.Y + (MusicControl.Height / 2) - SliderHeight, VolumeBarWidth, SliderHeight); } }
 		#endregion
 
 		#region Colors
@@ -131,13 +200,16 @@ namespace Windows
 		#endregion
 
 		#region Panels
-		Panel timeBarBounds = new Panel();
 		Panel timeBarProgress = new Panel();
+		Panel volumeBarVolume = new Panel();
 		#endregion
 
 		#region Variables
 		public delegate void _OnTimeBarValueChanged();
 		public _OnTimeBarValueChanged OnTimeBarValueChanged;
+
+		public delegate void _OnVolumeBarValueChanged();
+		public _OnVolumeBarValueChanged OnVolumeBarValueChanged;
 		#endregion
 
 		// Draw graphics
@@ -222,8 +294,11 @@ namespace Windows
 			EnabledRepeatOneButtonUnhovered.Size = new Size(ShuffleRepeatButtonSize, ShuffleRepeatButtonSize);
 			EnabledRepeatOneButtonUnhovered.Location = new Point(SkipButton.Location.X + SkipButton.Width + ShuffleRepeatOffset, PlayButton.Location.Y + ((PlayButton.Height - RepeatButtonUnhovered.Height) / 2));
 
-			// Draw the timebar
-			e.Graphics.FillRectangle(new SolidBrush(cSliderBG), TimeBar_BG);            // Draw background
+			// Draw the timebar background
+			e.Graphics.FillRectangle(new SolidBrush(cSliderBG), TimeBar_BG);
+
+			// Draw the volumebar background
+			e.Graphics.FillRectangle(new SolidBrush(cSliderBG), VolumeBar_BG);
 
 			// Middle line through play/pause button (DEBUG ONLY)
 			//Rectangle middle = new Rectangle(0, PlayButton.Location.Y + (PlayButton.Height / 2) - 1, this.ClientSize.Width, 2);
@@ -257,9 +332,12 @@ namespace Windows
 
 				else if (TopBar.Contains(cursor)) message.Result = (IntPtr)HTTOPBARMOVE;
 				
-				// hover event for when hovered over background
+				// hover event for when hovered over background of timebar
 				else if (TimeBar_BG.Contains(cursor))
 				{
+					PlaybackSettings.volumeSelected = false;
+					volumeBarVolume.BackColor = cSliderUnselected;
+
 					PlaybackSettings.timeSelected = true;
 					timeBarProgress.BackColor = cSliderSelected;
 					if (!PlaybackSettings.edittingTime)
@@ -269,10 +347,30 @@ namespace Windows
 						SliderHandle.BringToFront();
 					}
 				}
-				else if (!TimeBar_BG.Contains(cursor) && !PlaybackSettings.edittingTime)
+				else if (VolumeBar_BG.Contains(cursor))
 				{
 					PlaybackSettings.timeSelected = false;
 					timeBarProgress.BackColor = cSliderUnselected;
+
+					Console.WriteLine("Contains");
+					PlaybackSettings.volumeSelected = true;
+					volumeBarVolume.BackColor = cSliderSelected;
+					if (!PlaybackSettings.edittingVolume)
+					{
+						SliderHandle.Location = new Point(volumeBarVolume.Location.X + volumeBarVolume.Width - (SliderHandle.Width / 2), volumeBarVolume.Location.Y - (SliderHandle.Height / 2) + (volumeBarVolume.Height / 2));
+						SliderHandle.Visible = true;
+						SliderHandle.BringToFront();
+					}
+				}
+
+				else if (!TimeBar_BG.Contains(cursor) && !VolumeBar_BG.Contains(cursor))
+				{
+					PlaybackSettings.timeSelected = false;
+					timeBarProgress.BackColor = cSliderUnselected;
+					SliderHandle.Visible = false;
+
+					PlaybackSettings.volumeSelected = false;
+					volumeBarVolume.BackColor = cSliderUnselected;
 					SliderHandle.Visible = false;
 				}
 			}
@@ -453,9 +551,10 @@ namespace Windows
 			if (e.Button == MouseButtons.Left)
 			{
 				if (PlaybackSettings.timeSelected)
-				{
 					PlaybackSettings.edittingTime = true;
-				}
+
+				if (PlaybackSettings.volumeSelected)
+					PlaybackSettings.edittingVolume = true;
 			}
 		}
 
@@ -469,19 +568,25 @@ namespace Windows
 					PlaybackSettings.edittingTime = false;
 					OnTimeBarValueChanged?.Invoke();
 				}
+
+				if (PlaybackSettings.edittingVolume)
+				{
+					PlaybackSettings.edittingVolume = false;
+					OnVolumeBarValueChanged?.Invoke();
+				}
 			}
 		}
 
 		// Mouse enters slider
 		private void SliderHandleMouseEnter(object sender, EventArgs e)
 		{
-			timeBarProgress.BackColor = cSliderSelected;
+			
 		}
 
 		// Mouse exits slider
 		private void SliderHandleMouseLeave(object sender, EventArgs e)
 		{
-			if (PlaybackSettings.edittingTime)
+			if (PlaybackSettings.edittingTime || PlaybackSettings.edittingVolume)
 			{
 				checkUpSlider = true;
 			}
@@ -494,6 +599,12 @@ namespace Windows
 			{
 				SliderHandle.Location = new Point((int)Clamp(SliderHandle.Location.X + e.Location.X - (SliderHandle.Width / 2), TimeBar_BG.X - (SliderHandle.Width / 2), TimeBar_BG.X + TimeBar_BG.Width - (SliderHandle.Width / 2)), SliderHandle.Location.Y);
 				timeBarProgress.Size = new Size((SliderHandle.Location.X + (SliderHandle.Width / 2)) - TimeBar_BG.X, timeBarProgress.Height);
+			}
+
+			if (PlaybackSettings.edittingVolume)
+			{
+				SliderHandle.Location = new Point((int)Clamp(SliderHandle.Location.X + e.Location.X - (SliderHandle.Width / 2), VolumeBar_BG.X - (SliderHandle.Width / 2), VolumeBar_BG.X + VolumeBar_BG.Width - (SliderHandle.Width / 2)), SliderHandle.Location.Y);
+				volumeBarVolume.Size = new Size((SliderHandle.Location.X + (SliderHandle.Width / 2)) - VolumeBar_BG.X, volumeBarVolume.Height);
 			}
 		}
 		#endregion
@@ -508,22 +619,48 @@ namespace Windows
 				checkUpSlider = false;
 				OnTimeBarValueChanged?.Invoke();
 			}
+
+			if (checkUpSlider && PlaybackSettings.edittingVolume)
+			{
+				PlaybackSettings.edittingVolume = false;
+				checkUpSlider = false;
+				OnTimeBarValueChanged?.Invoke();
+			}
 		}
 
 		// Mouse move event
 		private void FormMouseMove(object sender, MouseEventArgs e)
 		{
-			
-		}
-
-		// Mouse click event
-		private void FormMouseClick(object sender, MouseEventArgs e)
-		{
-			if (PlaybackSettings.timeSelected)
+			if (PlaybackSettings.edittingTime)
 			{
 				SliderHandle.Location = new Point((int)Clamp(e.Location.X - (SliderHandle.Width / 2), TimeBar_BG.X - (SliderHandle.Width / 2), TimeBar_BG.X + TimeBar_BG.Width - (SliderHandle.Width / 2)), SliderHandle.Location.Y);
 				timeBarProgress.Size = new Size((SliderHandle.Location.X + (SliderHandle.Width / 2)) - TimeBar_BG.X, timeBarProgress.Height);
-				OnTimeBarValueChanged?.Invoke();
+			}
+
+			if (PlaybackSettings.edittingVolume)
+			{
+				SliderHandle.Location = new Point((int)Clamp(e.Location.X - (SliderHandle.Width / 2), VolumeBar_BG.X - (SliderHandle.Width / 2), VolumeBar_BG.X + VolumeBar_BG.Width - (SliderHandle.Width / 2)), SliderHandle.Location.Y);
+				volumeBarVolume.Size = new Size((SliderHandle.Location.X + (SliderHandle.Width / 2)) - VolumeBar_BG.X, volumeBarVolume.Height);
+			}
+		}
+
+		// Mouse click event
+		private void FormMouseDown(object sender, MouseEventArgs e)
+		{
+			if (PlaybackSettings.timeSelected)
+			{
+				checkUpSlider = true;
+				PlaybackSettings.edittingTime = true;
+				SliderHandle.Location = new Point((int)Clamp(e.Location.X - (SliderHandle.Width / 2), TimeBar_BG.X - (SliderHandle.Width / 2), TimeBar_BG.X + TimeBar_BG.Width - (SliderHandle.Width / 2)), SliderHandle.Location.Y);
+				timeBarProgress.Size = new Size((SliderHandle.Location.X + (SliderHandle.Width / 2)) - TimeBar_BG.X, timeBarProgress.Height);
+			}
+
+			if (PlaybackSettings.volumeSelected)
+			{
+				checkUpSlider = true;
+				PlaybackSettings.edittingVolume = true;
+				SliderHandle.Location = new Point((int)Clamp(e.Location.X - (SliderHandle.Width / 2), VolumeBar_BG.X - (SliderHandle.Width / 2), VolumeBar_BG.X + VolumeBar_BG.Width - (SliderHandle.Width / 2)), SliderHandle.Location.Y);
+				volumeBarVolume.Size = new Size((SliderHandle.Location.X + (SliderHandle.Width / 2)) - VolumeBar_BG.X, volumeBarVolume.Height);
 			}
 		}
 		#endregion

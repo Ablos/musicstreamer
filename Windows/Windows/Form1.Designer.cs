@@ -525,7 +525,7 @@ namespace Windows
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "Form1";
 			this.Text = "VIBES";
-			this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.FormMouseClick);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FormMouseDown);
 			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FormMouseMove);
 			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FormMouseUp);
 			this.ResumeLayout(false);
