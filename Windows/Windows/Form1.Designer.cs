@@ -28,7 +28,6 @@ namespace Windows
 		/// </summary>
 		private void InitializeComponent()
 		{
-<<<<<<< HEAD
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
 			this.button1 = new System.Windows.Forms.Button();
 			this.Title = new System.Windows.Forms.Label();
@@ -531,8 +530,6 @@ namespace Windows
 			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FormMouseUp);
 			this.ResumeLayout(false);
 			this.PerformLayout();
-=======
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.button1 = new System.Windows.Forms.Button();
             this.Title = new System.Windows.Forms.Label();
             this.QuitButton = new System.Windows.Forms.Button();
@@ -1067,12 +1064,11 @@ namespace Windows
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "Form1";
             this.Text = "VIBES";
-            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.FormMouseClick);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FormMouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FormMouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FormMouseUp);
             this.ResumeLayout(false);
             this.PerformLayout();
->>>>>>> 3cf1346d37ffc1fbb2750cb71e4a0cf3fea7a315
 
 		}
 
