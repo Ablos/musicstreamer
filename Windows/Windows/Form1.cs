@@ -754,8 +754,8 @@ namespace Windows
 			ShuffleButton.Visible = true;
 		}
 
-		// Press on the unenabled repeat button
-		private void RepeatButton_Click(object sender, EventArgs e)
+        // Press on the unenabled repeat button
+        private void RepeatButton_Click(object sender, EventArgs e)
 		{
 			PlaybackSettings.repeatState = PlaybackSettings.RepeatState.REPEAT_ALL;
 			EnabledRepeatButton.BringToFront();
@@ -795,9 +795,9 @@ namespace Windows
             form.Show();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
         {
-            Form2 form = new Form2();
+            Form3 form = new Form3();
             form.Show();
         }
         #endregion
