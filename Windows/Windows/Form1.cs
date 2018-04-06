@@ -36,6 +36,7 @@ namespace Windows
 			{
 				PlaybackSettings.timeSelected = true;
 				timeBarProgress.BackColor = cSliderSelected;
+				volumeBarVolume.BackColor = cSliderUnselected;
 				Update();
 
 				if (!PlaybackSettings.edittingTime)
@@ -68,7 +69,9 @@ namespace Windows
 			timeBarProgress.MouseUp += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
 			{
 				PlaybackSettings.edittingTime = false;
-				OnTimeBarValueChanged?.Invoke();
+				OnTimeBarValueChanged?.Invoke(GetTimeBarValue());
+				if (!PlaybackSettings.timeSelected)
+					timeBarProgress.BackColor = cSliderUnselected;
 			}));
 
 			// Timebar settings
@@ -83,6 +86,7 @@ namespace Windows
 			{
 				PlaybackSettings.volumeSelected = true;
 				volumeBarVolume.BackColor = cSliderSelected;
+				timeBarProgress.BackColor = cSliderUnselected;
 				Update();
 
 				if (!PlaybackSettings.edittingVolume)
@@ -115,7 +119,9 @@ namespace Windows
 			volumeBarVolume.MouseUp += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
 			{
 				PlaybackSettings.edittingVolume = false;
-				OnTimeBarValueChanged?.Invoke();
+				OnTimeBarValueChanged?.Invoke(GetVolumeBarValue());
+				if (!PlaybackSettings.volumeSelected)
+					volumeBarVolume.BackColor = cSliderUnselected;
 			}));
 		}
 
@@ -205,10 +211,10 @@ namespace Windows
 		#endregion
 
 		#region Variables
-		public delegate void _OnTimeBarValueChanged();
+		public delegate void _OnTimeBarValueChanged(float value);
 		public _OnTimeBarValueChanged OnTimeBarValueChanged;
 
-		public delegate void _OnVolumeBarValueChanged();
+		public delegate void _OnVolumeBarValueChanged(float value);
 		public _OnVolumeBarValueChanged OnVolumeBarValueChanged;
 		#endregion
 
@@ -351,8 +357,7 @@ namespace Windows
 				{
 					PlaybackSettings.timeSelected = false;
 					timeBarProgress.BackColor = cSliderUnselected;
-
-					Console.WriteLine("Contains");
+					
 					PlaybackSettings.volumeSelected = true;
 					volumeBarVolume.BackColor = cSliderSelected;
 					if (!PlaybackSettings.edittingVolume)
@@ -564,13 +569,13 @@ namespace Windows
 				if (PlaybackSettings.edittingTime)
 				{
 					PlaybackSettings.edittingTime = false;
-					OnTimeBarValueChanged?.Invoke();
+					OnTimeBarValueChanged?.Invoke(GetTimeBarValue());
 				}
 
 				if (PlaybackSettings.edittingVolume)
 				{
 					PlaybackSettings.edittingVolume = false;
-					OnVolumeBarValueChanged?.Invoke();
+					OnVolumeBarValueChanged?.Invoke(GetVolumeBarValue());
 				}
 			}
 		}
@@ -615,14 +620,14 @@ namespace Windows
 			{
 				PlaybackSettings.edittingTime = false;
 				checkUpSlider = false;
-				OnTimeBarValueChanged?.Invoke();
+				OnTimeBarValueChanged?.Invoke(GetTimeBarValue());
 			}
 
 			if (checkUpSlider && PlaybackSettings.edittingVolume)
 			{
 				PlaybackSettings.edittingVolume = false;
 				checkUpSlider = false;
-				OnTimeBarValueChanged?.Invoke();
+				OnTimeBarValueChanged?.Invoke(GetVolumeBarValue());
 			}
 		}
 
@@ -817,10 +822,21 @@ namespace Windows
 		{
 			timeBarProgress.Size = new Size((int)((float)TimeBar_BG.Width * (float)((float)percentage / (float)100f)), timeBarProgress.Height);
 			if (PlaybackSettings.timeSelected)
-			{
 				SliderHandle.Location = new Point(timeBarProgress.Location.X + timeBarProgress.Width - (SliderHandle.Width / 2), timeBarProgress.Location.Y - (SliderHandle.Height / 2) + (timeBarProgress.Height / 2));
-			}
 		}
+
+		private float GetVolumeBarValue()
+		{
+			return (float)volumeBarVolume.Width / (float)VolumeBar_BG.Width * (float)100f;
+		}
+
+		private void SetVolumePercentage(float percentage)
+		{
+			volumeBarVolume.Size = new Size((int)((float)VolumeBar_BG.Width * (float)((float)percentage / (float)100f)), volumeBarVolume.Height);
+			if (PlaybackSettings.volumeSelected)
+				SliderHandle.Location = new Point(volumeBarVolume.Location.X + volumeBarVolume.Width - (SliderHandle.Width / 2), volumeBarVolume.Location.Y - (SliderHandle.Height / 2) + (volumeBarVolume.Height / 2));
+		}
+
 		#endregion
 	}
 }
