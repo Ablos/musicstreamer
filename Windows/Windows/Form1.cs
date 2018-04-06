@@ -18,11 +18,73 @@ namespace Windows
 
 		public Form1()
 		{
+			Console.WriteLine(Application.StartupPath);
 			InitializeComponent();
 			this.FormBorderStyle = FormBorderStyle.None;
 			this.DoubleBuffered = true;
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
+			this.BackgroundImage = ResourceLoader.loadImage(rWindowBackground);
 
+			#region Instantiate top bar contents
+			// Instatiate topbar title
+			topBarTitle.Anchor = AnchorStyles.Top;
+			topBarTitle.AutoSize = true;
+			topBarTitle.BackColor = Color.Transparent;
+			topBarTitle.Font = new Font("Roboto", 10f, FontStyle.Regular);
+			topBarTitle.ForeColor = Color.White;
+			topBarTitle.Location = new Point(this.ClientSize.Width / 2 - topBarTitle.Width / 2, TitleOffset);
+			topBarTitle.Text = "VIBES";
+			topBarTitle.TextAlign = ContentAlignment.MiddleCenter;
+			topBarTitle.MouseMove += new MouseEventHandler(Mover);
+			Controls.Add(topBarTitle);
+
+			// Instantiate exit button
+			ExitButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			ExitButton.BackColor = Color.Transparent;
+			ExitButton.BackgroundImage = ResourceLoader.loadImage(rExitButton);
+			ExitButton.BackgroundImageLayout = ImageLayout.Stretch;
+			ExitButton.FlatAppearance.BorderSize = 0;
+			ExitButton.FlatAppearance.MouseDownBackColor = Color.DarkRed;
+			ExitButton.FlatAppearance.MouseOverBackColor = Color.Red;
+			ExitButton.FlatStyle = FlatStyle.Flat;
+			ExitButton.Location = new Point(this.ClientSize.Width - ExitButton.Width - ControlButtonsOffset, ControlButtonsOffset);
+			ExitButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
+			ExitButton.Click += new EventHandler(QuitButton_Click);
+			Controls.Add(ExitButton);
+			#endregion
+
+			#region Instantiate play button
+			// Settings for play button
+			PlayButton.BackColor = Color.Transparent;
+			PlayButton.BackgroundImage = ResourceLoader.loadImage(rPlayButton);
+			PlayButton.BackgroundImageLayout = ImageLayout.Stretch;
+			PlayButton.FlatAppearance.BorderSize = 0;
+			PlayButton.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			PlayButton.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			PlayButton.FlatStyle = FlatStyle.Flat;
+			PlayButton.Size = new Size(PlayPauseSize + PlayPauseResize, PlayPauseSize + PlayPauseResize);
+			PlayButton.Location = new Point(this.ClientSize.Width / 2 - PlayButton.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset - (PlayPauseResize / 2));
+			PlayButton.Visible = false;
+			PlayButton.Click += new EventHandler(PlayButton_Click);
+			PlayButton.MouseLeave += new EventHandler(PlayMouseLeave);
+			PlayButton.Font = new Font("Roboto", 10, FontStyle.Regular);
+			Controls.Add(PlayButton);
+
+			// Settings for unhovered play button
+			PlayButtonUnhovered.BackColor = Color.Transparent;
+			PlayButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rPlayButton);
+			PlayButtonUnhovered.BackgroundImageLayout = ImageLayout.Stretch;
+			PlayButtonUnhovered.FlatAppearance.BorderSize = 0;
+			PlayButtonUnhovered.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			PlayButtonUnhovered.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			PlayButtonUnhovered.FlatStyle = FlatStyle.Flat;
+			PlayButtonUnhovered.Size = new Size(PlayPauseSize, PlayPauseSize);
+			PlayButtonUnhovered.Location = new Point(this.ClientSize.Width / 2 - PlayButtonUnhovered.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset);
+			PlayButtonUnhovered.MouseEnter += new EventHandler(PlayMouseEnter);
+			Controls.Add(PlayButtonUnhovered);
+			#endregion
+
+			#region Instantiate Timebar
 			// Timebar settings
 			timeBarProgress.Size = new Size(0, TimeBar_BG.Height);                      // Set scale for panel
 			SliderHandle.Size = new Size(SliderHandleRadius, SliderHandleRadius);       // Resize handle for all sliders
@@ -73,13 +135,15 @@ namespace Windows
 				if (!PlaybackSettings.timeSelected)
 					timeBarProgress.BackColor = cSliderUnselected;
 			}));
+			#endregion
 
+			#region Instantiate Volumebar
 			// Timebar settings
 			volumeBarVolume.Size = new Size((int)(VolumeBar_BG.Width * ((float)PlaybackSettings.volume / 100)), VolumeBar_BG.Height);   // Set scale for panel
-			volumeBarVolume.BackColor = cSliderUnselected;																				// Color the timeBarProgress panel
-			volumeBarVolume.Location = VolumeBar_BG.Location;																			// Set location of panel
-			Controls.Add(volumeBarVolume);																								// Instantiate the volume bar progress
-			SliderHandle.BringToFront();																								// Bring slider handle forward
+			volumeBarVolume.BackColor = cSliderUnselected;                                                                              // Color the timeBarProgress panel
+			volumeBarVolume.Location = VolumeBar_BG.Location;                                                                           // Set location of panel
+			Controls.Add(volumeBarVolume);                                                                                              // Instantiate the volume bar progress
+			SliderHandle.BringToFront();                                                                                                // Bring slider handle forward
 
 			// Event for when hovered over the time progress
 			volumeBarVolume.MouseEnter += new EventHandler(new Action<object, EventArgs>((object sender, EventArgs args) =>
@@ -123,9 +187,10 @@ namespace Windows
 				if (!PlaybackSettings.volumeSelected)
 					volumeBarVolume.BackColor = cSliderUnselected;
 			}));
+			#endregion
 		}
 
-		#region Controls
+		#region Resize constants
 		private const int
 			HTLEFT = 10,
 			HTRIGHT = 11,
@@ -138,6 +203,14 @@ namespace Windows
 			HTTOPBARMOVE = 2;
 		#endregion
 
+		#region Resource name constants
+		const string rWindowBackground = "window-background";
+
+		const string rExitButton = "topbar-exit";
+
+		const string rPlayButton = "musiccontrol-play";
+		#endregion
+
 		#region Sizes and offsets
 		const int TopSize = 20;                         // Size of the top bar
 
@@ -146,7 +219,7 @@ namespace Windows
 
 		const int BorderSize = 5;						// Size of the border, witch is used to resize
 
-		const int TitleOffset = 3;                      // How far the title should be off the top of the window
+		const int TitleOffset = 2;                      // How far the title should be off the top of the window
 
 		const int MusicControlSize = 100;               // How big the MusicControl background should be
 
@@ -205,9 +278,19 @@ namespace Windows
 		Color cSliderSelected = Color.FromArgb(204, 0, 0);
 		#endregion
 
-		#region Panels
+		#region Controls
+		// Panels
 		Panel timeBarProgress = new Panel();
 		Panel volumeBarVolume = new Panel();
+
+		// Buttons
+		Button PlayButton = new Button();
+		Button PlayButtonUnhovered = new Button();
+
+		Button ExitButton = new Button();
+
+		// Labels
+		Label topBarTitle = new Label();
 		#endregion
 
 		#region Variables
@@ -227,29 +310,26 @@ namespace Windows
 			// Draw the music control background
 			e.Graphics.FillRectangle(new SolidBrush(cMusicControl), MusicControl);
 
-			// Resize the quit button to fit the top bar
-			QuitButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
-			QuitButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - ControlButtonsOffset, ControlButtonsOffset);
+			// Position the exit button
+			ExitButton.Location = new Point(this.ClientSize.Width - ExitButton.Width - ControlButtonsOffset, ControlButtonsOffset);
 
 			// Update title location, to keep it in the center
-			Title.Location = new Point(this.ClientSize.Width / 2 - Title.Width / 2, TitleOffset);
+			topBarTitle.Location = new Point(this.ClientSize.Width / 2 - topBarTitle.Width / 2, TitleOffset);
 
 			// Resize and position the maximize button to fit the top bar
 			MaximizeButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
-			MaximizeButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - ControlButtonsOffset - QuitButton.Width, ControlButtonsOffset);
+			MaximizeButton.Location = new Point(this.ClientSize.Width - ExitButton.Width - ControlButtonsOffset - ExitButton.Width, ControlButtonsOffset);
 
 			// Resize and position the normal window button to fit the top bar
 			NormalWindowButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
-			NormalWindowButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - ControlButtonsOffset - QuitButton.Width, ControlButtonsOffset);
+			NormalWindowButton.Location = new Point(this.ClientSize.Width - ExitButton.Width - ControlButtonsOffset - ExitButton.Width, ControlButtonsOffset);
 
 			// Resize and position the minimize button to fit the top bar
 			MinimizeButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
-			MinimizeButton.Location = new Point(this.ClientSize.Width - QuitButton.Width - MaximizeButton.Width - ControlButtonsOffset - MinimizeButton.Width, ControlButtonsOffset);
+			MinimizeButton.Location = new Point(this.ClientSize.Width - ExitButton.Width - MaximizeButton.Width - ControlButtonsOffset - MinimizeButton.Width, ControlButtonsOffset);
 
-			// Resize and position the play button
-			PlayButton.Size = new Size(PlayPauseSize + PlayPauseResize, PlayPauseSize + PlayPauseResize);
+			// Position the play button
 			PlayButton.Location = new Point(this.ClientSize.Width / 2 - PlayButton.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset - (PlayPauseResize / 2));
-			PlayButtonUnhovered.Size = new Size(PlayPauseSize, PlayPauseSize);
 			PlayButtonUnhovered.Location = new Point(this.ClientSize.Width / 2 - PlayButtonUnhovered.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset);
 
 			// Resize and position the pause button
@@ -400,6 +480,7 @@ namespace Windows
 		{
 			timeBarProgress.Location = TimeBar_BG.Location;
 			timeBarProgress.Size = new Size((int)((float)TimeBar_BG.Width * (float)((float)timebarvalue / (float)100f)), timeBarProgress.Height);
+			volumeBarVolume.Location = VolumeBar_BG.Location;
 			base.OnResize(e);
 		}
 
