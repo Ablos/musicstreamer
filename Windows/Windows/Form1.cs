@@ -16,6 +16,7 @@ namespace Windows
 		[DllImport("user32.dll")]
 		public static extern bool ReleaseCapture();
 
+		// Constructor
 		public Form1()
 		{
 			Console.WriteLine(Application.StartupPath);
@@ -24,169 +25,403 @@ namespace Windows
 			this.DoubleBuffered = true;
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
 			this.BackgroundImage = ResourceLoader.loadImage(rWindowBackground);
+			this.MinimumSize = new Size(800, 500);
 
 			#region Instantiate top bar contents
 			// Instatiate topbar title
-			topBarTitle.Anchor = AnchorStyles.Top;
-			topBarTitle.AutoSize = true;
-			topBarTitle.BackColor = Color.Transparent;
-			topBarTitle.Font = new Font("Roboto", 10f, FontStyle.Regular);
-			topBarTitle.ForeColor = Color.White;
-			topBarTitle.Location = new Point(this.ClientSize.Width / 2 - topBarTitle.Width / 2, TitleOffset);
-			topBarTitle.Text = "VIBES";
-			topBarTitle.TextAlign = ContentAlignment.MiddleCenter;
-			topBarTitle.MouseMove += new MouseEventHandler(Mover);
-			Controls.Add(topBarTitle);
+			lTopBarTitle.Anchor = AnchorStyles.Top;
+			lTopBarTitle.AutoSize = true;
+			lTopBarTitle.BackColor = Color.Transparent;
+			lTopBarTitle.Font = new Font("Roboto", 10f, FontStyle.Regular);
+			lTopBarTitle.ForeColor = Color.White;
+			lTopBarTitle.Location = new Point(this.ClientSize.Width / 2 - lTopBarTitle.Width / 2, TitleOffset);
+			lTopBarTitle.Text = "VIBES";
+			lTopBarTitle.TextAlign = ContentAlignment.MiddleCenter;
+			lTopBarTitle.MouseMove += new MouseEventHandler(Mover);
+			Controls.Add(lTopBarTitle);
 
 			// Instantiate exit button
-			ExitButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			ExitButton.BackColor = Color.Transparent;
-			ExitButton.BackgroundImage = ResourceLoader.loadImage(rExitButton);
-			ExitButton.BackgroundImageLayout = ImageLayout.Stretch;
-			ExitButton.FlatAppearance.BorderSize = 0;
-			ExitButton.FlatAppearance.MouseDownBackColor = Color.DarkRed;
-			ExitButton.FlatAppearance.MouseOverBackColor = Color.Red;
-			ExitButton.FlatStyle = FlatStyle.Flat;
-			ExitButton.Location = new Point(this.ClientSize.Width - ExitButton.Width - ControlButtonsOffset, ControlButtonsOffset);
-			ExitButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
-			ExitButton.Click += new EventHandler(QuitButton_Click);
-			Controls.Add(ExitButton);
+			bExitButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			bExitButton.BackColor = Color.Transparent;
+			bExitButton.BackgroundImage = ResourceLoader.loadImage(rExitButton);
+			bExitButton.BackgroundImageLayout = ImageLayout.Stretch;
+			bExitButton.FlatAppearance.BorderSize = 0;
+			bExitButton.FlatAppearance.MouseDownBackColor = Color.DarkRed;
+			bExitButton.FlatAppearance.MouseOverBackColor = Color.Red;
+			bExitButton.FlatStyle = FlatStyle.Flat;
+			bExitButton.Location = new Point(this.ClientSize.Width - bExitButton.Width - ControlButtonsOffset, ControlButtonsOffset);
+			bExitButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
+			bExitButton.Click += new EventHandler(ExitButton_Click);
+			Controls.Add(bExitButton);
+
+			// Instantiate maximize button
+			bMaximizeButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			bMaximizeButton.BackColor = Color.Transparent;
+			bMaximizeButton.BackgroundImage = ResourceLoader.loadImage(rMaximizeButton);
+			bMaximizeButton.BackgroundImageLayout = ImageLayout.Stretch;
+			bMaximizeButton.FlatAppearance.BorderSize = 0;
+			bMaximizeButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(64, 64, 64);
+			bMaximizeButton.FlatAppearance.MouseOverBackColor = Color.Gray;
+			bMaximizeButton.FlatStyle = FlatStyle.Flat;
+			bMaximizeButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
+			bMaximizeButton.Location = new Point(this.ClientSize.Width - bExitButton.Width - ControlButtonsOffset - bExitButton.Width, ControlButtonsOffset);
+			bMaximizeButton.Click += new EventHandler(MaximizeButton_Click);
+			Controls.Add(bMaximizeButton);
+
+			//Instantiate exit maximize button
+			bExitMaximizeButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			bExitMaximizeButton.BackColor = Color.Transparent;
+			bExitMaximizeButton.BackgroundImage = ResourceLoader.loadImage(rExitMaximizeButton);
+			bExitMaximizeButton.BackgroundImageLayout = ImageLayout.Stretch;
+			bExitMaximizeButton.FlatAppearance.BorderSize = 0;
+			bExitMaximizeButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(64, 64, 64);
+			bExitMaximizeButton.FlatAppearance.MouseOverBackColor = Color.Gray;
+			bExitMaximizeButton.FlatStyle = FlatStyle.Flat;
+			bExitMaximizeButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
+			bExitMaximizeButton.Location = new Point(this.ClientSize.Width - bExitButton.Width - ControlButtonsOffset - bExitButton.Width, ControlButtonsOffset);
+			bExitMaximizeButton.Visible = false;
+			bExitMaximizeButton.Click += new EventHandler(ExitMaximizeButton_Click);
+			Controls.Add(bExitMaximizeButton);
+
+			// Instantiate minimize button
+			bMinimizeButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			bMinimizeButton.BackColor = Color.Transparent;
+			bMinimizeButton.BackgroundImage = ResourceLoader.loadImage(rMinimizeButton);
+			bMinimizeButton.BackgroundImageLayout = ImageLayout.Stretch;
+			bMinimizeButton.FlatAppearance.BorderSize = 0;
+			bMinimizeButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(64, 64, 64);
+			bMinimizeButton.FlatAppearance.MouseOverBackColor = Color.Gray;
+			bMinimizeButton.FlatStyle = FlatStyle.Flat;
+			bMinimizeButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
+			bMinimizeButton.Location = new Point(this.ClientSize.Width - bExitButton.Width - bMaximizeButton.Width - ControlButtonsOffset - bMinimizeButton.Width, ControlButtonsOffset);
+			bMinimizeButton.Click += new EventHandler(MinimizeButton_Click);
+			Controls.Add(bMinimizeButton);
 			#endregion
 
-			#region Instantiate play button
+			#region Instantiate playpause button
 			// Settings for play button
-			PlayButton.BackColor = Color.Transparent;
-			PlayButton.BackgroundImage = ResourceLoader.loadImage(rPlayButton);
-			PlayButton.BackgroundImageLayout = ImageLayout.Stretch;
-			PlayButton.FlatAppearance.BorderSize = 0;
-			PlayButton.FlatAppearance.MouseDownBackColor = Color.Transparent;
-			PlayButton.FlatAppearance.MouseOverBackColor = Color.Transparent;
-			PlayButton.FlatStyle = FlatStyle.Flat;
-			PlayButton.Size = new Size(PlayPauseSize + PlayPauseResize, PlayPauseSize + PlayPauseResize);
-			PlayButton.Location = new Point(this.ClientSize.Width / 2 - PlayButton.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset - (PlayPauseResize / 2));
-			PlayButton.Visible = false;
-			PlayButton.Click += new EventHandler(PlayButton_Click);
-			PlayButton.MouseLeave += new EventHandler(PlayMouseLeave);
-			PlayButton.Font = new Font("Roboto", 10, FontStyle.Regular);
-			Controls.Add(PlayButton);
+			bPlayPauseButton.BackColor = Color.Transparent;
+			bPlayPauseButton.BackgroundImage = ResourceLoader.loadImage(rPlayButton);
+			bPlayPauseButton.BackgroundImageLayout = ImageLayout.Stretch;
+			bPlayPauseButton.FlatAppearance.BorderSize = 0;
+			bPlayPauseButton.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			bPlayPauseButton.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			bPlayPauseButton.FlatStyle = FlatStyle.Flat;
+			bPlayPauseButton.Size = new Size(PlayPauseSize + PlayPauseResize, PlayPauseSize + PlayPauseResize);
+			bPlayPauseButton.Location = new Point(this.ClientSize.Width / 2 - bPlayPauseButton.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset - (PlayPauseResize / 2));
+			bPlayPauseButton.Visible = false;
+			bPlayPauseButton.Click += new EventHandler(PlayPauseButton_Click);
+			bPlayPauseButton.MouseLeave += new EventHandler(PlayMouseLeave);
+			Controls.Add(bPlayPauseButton);
 
 			// Settings for unhovered play button
-			PlayButtonUnhovered.BackColor = Color.Transparent;
-			PlayButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rPlayButton);
-			PlayButtonUnhovered.BackgroundImageLayout = ImageLayout.Stretch;
-			PlayButtonUnhovered.FlatAppearance.BorderSize = 0;
-			PlayButtonUnhovered.FlatAppearance.MouseDownBackColor = Color.Transparent;
-			PlayButtonUnhovered.FlatAppearance.MouseOverBackColor = Color.Transparent;
-			PlayButtonUnhovered.FlatStyle = FlatStyle.Flat;
-			PlayButtonUnhovered.Size = new Size(PlayPauseSize, PlayPauseSize);
-			PlayButtonUnhovered.Location = new Point(this.ClientSize.Width / 2 - PlayButtonUnhovered.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset);
-			PlayButtonUnhovered.MouseEnter += new EventHandler(PlayMouseEnter);
-			Controls.Add(PlayButtonUnhovered);
+			bPlayPauseButtonUnhovered.BackColor = Color.Transparent;
+			bPlayPauseButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rPlayButton);
+			bPlayPauseButtonUnhovered.BackgroundImageLayout = ImageLayout.Stretch;
+			bPlayPauseButtonUnhovered.FlatAppearance.BorderSize = 0;
+			bPlayPauseButtonUnhovered.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			bPlayPauseButtonUnhovered.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			bPlayPauseButtonUnhovered.FlatStyle = FlatStyle.Flat;
+			bPlayPauseButtonUnhovered.Size = new Size(PlayPauseSize, PlayPauseSize);
+			bPlayPauseButtonUnhovered.Location = new Point(this.ClientSize.Width / 2 - bPlayPauseButtonUnhovered.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset);
+			bPlayPauseButtonUnhovered.MouseEnter += new EventHandler(PlayMouseEnter);
+			Controls.Add(bPlayPauseButtonUnhovered);
+			#endregion
+
+			#region Instantiate back and skip button
+			// Instantiate skip button
+			bSkipButton.BackColor = Color.Transparent;
+			bSkipButton.BackgroundImage = ResourceLoader.loadImage(rSkipButton);
+			bSkipButton.BackgroundImageLayout = ImageLayout.Stretch;
+			bSkipButton.FlatAppearance.BorderSize = 0;
+			bSkipButton.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			bSkipButton.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			bSkipButton.FlatStyle = FlatStyle.Flat;
+			bSkipButton.Size = new Size(SkipBackButtonSize + SkipBackResize, SkipBackButtonSize + SkipBackResize);
+			bSkipButton.Location = new Point(bPlayPauseButton.Location.X + bPlayPauseButton.Width + SkipBackOffset - (SkipBackResize / 2), bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bSkipButton.Height) / 2));
+			bSkipButton.Visible = false;
+			bSkipButton.MouseLeave += new EventHandler(SkipMouseLeave);
+			bSkipButton.Click += new EventHandler(SkipButton_Click);
+			Controls.Add(bSkipButton);
+
+			// Instantiate unhovered skip button
+			bSkipButtonUnhovered.BackColor = Color.Transparent;
+			bSkipButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rSkipButton);
+			bSkipButtonUnhovered.BackgroundImageLayout = ImageLayout.Stretch;
+			bSkipButtonUnhovered.FlatAppearance.BorderSize = 0;
+			bSkipButtonUnhovered.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			bSkipButtonUnhovered.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			bSkipButtonUnhovered.FlatStyle = FlatStyle.Flat;
+			bSkipButtonUnhovered.Size = new Size(SkipBackButtonSize, SkipBackButtonSize);
+			bSkipButtonUnhovered.Location = new Point(bPlayPauseButton.Location.X + bPlayPauseButton.Width + SkipBackOffset, bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bSkipButtonUnhovered.Height) / 2));
+			bSkipButtonUnhovered.MouseEnter += new EventHandler(SkipMouseEnter);
+			Controls.Add(bSkipButtonUnhovered);
+
+			// Instantiate back button
+			bBackButton.BackColor = Color.Transparent;
+			bBackButton.BackgroundImage = ResourceLoader.loadImage(rBackButton);
+			bBackButton.BackgroundImageLayout = ImageLayout.Stretch;
+			bBackButton.FlatAppearance.BorderSize = 0;
+			bBackButton.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			bBackButton.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			bBackButton.FlatStyle = FlatStyle.Flat;
+			bBackButton.Size = new Size(SkipBackButtonSize + SkipBackResize, SkipBackButtonSize + SkipBackResize);
+			bBackButton.Location = new Point(bPlayPauseButton.Location.X + bPlayPauseButton.Width + SkipBackOffset - (SkipBackResize / 2), bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bSkipButton.Height) / 2));
+			bBackButton.Visible = false;
+			bBackButton.MouseLeave += new EventHandler(BackMouseLeave);
+			bBackButton.Click += new EventHandler(BackButton_Click);
+			Controls.Add(bBackButton);
+
+			// Instantiate unhovered back button
+			bBackButtonUnhovered.BackColor = Color.Transparent;
+			bBackButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rBackButton);
+			bBackButtonUnhovered.BackgroundImageLayout = ImageLayout.Stretch;
+			bBackButtonUnhovered.FlatAppearance.BorderSize = 0;
+			bBackButtonUnhovered.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			bBackButtonUnhovered.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			bBackButtonUnhovered.FlatStyle = FlatStyle.Flat;
+			bBackButtonUnhovered.Size = new Size(SkipBackButtonSize, SkipBackButtonSize);
+			bBackButtonUnhovered.Location = new Point(bPlayPauseButton.Location.X - bBackButtonUnhovered.Width - SkipBackOffset, bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bBackButtonUnhovered.Height) / 2));
+			bBackButtonUnhovered.MouseEnter += new EventHandler(BackMouseEnter);
+			Controls.Add(bBackButtonUnhovered);
+			#endregion
+
+			#region Instantiate shuffle button
+			// Instantiate shuffle button
+			bShuffleButton.BackColor = Color.Transparent;
+			bShuffleButton.BackgroundImage = ResourceLoader.loadImage(rShuffleButtonDisabled);
+			bShuffleButton.BackgroundImageLayout = ImageLayout.Stretch;
+			bShuffleButton.FlatAppearance.BorderSize = 0;
+			bShuffleButton.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			bShuffleButton.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			bShuffleButton.FlatStyle = FlatStyle.Flat;
+			bShuffleButton.Size = new Size(ShuffleRepeatButtonSize + ShuffleRepeatResize, ShuffleRepeatButtonSize + ShuffleRepeatResize);
+			bShuffleButton.Location = new Point(bBackButton.Location.X - bShuffleButton.Width - ShuffleRepeatOffset + (ShuffleRepeatResize / 2), bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bShuffleButton.Height) / 2));
+			bShuffleButton.Visible = false;
+			bShuffleButton.Click += new EventHandler(ShuffleButton_Click);
+			bShuffleButton.MouseLeave += new EventHandler(ShuffleMouseLeave);
+			Controls.Add(bShuffleButton);
+
+			// Instantiate unhovered shuffle button
+			bShuffleButtonUnhovered.BackColor = Color.Transparent;
+			bShuffleButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rShuffleButtonDisabled);
+			bShuffleButtonUnhovered.BackgroundImageLayout = ImageLayout.Stretch;
+			bShuffleButtonUnhovered.FlatAppearance.BorderSize = 0;
+			bShuffleButtonUnhovered.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			bShuffleButtonUnhovered.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			bShuffleButtonUnhovered.FlatStyle = FlatStyle.Flat;
+			bShuffleButtonUnhovered.Size = new Size(ShuffleRepeatButtonSize, ShuffleRepeatButtonSize);
+			bShuffleButtonUnhovered.Location = new Point(bBackButton.Location.X - bShuffleButtonUnhovered.Width - ShuffleRepeatOffset, bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bShuffleButtonUnhovered.Height) / 2));
+			bShuffleButtonUnhovered.Click += new EventHandler(ShuffleButton_Click);
+			bShuffleButtonUnhovered.MouseEnter += new EventHandler(ShuffleMouseEnter);
+			Controls.Add(bShuffleButtonUnhovered);
+			#endregion
+
+			#region Instantiate repeat button
+			// Instantiate repeat button
+			bRepeatButton.BackColor = Color.Transparent;
+			bRepeatButton.BackgroundImage = ResourceLoader.loadImage(rRepeatButtonDisabled);
+			bRepeatButton.BackgroundImageLayout = ImageLayout.Stretch;
+			bRepeatButton.FlatAppearance.BorderSize = 0;
+			bRepeatButton.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			bRepeatButton.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			bRepeatButton.FlatStyle = FlatStyle.Flat;
+			bRepeatButton.Size = new Size(ShuffleRepeatButtonSize + ShuffleRepeatResize, ShuffleRepeatButtonSize + ShuffleRepeatResize);
+			bRepeatButton.Location = new Point(bSkipButton.Location.X + bSkipButton.Width + ShuffleRepeatOffset - (ShuffleRepeatResize / 2), bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bRepeatButton.Height) / 2));
+			bRepeatButton.Visible = false;
+			bRepeatButton.Click += new EventHandler(RepeatButton_Click);
+			bRepeatButton.MouseLeave += new EventHandler(RepeatMouseLeave);
+			Controls.Add(bRepeatButton);
+
+			// Instantiate unhovered repeat button
+			bRepeatButtonUnhovered.BackColor = Color.Transparent;
+			bRepeatButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rRepeatButtonDisabled);
+			bRepeatButtonUnhovered.BackgroundImageLayout = ImageLayout.Stretch;
+			bRepeatButtonUnhovered.FlatAppearance.BorderSize = 0;
+			bRepeatButtonUnhovered.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			bRepeatButtonUnhovered.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			bRepeatButtonUnhovered.FlatStyle = FlatStyle.Flat;
+			bRepeatButtonUnhovered.Size = new Size(ShuffleRepeatButtonSize, ShuffleRepeatButtonSize);
+			bRepeatButtonUnhovered.Location = new Point(bSkipButton.Location.X + bSkipButton.Width + ShuffleRepeatOffset, bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bRepeatButtonUnhovered.Height) / 2));
+			bRepeatButtonUnhovered.MouseEnter += new EventHandler(RepeatMouseEnter);
+			Controls.Add(bRepeatButtonUnhovered);
 			#endregion
 
 			#region Instantiate Timebar
 			// Timebar settings
-			timeBarProgress.Size = new Size(0, TimeBar_BG.Height);                      // Set scale for panel
-			SliderHandle.Size = new Size(SliderHandleRadius, SliderHandleRadius);       // Resize handle for all sliders
-			timeBarProgress.BackColor = cSliderUnselected;                              // Color the timeBarProgress panel
-			timeBarProgress.Location = TimeBar_BG.Location;                             // Set location of panel
-			Controls.Add(timeBarProgress);                                              // Instantiate the time bar progress
-			SliderHandle.BringToFront();                                                // Bring slider handle forward
+			pTimeBarProgress.Size = new Size(0, TimeBar_BG.Height);                      // Set scale for panel
+			pSliderHandle.Size = new Size(SliderHandleRadius, SliderHandleRadius);       // Resize handle for all sliders
+			pTimeBarProgress.BackColor = cSliderUnselected;                              // Color the timeBarProgress panel
+			pTimeBarProgress.Location = TimeBar_BG.Location;                             // Set location of panel
+			Controls.Add(pTimeBarProgress);                                              // Instantiate the time bar progress
+			pSliderHandle.BringToFront();                                                // Bring slider handle forward
 
 			// Event for when hovered over the time progress
-			timeBarProgress.MouseEnter += new EventHandler(new Action<object, EventArgs>((object sender, EventArgs args) =>
+			pTimeBarProgress.MouseEnter += new EventHandler(new Action<object, EventArgs>((object sender, EventArgs args) =>
 			{
 				PlaybackSettings.timeSelected = true;
-				timeBarProgress.BackColor = cSliderSelected;
-				volumeBarVolume.BackColor = cSliderUnselected;
+				pTimeBarProgress.BackColor = cSliderSelected;
+				pVolumeBarVolume.BackColor = cSliderUnselected;
 				Update();
 
 				if (!PlaybackSettings.edittingTime)
 				{
-					SliderHandle.Location = new Point(timeBarProgress.Location.X + timeBarProgress.Width - (SliderHandle.Width / 2), timeBarProgress.Location.Y - (SliderHandle.Height / 2) + (timeBarProgress.Height / 2));
-					SliderHandle.Visible = true;
-					SliderHandle.BringToFront();
+					pSliderHandle.Location = new Point(pTimeBarProgress.Location.X + pTimeBarProgress.Width - (pSliderHandle.Width / 2), pTimeBarProgress.Location.Y - (pSliderHandle.Height / 2) + (pTimeBarProgress.Height / 2));
+					pSliderHandle.Visible = true;
+					pSliderHandle.BringToFront();
 				}
 			}));
 
 			// Event for when clicked on time progress
-			timeBarProgress.MouseDown += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
+			pTimeBarProgress.MouseDown += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
 			{
 				PlaybackSettings.edittingTime = true;
-				timeBarProgress.Size = new Size(args.Location.X, timeBarProgress.Height);
-				SliderHandle.Location = new Point(timeBarProgress.Location.X + timeBarProgress.Width - (SliderHandle.Width / 2), timeBarProgress.Location.Y - (SliderHandle.Height / 2) + (timeBarProgress.Height / 2));
+				pTimeBarProgress.Size = new Size(args.Location.X, pTimeBarProgress.Height);
+				pSliderHandle.Location = new Point(pTimeBarProgress.Location.X + pTimeBarProgress.Width - (pSliderHandle.Width / 2), pTimeBarProgress.Location.Y - (pSliderHandle.Height / 2) + (pTimeBarProgress.Height / 2));
 			}));
 
 			// Event for when mouse moves on time progress
-			timeBarProgress.MouseMove += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
+			pTimeBarProgress.MouseMove += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
 			{
 				if (PlaybackSettings.edittingTime)
 				{
-					timeBarProgress.Size = new Size((int)Clamp(args.Location.X, 0, TimeBar_BG.Width), timeBarProgress.Height);
-					SliderHandle.Location = new Point(timeBarProgress.Location.X + timeBarProgress.Width - (SliderHandle.Width / 2), timeBarProgress.Location.Y - (SliderHandle.Height / 2) + (timeBarProgress.Height / 2));
+					pTimeBarProgress.Size = new Size((int)Clamp(args.Location.X, 0, TimeBar_BG.Width), pTimeBarProgress.Height);
+					pSliderHandle.Location = new Point(pTimeBarProgress.Location.X + pTimeBarProgress.Width - (pSliderHandle.Width / 2), pTimeBarProgress.Location.Y - (pSliderHandle.Height / 2) + (pTimeBarProgress.Height / 2));
 				}
 			}));
 
 			// Event for when mouse up on time progress
-			timeBarProgress.MouseUp += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
+			pTimeBarProgress.MouseUp += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
 			{
 				PlaybackSettings.edittingTime = false;
 				OnTimeBarValueChanged?.Invoke(GetTimeBarValue());
 				if (!PlaybackSettings.timeSelected)
-					timeBarProgress.BackColor = cSliderUnselected;
+					pTimeBarProgress.BackColor = cSliderUnselected;
 			}));
+
+			// Instatiate time passed label
+			lSongTimePassed.AutoSize = true;
+			lSongTimePassed.BackColor = Color.Transparent;
+			lSongTimePassed.Font = new Font("Roboto", 8f, FontStyle.Regular);
+			lSongTimePassed.ForeColor = Color.FromArgb(212, 212, 212);
+			lSongTimePassed.Text = "0:00";
+			lSongTimePassed.TextAlign = ContentAlignment.MiddleCenter;
+			lSongTimePassed.Location = new Point(TimeBar_BG.X - lSongTimePassed.Width - TimeIndicatorsOffset, TimeBar_BG.Y + (TimeBar_BG.Height / 2) - (lSongTimePassed.Height / 2));
+			Controls.Add(lSongTimePassed);
+
+			// Instantiate total time label
+			lSongTotalTime.AutoSize = true;
+			lSongTotalTime.BackColor = Color.Transparent;
+			lSongTotalTime.Font = new Font("Roboto", 8f, FontStyle.Regular);
+			lSongTotalTime.ForeColor = Color.FromArgb(212, 212, 212);
+			lSongTotalTime.Text = "0:00";
+			lSongTotalTime.TextAlign = ContentAlignment.MiddleCenter;
+			lSongTotalTime.Location = new Point(TimeBar_BG.X + TimeBar_BG.Width + TimeIndicatorsOffset, TimeBar_BG.Y + (TimeBar_BG.Height / 2) - (lSongTotalTime.Height / 2));
+			Controls.Add(lSongTotalTime);
 			#endregion
 
 			#region Instantiate Volumebar
 			// Timebar settings
-			volumeBarVolume.Size = new Size((int)(VolumeBar_BG.Width * ((float)PlaybackSettings.volume / 100)), VolumeBar_BG.Height);   // Set scale for panel
-			volumeBarVolume.BackColor = cSliderUnselected;                                                                              // Color the timeBarProgress panel
-			volumeBarVolume.Location = VolumeBar_BG.Location;                                                                           // Set location of panel
-			Controls.Add(volumeBarVolume);                                                                                              // Instantiate the volume bar progress
-			SliderHandle.BringToFront();                                                                                                // Bring slider handle forward
+			pVolumeBarVolume.Size = new Size((int)(VolumeBar_BG.Width * ((float)PlaybackSettings.volume / 100)), VolumeBar_BG.Height);   // Set scale for panel
+			pVolumeBarVolume.BackColor = cSliderUnselected;                                                                              // Color the timeBarProgress panel
+			pVolumeBarVolume.Location = VolumeBar_BG.Location;                                                                           // Set location of panel
+			Controls.Add(pVolumeBarVolume);                                                                                              // Instantiate the volume bar progress
+			pSliderHandle.BringToFront();                                                                                                // Bring slider handle forward
 
 			// Event for when hovered over the time progress
-			volumeBarVolume.MouseEnter += new EventHandler(new Action<object, EventArgs>((object sender, EventArgs args) =>
+			pVolumeBarVolume.MouseEnter += new EventHandler(new Action<object, EventArgs>((object sender, EventArgs args) =>
 			{
 				PlaybackSettings.volumeSelected = true;
-				volumeBarVolume.BackColor = cSliderSelected;
-				timeBarProgress.BackColor = cSliderUnselected;
+				pVolumeBarVolume.BackColor = cSliderSelected;
+				pTimeBarProgress.BackColor = cSliderUnselected;
 				Update();
 
 				if (!PlaybackSettings.edittingVolume)
 				{
-					SliderHandle.Location = new Point(volumeBarVolume.Location.X + volumeBarVolume.Width - (SliderHandle.Width / 2), volumeBarVolume.Location.Y - (SliderHandle.Height / 2) + (volumeBarVolume.Height / 2));
-					SliderHandle.Visible = true;
-					SliderHandle.BringToFront();
+					pSliderHandle.Location = new Point(pVolumeBarVolume.Location.X + pVolumeBarVolume.Width - (pSliderHandle.Width / 2), pVolumeBarVolume.Location.Y - (pSliderHandle.Height / 2) + (pVolumeBarVolume.Height / 2));
+					pSliderHandle.Visible = true;
+					pSliderHandle.BringToFront();
 				}
 			}));
 
 			// Event for when clicked on time progress
-			volumeBarVolume.MouseDown += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
+			pVolumeBarVolume.MouseDown += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
 			{
 				PlaybackSettings.edittingVolume = true;
-				volumeBarVolume.Size = new Size(args.Location.X, volumeBarVolume.Height);
-				SliderHandle.Location = new Point(volumeBarVolume.Location.X + volumeBarVolume.Width - (SliderHandle.Width / 2), volumeBarVolume.Location.Y - (SliderHandle.Height / 2) + (volumeBarVolume.Height / 2));
+				pVolumeBarVolume.Size = new Size(args.Location.X, pVolumeBarVolume.Height);
+				pSliderHandle.Location = new Point(pVolumeBarVolume.Location.X + pVolumeBarVolume.Width - (pSliderHandle.Width / 2), pVolumeBarVolume.Location.Y - (pSliderHandle.Height / 2) + (pVolumeBarVolume.Height / 2));
 			}));
 
 			// Event for when mouse moves on time progress
-			volumeBarVolume.MouseMove += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
+			pVolumeBarVolume.MouseMove += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
 			{
 				if (PlaybackSettings.edittingVolume)
 				{
-					volumeBarVolume.Size = new Size((int)Clamp(args.Location.X, 0, VolumeBar_BG.Width), volumeBarVolume.Height);
-					SliderHandle.Location = new Point(volumeBarVolume.Location.X + volumeBarVolume.Width - (SliderHandle.Width / 2), volumeBarVolume.Location.Y - (SliderHandle.Height / 2) + (volumeBarVolume.Height / 2));
+					pVolumeBarVolume.Size = new Size((int)Clamp(args.Location.X, 0, VolumeBar_BG.Width), pVolumeBarVolume.Height);
+					pSliderHandle.Location = new Point(pVolumeBarVolume.Location.X + pVolumeBarVolume.Width - (pSliderHandle.Width / 2), pVolumeBarVolume.Location.Y - (pSliderHandle.Height / 2) + (pVolumeBarVolume.Height / 2));
 				}
 			}));
 
 			// Event for when mouse up on time progress
-			volumeBarVolume.MouseUp += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
+			pVolumeBarVolume.MouseUp += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
 			{
 				PlaybackSettings.edittingVolume = false;
 				OnTimeBarValueChanged?.Invoke(GetVolumeBarValue());
 				if (!PlaybackSettings.volumeSelected)
-					volumeBarVolume.BackColor = cSliderUnselected;
+					pVolumeBarVolume.BackColor = cSliderUnselected;
 			}));
+
+			// Instantiate volume speaker
+			pVolumeSpeaker.BackColor = Color.Transparent;
+			pVolumeSpeaker.Image = ResourceLoader.loadImage(rVolumeSpeaker);
+			pVolumeSpeaker.SizeMode = PictureBoxSizeMode.StretchImage;
+			pVolumeSpeaker.Location = new Point(VolumeBar_BG.X - pVolumeSpeaker.Width - VolumeSpeakerOffset, VolumeBar_BG.Y + (VolumeBar_BG.Height / 2) - (pVolumeSpeaker.Height / 2));
+			pVolumeSpeaker.Size = new Size(15, 15);
+			Controls.Add(pVolumeSpeaker);
+			#endregion
+
+			#region Instantiate slider handle
+			// Instantiate slider handle
+			pSliderHandle.BackColor = Color.Transparent;
+			pSliderHandle.BackgroundImage = ResourceLoader.loadImage(rSliderHandle);
+			pSliderHandle.BackgroundImageLayout = ImageLayout.Stretch;
+			pSliderHandle.Size = new Size(10, 10);
+			pSliderHandle.Visible = false;
+			pSliderHandle.MouseDown += new MouseEventHandler(SliderHandleMouseDown);
+			pSliderHandle.MouseEnter += new EventHandler(SliderHandleMouseEnter);
+			pSliderHandle.MouseLeave += new EventHandler(SliderHandleMouseLeave);
+			pSliderHandle.MouseMove += new MouseEventHandler(SliderHandleMouseMove);
+			pSliderHandle.MouseUp += new MouseEventHandler(SliderHandleMouseUp);
+			Controls.Add(pSliderHandle);
+			#endregion
+
+			#region Instantiate song info
+			// Instantiate cover
+			pSongCover.Image = ResourceLoader.loadImage(rEmptyCover);
+			pSongCover.SizeMode = PictureBoxSizeMode.StretchImage;
+			pSongCover.Location = new Point(MusicControl.X + ((MusicControl.Height - (MusicControl.Height / 100 * CoverPercentage)) / 2), MusicControl.Y + ((MusicControl.Height - (MusicControl.Height / 100 * CoverPercentage)) / 2));
+			pSongCover.Size = new Size(MusicControl.Height / 100 * CoverPercentage, MusicControl.Height / 100 * CoverPercentage);
+			Controls.Add(pSongCover);
+
+			// Instantiates song title label
+			lSongTitle.AutoSize = true;
+			lSongTitle.BackColor = Color.Transparent;
+			lSongTitle.Font = new Font("Roboto Medium", 10f, FontStyle.Regular);
+			lSongTitle.ForeColor = Color.FromArgb(226, 226, 226);
+			lSongTitle.Text = "SONGTITLE";
+			lSongTitle.TextAlign = ContentAlignment.BottomLeft;
+			lSongTitle.Location = new Point(pSongCover.Location.X + pSongCover.Width + SongInfoOffset, pSongCover.Location.Y + (pSongCover.Height / 2) - ((lSongTitle.Height + lSongArtist.Height) / 2));
+			Controls.Add(lSongTitle);
+
+			// Instantiates song artist label
+			lSongArtist.AutoSize = true;
+			lSongArtist.BackColor = Color.Transparent;
+			lSongArtist.Font = new Font("Roboto", 9f, FontStyle.Regular);
+			lSongArtist.ForeColor = Color.FromArgb(174, 174, 174);
+			lSongArtist.Text = "SONGARTIST";
+			lSongArtist.TextAlign = ContentAlignment.TopLeft;
+			lSongArtist.Location = new Point(pSongCover.Location.X + pSongCover.Width + SongInfoOffset + 2, pSongCover.Location.Y + (pSongCover.Height / 2) + (lSongTitle.Height - ((lSongTitle.Height + lSongArtist.Height) / 2)));
+			Controls.Add(lSongArtist);
 			#endregion
 		}
 
@@ -205,10 +440,25 @@ namespace Windows
 
 		#region Resource name constants
 		const string rWindowBackground = "window-background";
+		const string rEmptyCover = "empty-cover";
+
+		const string rSliderHandle = "slider-handle";
 
 		const string rExitButton = "topbar-exit";
+		const string rMaximizeButton = "topbar-maximize";
+		const string rExitMaximizeButton = "topbar-exit-maximize";
+		const string rMinimizeButton = "topbar-minimize";
 
 		const string rPlayButton = "musiccontrol-play";
+		const string rPauseButton = "musiccontrol-pause";
+		const string rSkipButton = "musiccontrol-skip";
+		const string rBackButton = "musiccontrol-back";
+		const string rShuffleButtonDisabled = "musiccontrol-shuffle-disabled";
+		const string rShuffleButtonEnabled = "musiccontrol-shuffle-enabled";
+		const string rRepeatButtonDisabled = "musiccontrol-repeat-disabled";
+		const string rRepeatButtonEnabled = "musiccontrol-repeat-enabled";
+		const string rRepeatButtonOneEnabled = "musiccontrol-repeat-one-enabled";
+		const string rVolumeSpeaker = "musiccontrol-speaker";
 		#endregion
 
 		#region Sizes and offsets
@@ -235,14 +485,19 @@ namespace Windows
 		const int ShuffleRepeatOffset = 10;             // How far should the shuffle and repeat button be from the skip and back button
 		const int ShuffleRepeatResize = 5;              // How far should the shuffle and repeat button stretch on hover
 
-		const int TimeBarPercentage = 35;               // How much percentage the time bar should take from the whole width of the window
+		const int TimeBarPercentage = 30;               // How much percentage the time bar should take from the whole width of the window
 		const int TimeBarOffset = 27;                   // How far the timebar should be off the bottom
+		const int TimeIndicatorsOffset = 5;				// How far the time indicators should be from the timebar
 
 		const int VolumeBarWidth = 100;					// How much wide the volume bar should be
-		const int VolumeBarOffset = 20;					// How far the volumebar should be off the right of the window
+		const int VolumeBarOffset = 20;                 // How far the volumebar should be off the right of the window
+		const int VolumeSpeakerOffset = 10;				// How far should the volume speaker be from the volume bar
 
 		const int SliderHeight = 5;						// How high a slider should be
-		const int SliderHandleRadius = 12;				// Radius of slider handle
+		const int SliderHandleRadius = 12;              // Radius of slider handle
+
+		const int CoverPercentage = 70;                 // How much space the cover should take from the music control in height
+		const int SongInfoOffset = 5;					// How far the song info should be from the cover
 		#endregion
 
 		#region Control Rectangles
@@ -280,17 +535,37 @@ namespace Windows
 
 		#region Controls
 		// Panels
-		Panel timeBarProgress = new Panel();
-		Panel volumeBarVolume = new Panel();
+		Panel pTimeBarProgress = new Panel();
+		Panel pVolumeBarVolume = new Panel();
+		Panel pSliderHandle = new Panel();
 
 		// Buttons
-		Button PlayButton = new Button();
-		Button PlayButtonUnhovered = new Button();
+		Button bPlayPauseButton = new Button();
+		Button bPlayPauseButtonUnhovered = new Button();
+		Button bSkipButton = new Button();
+		Button bSkipButtonUnhovered = new Button();
+		Button bBackButton = new Button();
+		Button bBackButtonUnhovered = new Button();
+		Button bShuffleButton = new Button();
+		Button bShuffleButtonUnhovered = new Button();
+		Button bRepeatButton = new Button();
+		Button bRepeatButtonUnhovered = new Button();
 
-		Button ExitButton = new Button();
+		Button bExitButton = new Button();
+		Button bMaximizeButton = new Button();
+		Button bExitMaximizeButton = new Button();
+		Button bMinimizeButton = new Button();
 
 		// Labels
-		Label topBarTitle = new Label();
+		Label lTopBarTitle = new Label();
+		Label lSongTimePassed = new Label();
+		Label lSongTotalTime = new Label();
+		Label lSongTitle = new Label();
+		Label lSongArtist = new Label();
+
+		// Picture boxes
+		PictureBox pSongCover = new PictureBox();
+		PictureBox pVolumeSpeaker = new PictureBox();
 		#endregion
 
 		#region Variables
@@ -301,6 +576,7 @@ namespace Windows
 		public _OnVolumeBarValueChanged OnVolumeBarValueChanged;
 		#endregion
 
+		#region Forms functions
 		// Draw graphics
 		protected override void OnPaint(PaintEventArgs e)
 		{
@@ -309,83 +585,14 @@ namespace Windows
 
 			// Draw the music control background
 			e.Graphics.FillRectangle(new SolidBrush(cMusicControl), MusicControl);
-
-			// Position the exit button
-			ExitButton.Location = new Point(this.ClientSize.Width - ExitButton.Width - ControlButtonsOffset, ControlButtonsOffset);
-
-			// Update title location, to keep it in the center
-			topBarTitle.Location = new Point(this.ClientSize.Width / 2 - topBarTitle.Width / 2, TitleOffset);
-
-			// Resize and position the maximize button to fit the top bar
-			MaximizeButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
-			MaximizeButton.Location = new Point(this.ClientSize.Width - ExitButton.Width - ControlButtonsOffset - ExitButton.Width, ControlButtonsOffset);
-
-			// Resize and position the normal window button to fit the top bar
-			NormalWindowButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
-			NormalWindowButton.Location = new Point(this.ClientSize.Width - ExitButton.Width - ControlButtonsOffset - ExitButton.Width, ControlButtonsOffset);
-
-			// Resize and position the minimize button to fit the top bar
-			MinimizeButton.Size = new Size(TopSize - ControlButtonsResize, TopSize - ControlButtonsResize);
-			MinimizeButton.Location = new Point(this.ClientSize.Width - ExitButton.Width - MaximizeButton.Width - ControlButtonsOffset - MinimizeButton.Width, ControlButtonsOffset);
-
-			// Position the play button
-			PlayButton.Location = new Point(this.ClientSize.Width / 2 - PlayButton.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset - (PlayPauseResize / 2));
-			PlayButtonUnhovered.Location = new Point(this.ClientSize.Width / 2 - PlayButtonUnhovered.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset);
-
-			// Resize and position the pause button
-			PauseButton.Size = new Size(PlayPauseSize + PlayPauseResize, PlayPauseSize + PlayPauseResize);
-			PauseButton.Location = new Point(this.ClientSize.Width / 2 - PauseButton.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset - (PlayPauseResize / 2));
-			PauseButtonUnhovered.Size = new Size(PlayPauseSize, PlayPauseSize);
-			PauseButtonUnhovered.Location = new Point(this.ClientSize.Width / 2 - PauseButtonUnhovered.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset);
-
-			// Resize and position the skip button
-			SkipButton.Size = new Size(SkipBackButtonSize + SkipBackResize, SkipBackButtonSize + SkipBackResize);
-			SkipButton.Location = new Point(PlayButton.Location.X + PlayButton.Width + SkipBackOffset - (SkipBackResize / 2), PlayButton.Location.Y + ((PlayButton.Height - SkipButton.Height) / 2));
-			SkipButtonUnhovered.Size = new Size(SkipBackButtonSize, SkipBackButtonSize);
-			SkipButtonUnhovered.Location = new Point(PlayButton.Location.X +PlayButton.Width + SkipBackOffset, PlayButton.Location.Y + ((PlayButton.Height - SkipButtonUnhovered.Height) / 2));
-
-			// Resize and position the back button
-			BackButton.Size = new Size(SkipBackButtonSize + SkipBackResize, SkipBackButtonSize + SkipBackResize);
-			BackButton.Location = new Point(PlayButton.Location.X - BackButton.Width - SkipBackOffset + (SkipBackResize / 2), PlayButton.Location.Y + ((PlayButton.Height - BackButton.Height) / 2));
-			BackButtonUnhovered.Size = new Size(SkipBackButtonSize, SkipBackButtonSize);
-			BackButtonUnhovered.Location = new Point(PlayButton.Location.X - BackButtonUnhovered.Width - SkipBackOffset, PlayButton.Location.Y + ((PlayButton.Height - BackButtonUnhovered.Height) / 2));
-
-			// Resize and position the shuffle button
-			ShuffleButton.Size = new Size(ShuffleRepeatButtonSize + ShuffleRepeatResize, ShuffleRepeatButtonSize + ShuffleRepeatResize);
-			ShuffleButton.Location = new Point(BackButton.Location.X - ShuffleButton.Width - ShuffleRepeatOffset + (ShuffleRepeatResize / 2), PlayButton.Location.Y + ((PlayButton.Height - ShuffleButton.Height) / 2));
-			ShuffleButtonUnhovered.Size = new Size(ShuffleRepeatButtonSize, ShuffleRepeatButtonSize);
-			ShuffleButtonUnhovered.Location = new Point(BackButton.Location.X - ShuffleButtonUnhovered.Width - ShuffleRepeatOffset, PlayButton.Location.Y + ((PlayButton.Height - ShuffleButtonUnhovered.Height) / 2));
-
-			// Resize and position the enabled shuffle button
-			EnabledShuffleButton.Size = new Size(ShuffleRepeatButtonSize + ShuffleRepeatResize, ShuffleRepeatButtonSize + ShuffleRepeatResize);
-			EnabledShuffleButton.Location = new Point(BackButton.Location.X - ShuffleButton.Width - ShuffleRepeatOffset + (ShuffleRepeatResize / 2), PlayButton.Location.Y + ((PlayButton.Height - ShuffleButton.Height) / 2));
-			EnabledShuffleButtonUnhovered.Size = new Size(ShuffleRepeatButtonSize, ShuffleRepeatButtonSize);
-			EnabledShuffleButtonUnhovered.Location = new Point(BackButton.Location.X - ShuffleButtonUnhovered.Width - ShuffleRepeatOffset, PlayButton.Location.Y + ((PlayButton.Height - ShuffleButtonUnhovered.Height) / 2));
-
-			// Resize and position the unenabled repeat button
-			RepeatButton.Size = new Size(ShuffleRepeatButtonSize + ShuffleRepeatResize, ShuffleRepeatButtonSize + ShuffleRepeatResize);
-			RepeatButton.Location = new Point(SkipButton.Location.X + SkipButton.Width + ShuffleRepeatOffset - (ShuffleRepeatResize / 2), PlayButton.Location.Y + ((PlayButton.Height - RepeatButton.Height) / 2));
-			RepeatButtonUnhovered.Size = new Size(ShuffleRepeatButtonSize, ShuffleRepeatButtonSize);
-			RepeatButtonUnhovered.Location = new Point(SkipButton.Location.X + SkipButton.Width + ShuffleRepeatOffset, PlayButton.Location.Y + ((PlayButton.Height - RepeatButtonUnhovered.Height) / 2));
-
-			// Resize and position the enabled repeat button
-			EnabledRepeatButton.Size = new Size(ShuffleRepeatButtonSize + ShuffleRepeatResize, ShuffleRepeatButtonSize + ShuffleRepeatResize);
-			EnabledRepeatButton.Location = new Point(SkipButton.Location.X + SkipButton.Width + ShuffleRepeatOffset - (ShuffleRepeatResize / 2), PlayButton.Location.Y + ((PlayButton.Height - RepeatButton.Height) / 2));
-			EnabledRepeatButtonUnhovered.Size = new Size(ShuffleRepeatButtonSize, ShuffleRepeatButtonSize);
-			EnabledRepeatButtonUnhovered.Location = new Point(SkipButton.Location.X + SkipButton.Width + ShuffleRepeatOffset, PlayButton.Location.Y + ((PlayButton.Height - RepeatButtonUnhovered.Height) / 2));
-
-			// Resize and position the enabled repeat one button
-			EnabledRepeatOneButton.Size = new Size(ShuffleRepeatButtonSize + ShuffleRepeatResize, ShuffleRepeatButtonSize + ShuffleRepeatResize);
-			EnabledRepeatOneButton.Location = new Point(SkipButton.Location.X + SkipButton.Width + ShuffleRepeatOffset - (ShuffleRepeatResize / 2), PlayButton.Location.Y + ((PlayButton.Height - RepeatButton.Height) / 2));
-			EnabledRepeatOneButtonUnhovered.Size = new Size(ShuffleRepeatButtonSize, ShuffleRepeatButtonSize);
-			EnabledRepeatOneButtonUnhovered.Location = new Point(SkipButton.Location.X + SkipButton.Width + ShuffleRepeatOffset, PlayButton.Location.Y + ((PlayButton.Height - RepeatButtonUnhovered.Height) / 2));
-
+			
 			// Draw the timebar background
 			e.Graphics.FillRectangle(new SolidBrush(cSliderBG), TimeBar_BG);
 
 			// Draw the volumebar background
 			e.Graphics.FillRectangle(new SolidBrush(cSliderBG), VolumeBar_BG);
 
+			#region Debug shapes
 			// Middle line through play/pause button (DEBUG ONLY)
 			//Rectangle middle = new Rectangle(0, PlayButton.Location.Y + (PlayButton.Height / 2) - 1, this.ClientSize.Width, 2);
 			//e.Graphics.FillRectangle(Brushes.Green, middle);
@@ -395,6 +602,7 @@ namespace Windows
 			//e.Graphics.FillRectangle(Brushes.Green, _Left);
 			//e.Graphics.FillRectangle(Brushes.Green, _Right);
 			//e.Graphics.FillRectangle(Brushes.Green, _Bottom);
+			#endregion
 		}
 		// Window control
 		protected override void WndProc(ref Message message)
@@ -406,6 +614,7 @@ namespace Windows
 			{
 				Point cursor = this.PointToClient(Cursor.Position);
 
+				#region Resize check
 				if (TopLeft.Contains(cursor)) message.Result = (IntPtr)HTTOPLEFT;
 				else if (TopRight.Contains(cursor)) message.Result = (IntPtr)HTTOPRIGHT;
 				else if (BottomLeft.Contains(cursor)) message.Result = (IntPtr)HTBOTTOMLEFT;
@@ -417,58 +626,60 @@ namespace Windows
 				else if (_Bottom.Contains(cursor)) message.Result = (IntPtr)HTBOTTOM;
 
 				else if (TopBar.Contains(cursor)) message.Result = (IntPtr)HTTOPBARMOVE;
-				
+				#endregion
+
+				#region Time/Volumebar check
 				// hover event for when hovered over background of timebar
 				else if (TimeBar_BG.Contains(cursor))
 				{
 					PlaybackSettings.volumeSelected = false;
-					volumeBarVolume.BackColor = cSliderUnselected;
+					pVolumeBarVolume.BackColor = cSliderUnselected;
 
 					PlaybackSettings.timeSelected = true;
-					timeBarProgress.BackColor = cSliderSelected;
+					pTimeBarProgress.BackColor = cSliderSelected;
 					if (!PlaybackSettings.edittingTime)
 					{
-						SliderHandle.Location = new Point(timeBarProgress.Location.X + timeBarProgress.Width - (SliderHandle.Width / 2), timeBarProgress.Location.Y - (SliderHandle.Height / 2) + (timeBarProgress.Height / 2));
-						SliderHandle.Visible = true;
-						SliderHandle.BringToFront();
+						pSliderHandle.Location = new Point(pTimeBarProgress.Location.X + pTimeBarProgress.Width - (pSliderHandle.Width / 2), pTimeBarProgress.Location.Y - (pSliderHandle.Height / 2) + (pTimeBarProgress.Height / 2));
+						pSliderHandle.Visible = true;
+						pSliderHandle.BringToFront();
 					}
 				}
 				else if (VolumeBar_BG.Contains(cursor))
 				{
 					PlaybackSettings.timeSelected = false;
-					timeBarProgress.BackColor = cSliderUnselected;
+					pTimeBarProgress.BackColor = cSliderUnselected;
 					
 					PlaybackSettings.volumeSelected = true;
-					volumeBarVolume.BackColor = cSliderSelected;
+					pVolumeBarVolume.BackColor = cSliderSelected;
 					if (!PlaybackSettings.edittingVolume)
 					{
-						SliderHandle.Location = new Point(volumeBarVolume.Location.X + volumeBarVolume.Width - (SliderHandle.Width / 2), volumeBarVolume.Location.Y - (SliderHandle.Height / 2) + (volumeBarVolume.Height / 2));
-						SliderHandle.Visible = true;
-						SliderHandle.BringToFront();
+						pSliderHandle.Location = new Point(pVolumeBarVolume.Location.X + pVolumeBarVolume.Width - (pSliderHandle.Width / 2), pVolumeBarVolume.Location.Y - (pSliderHandle.Height / 2) + (pVolumeBarVolume.Height / 2));
+						pSliderHandle.Visible = true;
+						pSliderHandle.BringToFront();
 					}
 				}
 
 				else if (!TimeBar_BG.Contains(cursor) && !VolumeBar_BG.Contains(cursor))
 				{
 					PlaybackSettings.timeSelected = false;
-					timeBarProgress.BackColor = cSliderUnselected;
-					SliderHandle.Visible = false;
+					pTimeBarProgress.BackColor = cSliderUnselected;
+					pSliderHandle.Visible = false;
 
 					PlaybackSettings.volumeSelected = false;
-					volumeBarVolume.BackColor = cSliderUnselected;
-					SliderHandle.Visible = false;
+					pVolumeBarVolume.BackColor = cSliderUnselected;
+					pSliderHandle.Visible = false;
 				}
+				#endregion
 			}
 		}
 
-		float timebarvalue;
-
 		// Event when window gets resized
+		float timebarvalue;
 		protected override void OnResizeBegin(EventArgs e)
 		{
 			this.WindowState = FormWindowState.Normal;
-			NormalWindowButton.Visible = false;
-			MaximizeButton.Visible = true;
+			bExitMaximizeButton.Visible = false;
+			bMaximizeButton.Visible = true;
 
 			timebarvalue = GetTimeBarValue();
 
@@ -478,151 +689,129 @@ namespace Windows
 		// Event when window is resizing
 		protected override void OnResize(EventArgs e)
 		{
-			timeBarProgress.Location = TimeBar_BG.Location;
-			timeBarProgress.Size = new Size((int)((float)TimeBar_BG.Width * (float)((float)timebarvalue / (float)100f)), timeBarProgress.Height);
-			volumeBarVolume.Location = VolumeBar_BG.Location;
+			#region Update locations
+			// Position timebar and volume bar location
+			pTimeBarProgress.Location = TimeBar_BG.Location;
+			pTimeBarProgress.Size = new Size((int)((float)TimeBar_BG.Width * (float)((float)timebarvalue / (float)100f)), pTimeBarProgress.Height);
+			pVolumeBarVolume.Location = VolumeBar_BG.Location;
+			lSongTimePassed.Location = new Point(TimeBar_BG.X - lSongTimePassed.Width - TimeIndicatorsOffset, TimeBar_BG.Y + (TimeBar_BG.Height / 2) - (lSongTimePassed.Height / 2));
+			lSongTotalTime.Location = new Point(TimeBar_BG.X + TimeBar_BG.Width + TimeIndicatorsOffset, TimeBar_BG.Y + (TimeBar_BG.Height / 2) - (lSongTotalTime.Height / 2));
+			pVolumeSpeaker.Location = new Point(VolumeBar_BG.X - pVolumeSpeaker.Width - VolumeSpeakerOffset, VolumeBar_BG.Y + (VolumeBar_BG.Height / 2) - (pVolumeSpeaker.Height / 2));
+
+			// Update title location, to keep it in the center
+			lTopBarTitle.Location = new Point(this.ClientSize.Width / 2 - lTopBarTitle.Width / 2, TitleOffset);
+
+			// Position the exit button
+			bExitButton.Location = new Point(this.ClientSize.Width - bExitButton.Width - ControlButtonsOffset, ControlButtonsOffset);
+
+			// Position the maximize and exit maximize button
+			bExitMaximizeButton.Location = bMaximizeButton.Location = new Point(this.ClientSize.Width - bExitButton.Width - ControlButtonsOffset - bExitButton.Width, ControlButtonsOffset);
+
+			// Position the minimize button to fit the top bar
+			bMinimizeButton.Location = new Point(this.ClientSize.Width - bExitButton.Width - bMaximizeButton.Width - ControlButtonsOffset - bMinimizeButton.Width, ControlButtonsOffset);
+
+			// Position the play button
+			bPlayPauseButton.Location = new Point(this.ClientSize.Width / 2 - bPlayPauseButton.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset - (PlayPauseResize / 2));
+			bPlayPauseButtonUnhovered.Location = new Point(this.ClientSize.Width / 2 - bPlayPauseButtonUnhovered.Width / 2, this.ClientSize.Height - MusicControlSize + PlayPauseTopOffset);
+
+			// Position the skip button
+			bSkipButton.Location = new Point(bPlayPauseButton.Location.X + bPlayPauseButton.Width + SkipBackOffset - (SkipBackResize / 2), bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bSkipButton.Height) / 2));
+			bSkipButtonUnhovered.Location = new Point(bPlayPauseButton.Location.X + bPlayPauseButton.Width + SkipBackOffset, bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bSkipButtonUnhovered.Height) / 2));
+
+			// Position the back button
+			bBackButton.Location = new Point(bPlayPauseButton.Location.X - bBackButton.Width - SkipBackOffset + (SkipBackResize / 2), bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bBackButton.Height) / 2));
+			bBackButtonUnhovered.Location = new Point(bPlayPauseButton.Location.X - bBackButtonUnhovered.Width - SkipBackOffset, bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bBackButtonUnhovered.Height) / 2));
+
+			// Position the shuffle button
+			bShuffleButton.Location = new Point(bBackButton.Location.X - bShuffleButton.Width - ShuffleRepeatOffset + (ShuffleRepeatResize / 2), bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bShuffleButton.Height) / 2));
+			bShuffleButtonUnhovered.Location = new Point(bBackButton.Location.X - bShuffleButtonUnhovered.Width - ShuffleRepeatOffset, bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bShuffleButtonUnhovered.Height) / 2));
+
+			// Position the unenabled repeat button
+			bRepeatButton.Location = new Point(bSkipButton.Location.X + bSkipButton.Width + ShuffleRepeatOffset - (ShuffleRepeatResize / 2), bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bRepeatButton.Height) / 2));
+			bRepeatButtonUnhovered.Location = new Point(bSkipButton.Location.X + bSkipButton.Width + ShuffleRepeatOffset, bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bRepeatButtonUnhovered.Height) / 2));
+
+			// Position the cover image
+			pSongCover.Location = new Point(MusicControl.X + ((MusicControl.Height - (MusicControl.Height / 100 * CoverPercentage)) / 2), MusicControl.Y + ((MusicControl.Height - (MusicControl.Height / 100 * CoverPercentage)) / 2));
+
+			// Position the song title and artist labels
+			lSongTitle.Location = new Point(pSongCover.Location.X + pSongCover.Width + SongInfoOffset, pSongCover.Location.Y + (pSongCover.Height / 2) - ((lSongTitle.Height + lSongArtist.Height) / 2));
+			lSongArtist.Location = new Point(pSongCover.Location.X + pSongCover.Width + SongInfoOffset + 2, pSongCover.Location.Y + (pSongCover.Height / 2) + (lSongTitle.Height - ((lSongTitle.Height + lSongArtist.Height) / 2)));
+			#endregion
 			base.OnResize(e);
 		}
-
-		// Move the window
-		private void Mover(object sender, MouseEventArgs e)
-		{
-			if (e.Button == MouseButtons.Left)
-			{
-				ReleaseCapture();
-				SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-			}
-		}
+		#endregion
 
 		#region Events
 		#region Hover events
 		// Mouse enters the play button
 		private void PlayMouseEnter(object sender, EventArgs e)
 		{
-			PlayButtonUnhovered.Visible = false;
-			PlayButton.Visible = true;
+			bPlayPauseButtonUnhovered.Visible = false;
+			bPlayPauseButton.Visible = true;
 		}
 
 		// Mouse leaves the play button
 		private void PlayMouseLeave(object sender, EventArgs e)
 		{
-			PlayButton.Visible = false;
-			PlayButtonUnhovered.Visible = true;
-		}
-		
-		// Mouse enters the play button
-		private void PauseMouseEnter(object sender, EventArgs e)
-		{
-			PauseButtonUnhovered.Visible = false;
-			PauseButton.Visible = true;
-		}
-
-		// Mouse leaves the play button
-		private void PauseMouseLeave(object sender, EventArgs e)
-		{
-			PauseButton.Visible = false;
-			PauseButtonUnhovered.Visible = true;
+			bPlayPauseButton.Visible = false;
+			bPlayPauseButtonUnhovered.Visible = true;
 		}
 
 		// Mouse enters skip button
 		private void SkipMouseEnter(object sender, EventArgs e)
 		{
-			SkipButtonUnhovered.Visible = false;
-			SkipButton.Visible = true;
+			bSkipButtonUnhovered.Visible = false;
+			bSkipButton.Visible = true;
 		}
 
 		// Mouse leaves skip button
 		private void SkipMouseLeave(object sender, EventArgs e)
 		{
-			SkipButton.Visible = false;
-			SkipButtonUnhovered.Visible = true;
+			bSkipButton.Visible = false;
+			bSkipButtonUnhovered.Visible = true;
 		}
 
 		// Mouse enters back button
 		private void BackMouseEnter(object sender, EventArgs e)
 		{
-			BackButtonUnhovered.Visible = false;
-			BackButton.Visible = true;
+			bBackButtonUnhovered.Visible = false;
+			bBackButton.Visible = true;
 		}
 
 		// Mouse leaves back button
 		private void BackMouseLeave(object sender, EventArgs e)
 		{
-			BackButton.Visible = false;
-			BackButtonUnhovered.Visible = true;
+			bBackButton.Visible = false;
+			bBackButtonUnhovered.Visible = true;
 		}
 
 		// Mouse enters the unenabled shuffle button
 		private void ShuffleMouseEnter(object sender, EventArgs e)
 		{
-			ShuffleButtonUnhovered.Visible = false;
-			ShuffleButton.Visible = true;
+			bShuffleButtonUnhovered.Visible = false;
+			bShuffleButton.Visible = true;
 		}
 
 		// Mouse leaves the unenabled shuffle button
 		private void ShuffleMouseLeave(object sender, EventArgs e)
 		{
-			ShuffleButton.Visible = false;
-			ShuffleButtonUnhovered.Visible = true;
-		}
-
-		// Mouse enters the enabled shuffle button
-		private void EnabledShuffleMouseEnter(object sender, EventArgs e)
-		{
-			EnabledShuffleButtonUnhovered.Visible = false;
-			EnabledShuffleButton.Visible = true;
-		}
-
-		// Mouse leaves the enabled shuffle button
-		private void EnabledShuffleMouseLeave(object sender, EventArgs e)
-		{
-			EnabledShuffleButton.Visible = false;
-			EnabledShuffleButtonUnhovered.Visible = true;
+			bShuffleButton.Visible = false;
+			bShuffleButtonUnhovered.Visible = true;
 		}
 
 		// Mouse enters the unenabled repeat button
 		private void RepeatMouseEnter(object sender, EventArgs e)
 		{
-			RepeatButtonUnhovered.Visible = false;
-			RepeatButton.Visible = true;
+			bRepeatButtonUnhovered.Visible = false;
+			bRepeatButton.Visible = true;
 		}
 
 		// Mouse leaves the unenabled repeat button
 		private void RepeatMouseLeave(object sender, EventArgs e)
 		{
-			RepeatButton.Visible = false;
-			RepeatButtonUnhovered.Visible = true;
+			bRepeatButton.Visible = false;
+			bRepeatButtonUnhovered.Visible = true;
 			//RepeatButtonUnhovered.BringToFront();
-		}
-
-		// Mouse enters enabled repeat button
-		private void EnabledRepeatMouseEnter(object sender, EventArgs e)
-		{
-			EnabledRepeatButtonUnhovered.Visible = false;
-			EnabledRepeatButton.Visible = true;
-		}
-
-		// Mouse leaves enabled repeat button
-		private void EnabledRepeatMouseLeave(object sender, EventArgs e)
-		{
-			EnabledRepeatButton.Visible = false;
-			EnabledRepeatButtonUnhovered.Visible = true;
-			//EnabledRepeatButtonUnhovered.BringToFront();
-		}
-
-		// Mouse enters enabled repeat one button
-		private void EnabledRepeatOneMouseEnter(object sender, EventArgs e)
-		{
-			EnabledRepeatOneButtonUnhovered.Visible = false;
-			EnabledRepeatOneButton.Visible = true;
-		}
-
-		// Mouse leaves enabled repeat one button
-		private void EnabledRepeatOneMouseLeave(object sender, EventArgs e)
-		{
-			EnabledRepeatOneButton.Visible = false;
-			EnabledRepeatOneButtonUnhovered.Visible = true;
-			//EnabledRepeatOneButtonUnhovered.BringToFront();
 		}
 		#endregion
 
@@ -681,14 +870,14 @@ namespace Windows
 		{
 			if (PlaybackSettings.edittingTime)
 			{
-				SliderHandle.Location = new Point((int)Clamp(SliderHandle.Location.X + e.Location.X - (SliderHandle.Width / 2), TimeBar_BG.X - (SliderHandle.Width / 2), TimeBar_BG.X + TimeBar_BG.Width - (SliderHandle.Width / 2)), SliderHandle.Location.Y);
-				timeBarProgress.Size = new Size((SliderHandle.Location.X + (SliderHandle.Width / 2)) - TimeBar_BG.X, timeBarProgress.Height);
+				pSliderHandle.Location = new Point((int)Clamp(pSliderHandle.Location.X + e.Location.X - (pSliderHandle.Width / 2), TimeBar_BG.X - (pSliderHandle.Width / 2), TimeBar_BG.X + TimeBar_BG.Width - (pSliderHandle.Width / 2)), pSliderHandle.Location.Y);
+				pTimeBarProgress.Size = new Size((pSliderHandle.Location.X + (pSliderHandle.Width / 2)) - TimeBar_BG.X, pTimeBarProgress.Height);
 			}
 
 			if (PlaybackSettings.edittingVolume)
 			{
-				SliderHandle.Location = new Point((int)Clamp(SliderHandle.Location.X + e.Location.X - (SliderHandle.Width / 2), VolumeBar_BG.X - (SliderHandle.Width / 2), VolumeBar_BG.X + VolumeBar_BG.Width - (SliderHandle.Width / 2)), SliderHandle.Location.Y);
-				volumeBarVolume.Size = new Size((SliderHandle.Location.X + (SliderHandle.Width / 2)) - VolumeBar_BG.X, volumeBarVolume.Height);
+				pSliderHandle.Location = new Point((int)Clamp(pSliderHandle.Location.X + e.Location.X - (pSliderHandle.Width / 2), VolumeBar_BG.X - (pSliderHandle.Width / 2), VolumeBar_BG.X + VolumeBar_BG.Width - (pSliderHandle.Width / 2)), pSliderHandle.Location.Y);
+				pVolumeBarVolume.Size = new Size((pSliderHandle.Location.X + (pSliderHandle.Width / 2)) - VolumeBar_BG.X, pVolumeBarVolume.Height);
 			}
 		}
 		#endregion
@@ -717,14 +906,14 @@ namespace Windows
 		{
 			if (PlaybackSettings.edittingTime)
 			{
-				SliderHandle.Location = new Point((int)Clamp(e.Location.X - (SliderHandle.Width / 2), TimeBar_BG.X - (SliderHandle.Width / 2), TimeBar_BG.X + TimeBar_BG.Width - (SliderHandle.Width / 2)), SliderHandle.Location.Y);
-				timeBarProgress.Size = new Size((SliderHandle.Location.X + (SliderHandle.Width / 2)) - TimeBar_BG.X, timeBarProgress.Height);
+				pSliderHandle.Location = new Point((int)Clamp(e.Location.X - (pSliderHandle.Width / 2), TimeBar_BG.X - (pSliderHandle.Width / 2), TimeBar_BG.X + TimeBar_BG.Width - (pSliderHandle.Width / 2)), pSliderHandle.Location.Y);
+				pTimeBarProgress.Size = new Size((pSliderHandle.Location.X + (pSliderHandle.Width / 2)) - TimeBar_BG.X, pTimeBarProgress.Height);
 			}
 
 			if (PlaybackSettings.edittingVolume)
 			{
-				SliderHandle.Location = new Point((int)Clamp(e.Location.X - (SliderHandle.Width / 2), VolumeBar_BG.X - (SliderHandle.Width / 2), VolumeBar_BG.X + VolumeBar_BG.Width - (SliderHandle.Width / 2)), SliderHandle.Location.Y);
-				volumeBarVolume.Size = new Size((SliderHandle.Location.X + (SliderHandle.Width / 2)) - VolumeBar_BG.X, volumeBarVolume.Height);
+				pSliderHandle.Location = new Point((int)Clamp(e.Location.X - (pSliderHandle.Width / 2), VolumeBar_BG.X - (pSliderHandle.Width / 2), VolumeBar_BG.X + VolumeBar_BG.Width - (pSliderHandle.Width / 2)), pSliderHandle.Location.Y);
+				pVolumeBarVolume.Size = new Size((pSliderHandle.Location.X + (pSliderHandle.Width / 2)) - VolumeBar_BG.X, pVolumeBarVolume.Height);
 			}
 		}
 
@@ -735,16 +924,16 @@ namespace Windows
 			{
 				checkUpSlider = true;
 				PlaybackSettings.edittingTime = true;
-				SliderHandle.Location = new Point((int)Clamp(e.Location.X - (SliderHandle.Width / 2), TimeBar_BG.X - (SliderHandle.Width / 2), TimeBar_BG.X + TimeBar_BG.Width - (SliderHandle.Width / 2)), SliderHandle.Location.Y);
-				timeBarProgress.Size = new Size((SliderHandle.Location.X + (SliderHandle.Width / 2)) - TimeBar_BG.X, timeBarProgress.Height);
+				pSliderHandle.Location = new Point((int)Clamp(e.Location.X - (pSliderHandle.Width / 2), TimeBar_BG.X - (pSliderHandle.Width / 2), TimeBar_BG.X + TimeBar_BG.Width - (pSliderHandle.Width / 2)), pSliderHandle.Location.Y);
+				pTimeBarProgress.Size = new Size((pSliderHandle.Location.X + (pSliderHandle.Width / 2)) - TimeBar_BG.X, pTimeBarProgress.Height);
 			}
 
 			if (PlaybackSettings.volumeSelected)
 			{
 				checkUpSlider = true;
 				PlaybackSettings.edittingVolume = true;
-				SliderHandle.Location = new Point((int)Clamp(e.Location.X - (SliderHandle.Width / 2), VolumeBar_BG.X - (SliderHandle.Width / 2), VolumeBar_BG.X + VolumeBar_BG.Width - (SliderHandle.Width / 2)), SliderHandle.Location.Y);
-				volumeBarVolume.Size = new Size((SliderHandle.Location.X + (SliderHandle.Width / 2)) - VolumeBar_BG.X, volumeBarVolume.Height);
+				pSliderHandle.Location = new Point((int)Clamp(e.Location.X - (pSliderHandle.Width / 2), VolumeBar_BG.X - (pSliderHandle.Width / 2), VolumeBar_BG.X + VolumeBar_BG.Width - (pSliderHandle.Width / 2)), pSliderHandle.Location.Y);
+				pVolumeBarVolume.Size = new Size((pSliderHandle.Location.X + (pSliderHandle.Width / 2)) - VolumeBar_BG.X, pVolumeBarVolume.Height);
 			}
 		}
 		#endregion
@@ -754,7 +943,7 @@ namespace Windows
 		#region Buttons
 		#region ControlButtons
 		// Button to quit the application
-		private void QuitButton_Click(object sender, EventArgs e)
+		private void ExitButton_Click(object sender, EventArgs e)
 		{
 			Application.Exit();
 		}
@@ -763,16 +952,16 @@ namespace Windows
 		private void MaximizeButton_Click(object sender, EventArgs e)
 		{
 			this.WindowState = FormWindowState.Maximized;
-			MaximizeButton.Visible = false;
-			NormalWindowButton.Visible = true;
+			bMaximizeButton.Visible = false;
+			bExitMaximizeButton.Visible = true;
 		}
 
 		// Button to return from maximized view of application
-		private void NormalWindowButton_Click(object sender, EventArgs e)
+		private void ExitMaximizeButton_Click(object sender, EventArgs e)
 		{
 			this.WindowState = FormWindowState.Normal;
-			NormalWindowButton.Visible = false;
-			MaximizeButton.Visible = true;
+			bExitMaximizeButton.Visible = false;
+			bMaximizeButton.Visible = true;
 		}
 
 		// Button to minimize the application
@@ -796,76 +985,59 @@ namespace Windows
 		}
 
 		// Press on the play button
-		private void PlayButton_Click(object sender, EventArgs e)
+		private void PlayPauseButton_Click(object sender, EventArgs e)
 		{
-			PlaybackSettings.isPaused = false;
-			PauseButtonUnhovered.BringToFront();
-			PlayButton.BringToFront();
-			PlayButton.Visible = false;
-			PauseButton.Visible = true;
-		}
-
-		// Press on the pause button
-		private void PauseButton_Click(object sender, EventArgs e)
-		{
-			PlaybackSettings.isPaused = true;
-			PlayButtonUnhovered.BringToFront();
-			PauseButton.BringToFront();
-			PauseButton.Visible = false;
-			PlayButton.Visible = true;
+			if (PlaybackSettings.isPaused)
+			{
+				PlaybackSettings.isPaused = false;
+				bPlayPauseButton.BackgroundImage = ResourceLoader.loadImage(rPauseButton);
+				bPlayPauseButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rPauseButton);
+			}else
+			{
+				PlaybackSettings.isPaused = true;
+				bPlayPauseButton.BackgroundImage = ResourceLoader.loadImage(rPlayButton);
+				bPlayPauseButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rPlayButton);
+			}
 		}
 
 		// Press on the unenabled shuffle button
 		private void ShuffleButton_Click(object sender, EventArgs e)
 		{
-			PlaybackSettings.shuffle = true;
-			EnabledShuffleButtonUnhovered.BringToFront();
-			ShuffleButton.BringToFront();
-			ShuffleButton.Visible = false;
-			EnabledShuffleButton.Visible = true;
-		}
-
-        // Press on the enabled shuffle button
-        private void EnabledShuffleButton_Click(object sender, EventArgs e)
-		{
-			PlaybackSettings.shuffle = false;
-			ShuffleButtonUnhovered.BringToFront();
-			EnabledShuffleButton.BringToFront();
-			EnabledShuffleButton.Visible = false;
-			ShuffleButton.Visible = true;
+			if (PlaybackSettings.shuffle)
+			{
+				PlaybackSettings.shuffle = false;
+				bShuffleButton.BackgroundImage = ResourceLoader.loadImage(rShuffleButtonDisabled);
+				bShuffleButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rShuffleButtonDisabled);
+			}
+			else
+			{
+				PlaybackSettings.shuffle = true;
+				bShuffleButton.BackgroundImage = ResourceLoader.loadImage(rShuffleButtonEnabled);
+				bShuffleButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rShuffleButtonEnabled);
+			}
 		}
 
         // Press on the unenabled repeat button
         private void RepeatButton_Click(object sender, EventArgs e)
 		{
-			PlaybackSettings.repeatState = PlaybackSettings.RepeatState.REPEAT_ALL;
-			EnabledRepeatButton.BringToFront();
-			EnabledRepeatButtonUnhovered.BringToFront();
-			RepeatButton.BringToFront();
-			RepeatButton.Visible = false;
-			EnabledRepeatButton.Visible = true;
-		}
-
-		// Press on the enabled repeat button
-		private void EnabledRepeatButton_Click(object sender, EventArgs e)
-		{
-			PlaybackSettings.repeatState = PlaybackSettings.RepeatState.REPEAT_ONE;
-			EnabledRepeatOneButton.BringToFront();
-			EnabledRepeatOneButtonUnhovered.BringToFront();
-			EnabledRepeatButton.BringToFront();
-			EnabledRepeatButton.Visible = false;
-			EnabledRepeatOneButton.Visible = true;
-		}
-
-		// Press on the enabled repeat one button
-		private void EnabledRepeatOneButton_Click(object sender, EventArgs e)
-		{
-			PlaybackSettings.repeatState = PlaybackSettings.RepeatState.NONE;
-			RepeatButton.BringToFront();
-			RepeatButtonUnhovered.BringToFront();
-			EnabledRepeatOneButton.BringToFront();
-			EnabledRepeatOneButton.Visible = false;
-			RepeatButton.Visible = true;
+			switch (PlaybackSettings.repeatState)
+			{
+				case PlaybackSettings.RepeatState.NONE:
+					PlaybackSettings.repeatState = PlaybackSettings.RepeatState.REPEAT_ALL;
+					bRepeatButton.BackgroundImage = ResourceLoader.loadImage(rRepeatButtonEnabled);
+					bRepeatButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rRepeatButtonEnabled);
+					break;
+				case PlaybackSettings.RepeatState.REPEAT_ALL:
+					PlaybackSettings.repeatState = PlaybackSettings.RepeatState.REPEAT_ONE;
+					bRepeatButton.BackgroundImage = ResourceLoader.loadImage(rRepeatButtonOneEnabled);
+					bRepeatButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rRepeatButtonOneEnabled);
+					break;
+				case PlaybackSettings.RepeatState.REPEAT_ONE:
+					PlaybackSettings.repeatState = PlaybackSettings.RepeatState.NONE;
+					bRepeatButton.BackgroundImage = ResourceLoader.loadImage(rRepeatButtonDisabled);
+					bRepeatButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rRepeatButtonDisabled);
+					break;
+			}
 		}
         #endregion
 
@@ -881,10 +1053,20 @@ namespace Windows
             Form3 form = new Form3();
             form.Show();
         }
-        #endregion
+		#endregion
 
-        #region Functions
-        private float Clamp(float value, float min, float max)
+		#region Custom functions
+		// Move the window
+		private void Mover(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				ReleaseCapture();
+				SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+			}
+		}
+
+		private float Clamp(float value, float min, float max)
 		{
 			if (value < min)
 				return min;
@@ -896,26 +1078,26 @@ namespace Windows
 
 		private float GetTimeBarValue()
 		{
-			return (float)timeBarProgress.Width / (float)TimeBar_BG.Width * (float)100f;
+			return (float)pTimeBarProgress.Width / (float)TimeBar_BG.Width * (float)100f;
 		}
 
 		private void SetTimeBarProcessPercentage(float percentage)
 		{
-			timeBarProgress.Size = new Size((int)((float)TimeBar_BG.Width * (float)((float)percentage / (float)100f)), timeBarProgress.Height);
+			pTimeBarProgress.Size = new Size((int)((float)TimeBar_BG.Width * (float)((float)percentage / (float)100f)), pTimeBarProgress.Height);
 			if (PlaybackSettings.timeSelected)
-				SliderHandle.Location = new Point(timeBarProgress.Location.X + timeBarProgress.Width - (SliderHandle.Width / 2), timeBarProgress.Location.Y - (SliderHandle.Height / 2) + (timeBarProgress.Height / 2));
+				pSliderHandle.Location = new Point(pTimeBarProgress.Location.X + pTimeBarProgress.Width - (pSliderHandle.Width / 2), pTimeBarProgress.Location.Y - (pSliderHandle.Height / 2) + (pTimeBarProgress.Height / 2));
 		}
 
 		private float GetVolumeBarValue()
 		{
-			return (float)volumeBarVolume.Width / (float)VolumeBar_BG.Width * (float)100f;
+			return (float)pVolumeBarVolume.Width / (float)VolumeBar_BG.Width * (float)100f;
 		}
 
 		private void SetVolumePercentage(float percentage)
 		{
-			volumeBarVolume.Size = new Size((int)((float)VolumeBar_BG.Width * (float)((float)percentage / (float)100f)), volumeBarVolume.Height);
+			pVolumeBarVolume.Size = new Size((int)((float)VolumeBar_BG.Width * (float)((float)percentage / (float)100f)), pVolumeBarVolume.Height);
 			if (PlaybackSettings.volumeSelected)
-				SliderHandle.Location = new Point(volumeBarVolume.Location.X + volumeBarVolume.Width - (SliderHandle.Width / 2), volumeBarVolume.Location.Y - (SliderHandle.Height / 2) + (volumeBarVolume.Height / 2));
+				pSliderHandle.Location = new Point(pVolumeBarVolume.Location.X + pVolumeBarVolume.Width - (pSliderHandle.Width / 2), pVolumeBarVolume.Location.Y - (pSliderHandle.Height / 2) + (pVolumeBarVolume.Height / 2));
 		}
 
 		#endregion
