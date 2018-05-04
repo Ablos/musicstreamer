@@ -2,7 +2,9 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Windows
 {
@@ -19,7 +21,6 @@ namespace Windows
 		// Constructor
 		public Form1()
 		{
-			Console.WriteLine(Application.StartupPath);
 			InitializeComponent();
 			this.FormBorderStyle = FormBorderStyle.None;
 			this.DoubleBuffered = true;
@@ -372,12 +373,12 @@ namespace Windows
 			}));
 
 			// Instantiate volume speaker
-			pVolumeSpeaker.BackColor = Color.Transparent;
-			pVolumeSpeaker.Image = ResourceLoader.loadImage(rVolumeSpeaker);
-			pVolumeSpeaker.SizeMode = PictureBoxSizeMode.StretchImage;
-			pVolumeSpeaker.Location = new Point(VolumeBar_BG.X - pVolumeSpeaker.Width - VolumeSpeakerOffset, VolumeBar_BG.Y + (VolumeBar_BG.Height / 2) - (pVolumeSpeaker.Height / 2));
-			pVolumeSpeaker.Size = new Size(15, 15);
-			Controls.Add(pVolumeSpeaker);
+			pbVolumeSpeaker.BackColor = Color.Transparent;
+			pbVolumeSpeaker.Image = ResourceLoader.loadImage(rVolumeSpeaker);
+			pbVolumeSpeaker.SizeMode = PictureBoxSizeMode.StretchImage;
+			pbVolumeSpeaker.Location = new Point(VolumeBar_BG.X - pbVolumeSpeaker.Width - VolumeSpeakerOffset, VolumeBar_BG.Y + (VolumeBar_BG.Height / 2) - (pbVolumeSpeaker.Height / 2));
+			pbVolumeSpeaker.Size = new Size(15, 15);
+			Controls.Add(pbVolumeSpeaker);
 			#endregion
 
 			#region Instantiate slider handle
@@ -397,20 +398,21 @@ namespace Windows
 
 			#region Instantiate song info
 			// Instantiate cover
-			pSongCover.Image = ResourceLoader.loadImage(rEmptyCover);
-			pSongCover.SizeMode = PictureBoxSizeMode.StretchImage;
-			pSongCover.Location = new Point(MusicControl.X + ((MusicControl.Height - (MusicControl.Height / 100 * CoverPercentage)) / 2), MusicControl.Y + ((MusicControl.Height - (MusicControl.Height / 100 * CoverPercentage)) / 2));
-			pSongCover.Size = new Size(MusicControl.Height / 100 * CoverPercentage, MusicControl.Height / 100 * CoverPercentage);
-			Controls.Add(pSongCover);
+			pbSongCover.Image = ResourceLoader.loadImage(rEmptyCover);
+			pbSongCover.SizeMode = PictureBoxSizeMode.StretchImage;
+			pbSongCover.Location = new Point(MusicControl.X + ((MusicControl.Height - (MusicControl.Height / 100 * CoverPercentage)) / 2), MusicControl.Y + ((MusicControl.Height - (MusicControl.Height / 100 * CoverPercentage)) / 2));
+			pbSongCover.Size = new Size(MusicControl.Height / 100 * CoverPercentage, MusicControl.Height / 100 * CoverPercentage);
+			Controls.Add(pbSongCover);
 
 			// Instantiates song title label
 			lSongTitle.AutoSize = true;
 			lSongTitle.BackColor = Color.Transparent;
 			lSongTitle.Font = new Font("Roboto Medium", 10f, FontStyle.Regular);
 			lSongTitle.ForeColor = Color.FromArgb(226, 226, 226);
-			lSongTitle.Text = "SONGTITLE";
 			lSongTitle.TextAlign = ContentAlignment.BottomLeft;
-			lSongTitle.Location = new Point(pSongCover.Location.X + pSongCover.Width + SongInfoOffset, pSongCover.Location.Y + (pSongCover.Height / 2) - ((lSongTitle.Height + lSongArtist.Height) / 2));
+			lSongTitle.Location = new Point(pbSongCover.Location.X + pbSongCover.Width + SongInfoOffset, pbSongCover.Location.Y + (pbSongCover.Height / 2) - ((lSongTitle.Height + lSongArtist.Height) / 2));
+			lSongTitle.Text = "";
+			lSongTitle.Margin = new Padding(0, 0, 0, 0);
 			Controls.Add(lSongTitle);
 
 			// Instantiates song artist label
@@ -418,10 +420,23 @@ namespace Windows
 			lSongArtist.BackColor = Color.Transparent;
 			lSongArtist.Font = new Font("Roboto", 9f, FontStyle.Regular);
 			lSongArtist.ForeColor = Color.FromArgb(174, 174, 174);
-			lSongArtist.Text = "SONGARTIST";
 			lSongArtist.TextAlign = ContentAlignment.TopLeft;
-			lSongArtist.Location = new Point(pSongCover.Location.X + pSongCover.Width + SongInfoOffset + 2, pSongCover.Location.Y + (pSongCover.Height / 2) + (lSongTitle.Height - ((lSongTitle.Height + lSongArtist.Height) / 2)));
+			lSongArtist.Location = new Point(pbSongCover.Location.X + pbSongCover.Width + SongInfoOffset, pbSongCover.Location.Y + (pbSongCover.Height / 2) + (lSongTitle.Height - ((lSongTitle.Height + lSongArtist.Height) / 2)));
+			lSongArtist.Text = "";
+			lSongArtist.Margin = new Padding(0, 0, 0, 0);
 			Controls.Add(lSongArtist);
+
+			SetSongInfo("Demons", "DJ Paul Elstak,Jantine");
+
+			// Instantiate right hide panel
+			SongInfoHide.BackColor = cMusicControl;
+			SongInfoHide.Size = new Size((int)((float)this.MinimumSize.Width * (float)((float)TimeBarPercentage / (float)100f)) + (2 * lSongTimePassed.Width) + (2 * TimeIndicatorsOffset), lSongTitle.Height + lSongArtist.Height);
+			SongInfoHide.Location = new Point(lSongTimePassed.Location.X, pbSongCover.Location.Y + (pbSongCover.Height / 2) - (SongInfoHide.Height / 2));
+			Controls.Add(SongInfoHide);
+
+			lSongTitle.SendToBack();
+			lSongArtist.SendToBack();
+			pbSongCover.BringToFront();
 			#endregion
 		}
 
@@ -497,7 +512,8 @@ namespace Windows
 		const int SliderHandleRadius = 12;              // Radius of slider handle
 
 		const int CoverPercentage = 70;                 // How much space the cover should take from the music control in height
-		const int SongInfoOffset = 5;					// How far the song info should be from the cover
+		const int SongInfoOffset = 7;                   // How far the song info should be from the cover
+		const int SongInfoMaxSize = 155;				// How wide the song info can be
 		#endregion
 
 		#region Control Rectangles
@@ -538,6 +554,8 @@ namespace Windows
 		Panel pTimeBarProgress = new Panel();
 		Panel pVolumeBarVolume = new Panel();
 		Panel pSliderHandle = new Panel();
+		Panel SongInfoHide = new Panel();
+		Panel pLeftHide = new Panel();
 
 		// Buttons
 		Button bPlayPauseButton = new Button();
@@ -564,8 +582,8 @@ namespace Windows
 		Label lSongArtist = new Label();
 
 		// Picture boxes
-		PictureBox pSongCover = new PictureBox();
-		PictureBox pVolumeSpeaker = new PictureBox();
+		PictureBox pbSongCover = new PictureBox();
+		PictureBox pbVolumeSpeaker = new PictureBox();
 		#endregion
 
 		#region Variables
@@ -696,7 +714,7 @@ namespace Windows
 			pVolumeBarVolume.Location = VolumeBar_BG.Location;
 			lSongTimePassed.Location = new Point(TimeBar_BG.X - lSongTimePassed.Width - TimeIndicatorsOffset, TimeBar_BG.Y + (TimeBar_BG.Height / 2) - (lSongTimePassed.Height / 2));
 			lSongTotalTime.Location = new Point(TimeBar_BG.X + TimeBar_BG.Width + TimeIndicatorsOffset, TimeBar_BG.Y + (TimeBar_BG.Height / 2) - (lSongTotalTime.Height / 2));
-			pVolumeSpeaker.Location = new Point(VolumeBar_BG.X - pVolumeSpeaker.Width - VolumeSpeakerOffset, VolumeBar_BG.Y + (VolumeBar_BG.Height / 2) - (pVolumeSpeaker.Height / 2));
+			pbVolumeSpeaker.Location = new Point(VolumeBar_BG.X - pbVolumeSpeaker.Width - VolumeSpeakerOffset, VolumeBar_BG.Y + (VolumeBar_BG.Height / 2) - (pbVolumeSpeaker.Height / 2));
 
 			// Update title location, to keep it in the center
 			lTopBarTitle.Location = new Point(this.ClientSize.Width / 2 - lTopBarTitle.Width / 2, TitleOffset);
@@ -731,12 +749,14 @@ namespace Windows
 			bRepeatButtonUnhovered.Location = new Point(bSkipButton.Location.X + bSkipButton.Width + ShuffleRepeatOffset, bPlayPauseButton.Location.Y + ((bPlayPauseButton.Height - bRepeatButtonUnhovered.Height) / 2));
 
 			// Position the cover image
-			pSongCover.Location = new Point(MusicControl.X + ((MusicControl.Height - (MusicControl.Height / 100 * CoverPercentage)) / 2), MusicControl.Y + ((MusicControl.Height - (MusicControl.Height / 100 * CoverPercentage)) / 2));
+			pbSongCover.Location = new Point(MusicControl.X + ((MusicControl.Height - (MusicControl.Height / 100 * CoverPercentage)) / 2), MusicControl.Y + ((MusicControl.Height - (MusicControl.Height / 100 * CoverPercentage)) / 2));
 
 			// Position the song title and artist labels
-			lSongTitle.Location = new Point(pSongCover.Location.X + pSongCover.Width + SongInfoOffset, pSongCover.Location.Y + (pSongCover.Height / 2) - ((lSongTitle.Height + lSongArtist.Height) / 2));
-			lSongArtist.Location = new Point(pSongCover.Location.X + pSongCover.Width + SongInfoOffset + 2, pSongCover.Location.Y + (pSongCover.Height / 2) + (lSongTitle.Height - ((lSongTitle.Height + lSongArtist.Height) / 2)));
+			lSongTitle.Location = new Point(pbSongCover.Location.X + pbSongCover.Width + SongInfoOffset, pbSongCover.Location.Y + (pbSongCover.Height / 2) - ((lSongTitle.Height + lSongArtist.Height) / 2));
+			lSongArtist.Location = new Point(pbSongCover.Location.X + pbSongCover.Width + SongInfoOffset, pbSongCover.Location.Y + (pbSongCover.Height / 2) + (lSongTitle.Height - ((lSongTitle.Height + lSongArtist.Height) / 2)));
+			SongInfoHide.Location = new Point(lSongTimePassed.Location.X, pbSongCover.Location.Y + (pbSongCover.Height / 2) - (SongInfoHide.Height / 2));
 			#endregion
+			CutSongInfo();
 			base.OnResize(e);
 		}
 		#endregion
@@ -1039,10 +1059,15 @@ namespace Windows
 					break;
 			}
 		}
-        #endregion
+		#endregion
 
-        // Upload button
-        private void button1_Click(object sender, EventArgs e)
+		private void button2_Click(object sender, EventArgs e)
+		{
+			SongInfoCarousel("SONGTITLE");
+		}
+
+		// Upload button
+		private void button1_Click(object sender, EventArgs e)
         {
             Form2 form = new Form2();
             form.Show();
@@ -1100,6 +1125,57 @@ namespace Windows
 				pSliderHandle.Location = new Point(pVolumeBarVolume.Location.X + pVolumeBarVolume.Width - (pSliderHandle.Width / 2), pVolumeBarVolume.Location.Y - (pSliderHandle.Height / 2) + (pVolumeBarVolume.Height / 2));
 		}
 
-		#endregion
-	}
+		private void SetSongInfo(string title, string artists)
+		{
+			lSongTitle.Text = title;
+			lSongArtist.Text = artists;
+			PlaybackSettings.title = title;
+			PlaybackSettings.artists = artists;
+		}
+
+		private void SongInfoCarousel(string fulltext)
+		{
+			
+		}
+
+		private void CutSongInfo()
+		{
+			if (lSongTitle.Location.X + CalculateStringSize(PlaybackSettings.title, lSongTitle.Font, 0).Width > SongInfoHide.Location.X)
+			{
+				for (int i = 0; i < PlaybackSettings.title.Length; i++)
+				{
+					if (lSongTitle.Location.X + CalculateStringSize(PlaybackSettings.title.Substring(0, i), lSongTitle.Font, 0).Width > SongInfoHide.Location.X)
+					{
+						lSongTitle.Text = PlaybackSettings.title.Substring(0, i);
+						break;
+					}
+				}
+			}else
+			{
+				lSongTitle.Text = PlaybackSettings.title;
+			}
+
+			if (lSongArtist.Location.X + CalculateStringSize(PlaybackSettings.artists, lSongArtist.Font, 0).Width > SongInfoHide.Location.X)
+			{
+				for (int i = 0; i < PlaybackSettings.artists.Length; i++)
+				{
+					if (lSongArtist.Location.X + CalculateStringSize(PlaybackSettings.artists.Substring(0, i), lSongArtist.Font, 0).Width > SongInfoHide.Location.X)
+					{
+						lSongArtist.Text = PlaybackSettings.artists.Substring(0, i);
+						break;
+					}
+				}
+			}else
+			{
+				lSongArtist.Text = PlaybackSettings.artists;
+			}
+		}
+
+		private Size CalculateStringSize(string input, Font font, int offset)
+		{
+			return TextRenderer.MeasureText(input, font) - new Size(offset, 0);
+		}
+
+	#endregion
+}
 }

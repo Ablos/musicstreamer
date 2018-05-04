@@ -20,5 +20,8 @@ namespace Windows
 
 		public static bool edittingVolume = false;
 		public static bool volumeSelected = false;
+
+		public static string title = "";
+		public static string artists = "";
 	}
 }
