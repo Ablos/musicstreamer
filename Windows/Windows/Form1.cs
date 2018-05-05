@@ -1,3 +1,7 @@
+/*
+ * (c) Abel Dieterich - HotkeyCode Inc.
+ */
+
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -429,7 +433,7 @@ namespace Windows
 			Controls.Add(lSongArtist);
 
 			SetSongInfo("Demons", "DJ Paul Elstak,Jantine");
-			//SetSongInfo("Veel te lange title die nooit past in dat ding dus daarom carousel", "Ook een veel te lange artistname die wederom niet past in dat ding en daarom carousel");
+			SetSongInfo("Veel te lange title die nooit past in dat ding dus daarom carousel", "Ook een veel te lange artistname die wederom niet past in dat ding en daarom carousel");
 
 			// Instantiate right hide panel
 			SongInfoHide.BackColor = cMusicControl;
@@ -441,6 +445,10 @@ namespace Windows
 			lSongArtist.SendToBack();
 			pbSongCover.BringToFront();
 			#endregion
+
+			pe = new PlaybackEngine();
+			pe.OnNewSong += loadNewSongInfo;
+			pe.OnTimeChanged += updateTimebar;
 		}
 
 		#region Resize constants
@@ -598,6 +606,8 @@ namespace Windows
 
 		public int songInfoCarouselSpeed = 40;
 		public string songInfoCarouselSpace = "        ";
+
+		private PlaybackEngine pe;
 		#endregion
 
 		#region Forms functions
@@ -973,6 +983,7 @@ namespace Windows
 		{
 			StopTitleCarousel();
 			StopArtistsCarousel();
+			pe.StopStream();
 			Application.Exit();
 		}
 
@@ -1026,6 +1037,8 @@ namespace Windows
 				bPlayPauseButton.BackgroundImage = ResourceLoader.loadImage(rPlayButton);
 				bPlayPauseButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rPlayButton);
 			}
+
+			pe.PauseStream();
 		}
 
 		// Press on the unenabled shuffle button
@@ -1071,8 +1084,7 @@ namespace Windows
 
 		private void button2_Click(object sender, EventArgs e)
 		{
-			StartTitleCarousel();
-			StartArtistsCarousel();
+			pe.StartNewSong("C:\\Users\\Abel\\Music\\Hardstyle\\Coone & Wildstylez - Here I Come.mp3");
 		}
 
 		// Upload button
@@ -1090,6 +1102,44 @@ namespace Windows
 		#endregion
 
 		#region Custom functions
+		// Update the timebar
+		private void updateTimebar(TimeSpan time)
+		{
+			string seconds = time.Seconds.ToString();
+			if (seconds.Length == 1)
+				seconds = "0" + seconds;
+			lSongTimePassed?.Invoke((MethodInvoker)(() => 
+			{
+				lSongTimePassed.Text = time.Minutes + ":" + seconds;
+			}));
+
+			if (PlaybackSettings.edittingTime)
+				return;
+
+			string[] parts = lSongTotalTime.Text.Split(':');
+			int minutes = Convert.ToInt32(parts[0]);
+			int sec = Convert.ToInt32(parts[1]);
+			int totalseconds = (minutes * 60 * 1000) + (sec * 1000);
+			SetTimeBarProcessPercentage(((float)time.TotalMilliseconds / (float)totalseconds) * (float)100f);
+		}
+
+		// Update all information
+		private void loadNewSongInfo(string title, string artists, Image cover, string totaltime)
+		{
+			lSongTitle.Text = title;
+			PlaybackSettings.title = title;
+			lSongArtist.Text = artists;
+			PlaybackSettings.artists = artists;
+			CutSongInfo();
+
+			pbSongCover.Image = cover;
+			lSongTotalTime.Text = totaltime;
+
+			PlaybackSettings.isPaused = false;
+			bPlayPauseButton.BackgroundImage = ResourceLoader.loadImage(rPauseButton);
+			bPlayPauseButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rPauseButton);
+		}
+
 		// Move the window
 		private void Mover(object sender, MouseEventArgs e)
 		{
@@ -1117,9 +1167,12 @@ namespace Windows
 
 		private void SetTimeBarProcessPercentage(float percentage)
 		{
-			pTimeBarProgress.Size = new Size((int)((float)TimeBar_BG.Width * (float)((float)percentage / (float)100f)), pTimeBarProgress.Height);
-			if (PlaybackSettings.timeSelected)
-				pSliderHandle.Location = new Point(pTimeBarProgress.Location.X + pTimeBarProgress.Width - (pSliderHandle.Width / 2), pTimeBarProgress.Location.Y - (pSliderHandle.Height / 2) + (pTimeBarProgress.Height / 2));
+			pTimeBarProgress?.Invoke((MethodInvoker)(() =>
+			{
+				pTimeBarProgress.Size = new Size((int)((float)TimeBar_BG.Width * (float)((float)percentage / (float)100f)), pTimeBarProgress.Height);
+				if (PlaybackSettings.timeSelected)
+					pSliderHandle.Location = new Point(pTimeBarProgress.Location.X + pTimeBarProgress.Width - (pSliderHandle.Width / 2), pTimeBarProgress.Location.Y - (pSliderHandle.Height / 2) + (pTimeBarProgress.Height / 2));
+			}));
 		}
 
 		private float GetVolumeBarValue()
@@ -1129,9 +1182,12 @@ namespace Windows
 
 		private void SetVolumePercentage(float percentage)
 		{
-			pVolumeBarVolume.Size = new Size((int)((float)VolumeBar_BG.Width * (float)((float)percentage / (float)100f)), pVolumeBarVolume.Height);
-			if (PlaybackSettings.volumeSelected)
-				pSliderHandle.Location = new Point(pVolumeBarVolume.Location.X + pVolumeBarVolume.Width - (pSliderHandle.Width / 2), pVolumeBarVolume.Location.Y - (pSliderHandle.Height / 2) + (pVolumeBarVolume.Height / 2));
+			pVolumeBarVolume?.Invoke((MethodInvoker)(() =>
+			{
+				pVolumeBarVolume.Size = new Size((int)((float)VolumeBar_BG.Width * (float)((float)percentage / (float)100f)), pVolumeBarVolume.Height);
+				if (PlaybackSettings.volumeSelected)
+					pSliderHandle.Location = new Point(pVolumeBarVolume.Location.X + pVolumeBarVolume.Width - (pSliderHandle.Width / 2), pVolumeBarVolume.Location.Y - (pSliderHandle.Height / 2) + (pVolumeBarVolume.Height / 2));
+			}));
 		}
 
 		private void SetSongInfo(string title, string artists)
