@@ -413,6 +413,7 @@ namespace Windows
 			lSongTitle.Location = new Point(pbSongCover.Location.X + pbSongCover.Width + SongInfoOffset, pbSongCover.Location.Y + (pbSongCover.Height / 2) - ((lSongTitle.Height + lSongArtist.Height) / 2));
 			lSongTitle.Text = "";
 			lSongTitle.Margin = new Padding(0, 0, 0, 0);
+			lSongTitle.MouseEnter += new EventHandler(StartTitleCarousel);
 			Controls.Add(lSongTitle);
 
 			// Instantiates song artist label
@@ -424,9 +425,11 @@ namespace Windows
 			lSongArtist.Location = new Point(pbSongCover.Location.X + pbSongCover.Width + SongInfoOffset, pbSongCover.Location.Y + (pbSongCover.Height / 2) + (lSongTitle.Height - ((lSongTitle.Height + lSongArtist.Height) / 2)));
 			lSongArtist.Text = "";
 			lSongArtist.Margin = new Padding(0, 0, 0, 0);
+			lSongArtist.MouseEnter += new EventHandler(StartArtistsCarousel);
 			Controls.Add(lSongArtist);
 
 			SetSongInfo("Demons", "DJ Paul Elstak,Jantine");
+			//SetSongInfo("Veel te lange title die nooit past in dat ding dus daarom carousel", "Ook een veel te lange artistname die wederom niet past in dat ding en daarom carousel");
 
 			// Instantiate right hide panel
 			SongInfoHide.BackColor = cMusicControl;
@@ -592,6 +595,9 @@ namespace Windows
 
 		public delegate void _OnVolumeBarValueChanged(float value);
 		public _OnVolumeBarValueChanged OnVolumeBarValueChanged;
+
+		public int songInfoCarouselSpeed = 40;
+		public string songInfoCarouselSpace = "        ";
 		#endregion
 
 		#region Forms functions
@@ -965,6 +971,8 @@ namespace Windows
 		// Button to quit the application
 		private void ExitButton_Click(object sender, EventArgs e)
 		{
+			StopTitleCarousel();
+			StopArtistsCarousel();
 			Application.Exit();
 		}
 
@@ -1063,7 +1071,8 @@ namespace Windows
 
 		private void button2_Click(object sender, EventArgs e)
 		{
-			SongInfoCarousel("SONGTITLE");
+			StartTitleCarousel();
+			StartArtistsCarousel();
 		}
 
 		// Upload button
@@ -1133,13 +1142,95 @@ namespace Windows
 			PlaybackSettings.artists = artists;
 		}
 
-		private void SongInfoCarousel(string fulltext)
+		bool stoptitlecarousel = false;
+		bool runningtitlecarousel = false;
+
+		private void StartTitleCarousel(object sender = null, EventArgs e = null)
 		{
-			
+			if (lSongTitle.Location.X + CalculateStringSize(PlaybackSettings.title, lSongTitle.Font, 0).Width <= SongInfoHide.Location.X || runningtitlecarousel)
+				return;
+
+			runningtitlecarousel = true;
+			new Thread(() =>
+			{
+				string carouselstring = PlaybackSettings.title + songInfoCarouselSpace;
+				string startstring = lSongTitle.Text;
+				int index = startstring.Length;
+				foreach (char c in carouselstring)
+				{
+					if (stoptitlecarousel)
+						break;
+
+					lSongTitle?.Invoke((MethodInvoker)(() =>
+					{
+						lSongTitle.Text = lSongTitle.Text.Substring(1) + carouselstring[index].ToString();
+					}));
+					index++;
+					if (index >= carouselstring.Length)
+						index = 0;
+
+					Thread.Sleep(songInfoCarouselSpeed);
+				}
+				stoptitlecarousel = false;
+				runningtitlecarousel = false;
+			}).Start();
+		}
+
+		private void StopTitleCarousel()
+		{
+			if (runningtitlecarousel)
+				stoptitlecarousel = true;
+			else
+				stoptitlecarousel = false;
+		}
+
+		bool stopartistscarousel = false;
+		bool runningartistscarousel = false;
+
+		private void StartArtistsCarousel(object sender = null, EventArgs e = null)
+		{
+			if (lSongArtist.Location.X + CalculateStringSize(PlaybackSettings.artists, lSongArtist.Font, 0).Width <= SongInfoHide.Location.X || runningartistscarousel)
+				return;
+
+			runningartistscarousel = true;
+			new Thread(() =>
+			{
+				string carouselstring = PlaybackSettings.artists + songInfoCarouselSpace;
+				string startstring = lSongArtist.Text;
+				int index = startstring.Length;
+				foreach (char c in carouselstring)
+				{
+					if (stopartistscarousel)
+						break;
+
+					lSongArtist?.Invoke((MethodInvoker)(() =>
+					{
+						lSongArtist.Text = lSongArtist.Text.Substring(1) + carouselstring[index].ToString();
+					}));
+					index++;
+					if (index >= carouselstring.Length)
+						index = 0;
+
+					Thread.Sleep(songInfoCarouselSpeed);
+				}
+				stopartistscarousel = false;
+				runningartistscarousel = false;
+			}).Start();
+		}
+
+		private void StopArtistsCarousel()
+		{
+			if (runningartistscarousel)
+				stopartistscarousel = true;
+			else
+				stopartistscarousel = false;
 		}
 
 		private void CutSongInfo()
 		{
+			StopTitleCarousel();
+			StopArtistsCarousel();
+
 			if (lSongTitle.Location.X + CalculateStringSize(PlaybackSettings.title, lSongTitle.Font, 0).Width > SongInfoHide.Location.X)
 			{
 				for (int i = 0; i < PlaybackSettings.title.Length; i++)
