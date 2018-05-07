@@ -371,7 +371,7 @@ namespace Windows
 			pVolumeBarVolume.MouseUp += new MouseEventHandler(new Action<object, MouseEventArgs>((object sender, MouseEventArgs args) =>
 			{
 				PlaybackSettings.edittingVolume = false;
-				OnTimeBarValueChanged?.Invoke(GetVolumeBarValue());
+				OnVolumeBarValueChanged?.Invoke(GetVolumeBarValue());
 				if (!PlaybackSettings.volumeSelected)
 					pVolumeBarVolume.BackColor = cSliderUnselected;
 			}));
@@ -432,8 +432,8 @@ namespace Windows
 			lSongArtist.MouseEnter += new EventHandler(StartArtistsCarousel);
 			Controls.Add(lSongArtist);
 
-			SetSongInfo("Demons", "DJ Paul Elstak,Jantine");
-			SetSongInfo("Veel te lange title die nooit past in dat ding dus daarom carousel", "Ook een veel te lange artistname die wederom niet past in dat ding en daarom carousel");
+			SetSongInfo("TITLE", "ARTISTS");
+			//SetSongInfo("Veel te lange title die nooit past in dat ding dus daarom carousel", "Ook een veel te lange artistname die wederom niet past in dat ding en daarom carousel");
 
 			// Instantiate right hide panel
 			SongInfoHide.BackColor = cMusicControl;
@@ -449,6 +449,8 @@ namespace Windows
 			pe = new PlaybackEngine();
 			pe.OnNewSong += loadNewSongInfo;
 			pe.OnTimeChanged += updateTimebar;
+			OnVolumeBarValueChanged += pe.SetVolume;
+			OnTimeBarValueChanged += pe.GotoPercentage;
 		}
 
 		#region Resize constants
@@ -933,7 +935,7 @@ namespace Windows
 			{
 				PlaybackSettings.edittingVolume = false;
 				checkUpSlider = false;
-				OnTimeBarValueChanged?.Invoke(GetVolumeBarValue());
+				OnVolumeBarValueChanged?.Invoke(GetVolumeBarValue());
 			}
 		}
 
@@ -984,7 +986,8 @@ namespace Windows
 			StopTitleCarousel();
 			StopArtistsCarousel();
 			pe.StopStream();
-			Application.Exit();
+			this.Close();
+			//Application.Exit();
 		}
 
 		// Button to maximize the application
@@ -1084,7 +1087,8 @@ namespace Windows
 
 		private void button2_Click(object sender, EventArgs e)
 		{
-			pe.StartNewSong("C:\\Users\\Abel\\Music\\Hardstyle\\Coone & Wildstylez - Here I Come.mp3");
+			//pe.StartNewSong("C:\\Users\\Abel\\Music\\Hardstyle\\Coone & Wildstylez - Here I Come.mp3");
+			pe.StartNewSong("music/dj_paul_elstak/demons");
 		}
 
 		// Upload button
@@ -1126,10 +1130,10 @@ namespace Windows
 		// Update all information
 		private void loadNewSongInfo(string title, string artists, Image cover, string totaltime)
 		{
-			lSongTitle.Text = title;
-			PlaybackSettings.title = title;
-			lSongArtist.Text = artists;
-			PlaybackSettings.artists = artists;
+			StopTitleCarousel();
+			StopArtistsCarousel();
+
+			SetSongInfo(title, artists);
 			CutSongInfo();
 
 			pbSongCover.Image = cover;
@@ -1138,6 +1142,9 @@ namespace Windows
 			PlaybackSettings.isPaused = false;
 			bPlayPauseButton.BackgroundImage = ResourceLoader.loadImage(rPauseButton);
 			bPlayPauseButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rPauseButton);
+
+			SetSongInfo(title, artists);
+			CutSongInfo();
 		}
 
 		// Move the window
@@ -1177,7 +1184,7 @@ namespace Windows
 
 		private float GetVolumeBarValue()
 		{
-			return (float)pVolumeBarVolume.Width / (float)VolumeBar_BG.Width * (float)100f;
+			return (float)pVolumeBarVolume.Width / (float)VolumeBar_BG.Width;
 		}
 
 		private void SetVolumePercentage(float percentage)
@@ -1188,6 +1195,8 @@ namespace Windows
 				if (PlaybackSettings.volumeSelected)
 					pSliderHandle.Location = new Point(pVolumeBarVolume.Location.X + pVolumeBarVolume.Width - (pSliderHandle.Width / 2), pVolumeBarVolume.Location.Y - (pSliderHandle.Height / 2) + (pVolumeBarVolume.Height / 2));
 			}));
+			OnVolumeBarValueChanged?.Invoke(GetVolumeBarValue());
+			Console.WriteLine("Invoked");
 		}
 
 		private void SetSongInfo(string title, string artists)
@@ -1219,13 +1228,16 @@ namespace Windows
 
 					lSongTitle?.Invoke((MethodInvoker)(() =>
 					{
-						lSongTitle.Text = lSongTitle.Text.Substring(1) + carouselstring[index].ToString();
+						if (!stoptitlecarousel)
+							lSongTitle.Text = lSongTitle.Text.Substring(1) + carouselstring[index].ToString();
 					}));
 					index++;
 					if (index >= carouselstring.Length)
 						index = 0;
 
 					Thread.Sleep(songInfoCarouselSpeed);
+					if (stoptitlecarousel)
+						break;
 				}
 				stoptitlecarousel = false;
 				runningtitlecarousel = false;
@@ -1261,13 +1273,16 @@ namespace Windows
 
 					lSongArtist?.Invoke((MethodInvoker)(() =>
 					{
-						lSongArtist.Text = lSongArtist.Text.Substring(1) + carouselstring[index].ToString();
+						if (!stopartistscarousel)
+							lSongArtist.Text = lSongArtist.Text.Substring(1) + carouselstring[index].ToString();
 					}));
 					index++;
 					if (index >= carouselstring.Length)
 						index = 0;
 
 					Thread.Sleep(songInfoCarouselSpeed);
+					if (stopartistscarousel)
+						break;
 				}
 				stopartistscarousel = false;
 				runningartistscarousel = false;

@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using NAudio.Lame;
 using NAudio.Wave;
 using WebDav;
+using Newtonsoft.Json;
 #endregion
 
 namespace Windows
@@ -363,9 +364,9 @@ namespace Windows
         //returns a byte array containing the image of a given url
         private byte[] GetImage(string url)
         {
-            //create webrequest
-            var request = (HttpWebRequest)WebRequest.Create(url);
-            var response = (HttpWebResponse)request.GetResponse();
+			//create webrequest
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
             //writes the image to a datastream
             using (Stream dataStream = response.GetResponseStream())
@@ -521,6 +522,8 @@ namespace Windows
             //creates the folder on the server
             await wClient.Mkcol(firstArtist + "/" + saveName);
 
+			SongInfo info = new SongInfo(title, artists, float.Parse(duration), genre, album);
+			File.WriteAllText(outgoingTemp + title + "\\songinfo.json", JsonConvert.SerializeObject(info));
 
             //uploads all file from the local folder to the folder on the server
             UpdateUploadStatus("Uploading To Server: 0%");
@@ -530,6 +533,8 @@ namespace Windows
             await wClient.PutFile(firstArtist + "/" + saveName + "/low.mp3", File.OpenRead(outgoingTemp + title + "\\low.mp3"));
             UpdateUploadStatus("Uploading To Server: 40%");
             await wClient.PutFile(firstArtist + "/" + saveName + "/high.mp3", File.OpenRead(outgoingTemp + title + "\\high.mp3"));
+			UpdateUploadStatus("Uploading To Server: 95%");
+			await wClient.PutFile(firstArtist + "/" + saveName + "/info.json", File.OpenRead(outgoingTemp + title + "\\songinfo.json"));
             UpdateUploadStatus("Uploading To Server: 100%");
 
 

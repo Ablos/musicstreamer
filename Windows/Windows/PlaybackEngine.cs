@@ -7,11 +7,36 @@ using System.IO;
 using System.Net;
 using System.Drawing;
 using System.Threading;
+using System.Text;
 using NAudio.Wave;
+using WebDav;
+using Newtonsoft.Json;
 
 namespace Windows
 {
-	class PlaybackEngine
+	public static class PlaybackSettings
+	{
+		public enum RepeatState { NONE, REPEAT_ALL, REPEAT_ONE };
+
+		public static bool shuffle = false;
+		public static RepeatState repeatState = RepeatState.NONE;
+		public static bool isPaused = true;
+		public static float volume = 100f;
+
+		public enum StreamQuality { LOW, HIGH };
+		public static StreamQuality streamQuality = StreamQuality.HIGH;
+
+		public static bool edittingTime = false;
+		public static bool timeSelected = false;
+
+		public static bool edittingVolume = false;
+		public static bool volumeSelected = false;
+
+		public static string title = "";
+		public static string artists = "";
+	}
+
+	public class PlaybackEngine
 	{
 		#region Delegates
 		public delegate void onNewSong(string title, string artists, Image cover, string totaltime);
@@ -19,6 +44,9 @@ namespace Windows
 
 		public delegate void onTimeChanged(TimeSpan time);
 		public onTimeChanged OnTimeChanged;
+
+		public delegate void onSongEnd();
+		public onSongEnd OnSongEnd;
 		#endregion
 
 		#region Variables
@@ -28,6 +56,7 @@ namespace Windows
 		string streamID = "";
 		string streamURL = "";
 		const string streamServer = "http://ablos.square7.ch/";
+		bool stop = false;
 		#endregion
 
 		#region Constructor and Deconstructor
@@ -35,11 +64,18 @@ namespace Windows
 		{
 			wo = new WaveOutEvent();
 		}
+
+		~PlaybackEngine()
+		{
+			StopStream();
+		}
 		#endregion
 
 		#region Public functions
 		public void StartNewSong(string url)
 		{
+			StopStream();
+			stop = false;
 			if (File.Exists(url))
 				InitiateLocalStream(url);
 			else
@@ -60,6 +96,7 @@ namespace Windows
 		/// </summary>
 		public void StopStream()
 		{
+			stop = true;
 			wo.Stop();
 			DeleteStream();
 		}
@@ -84,12 +121,23 @@ namespace Windows
 		/// <summary>
 		/// Get the total time of the currently playing song. Returns a TimeSpan.
 		/// </summary>
-		/// <returns></returns>
 		public TimeSpan GetTotalTime()
 		{
 			if (mf != null)
 			{
 				return mf.TotalTime;
+			}
+			return new TimeSpan(0, 0, 0);
+		}
+
+		/// <summary>
+		/// Get the current time of the currently playing song. Returns a TimeSpan.
+		/// </summary>
+		public TimeSpan GetCurrentTime()
+		{
+			if (mf != null)
+			{
+				return mf.CurrentTime;
 			}
 			return new TimeSpan(0, 0, 0);
 		}
@@ -106,6 +154,17 @@ namespace Windows
 			}
 		}
 
+		/// <summary>
+		/// Go to the given percentage of the track.
+		/// </summary>
+		/// <param name="Percentage"></param>
+		public void GotoPercentage(float percentage)
+		{
+			float totalMilliseconds = (float)GetTotalTime().TotalSeconds;
+			int timeToGoto = (int)(totalMilliseconds * (percentage / 100f));
+			Skip(timeToGoto - (int)GetCurrentTime().TotalSeconds);
+		}
+
 		#endregion
 
 		#region Private functions
@@ -116,7 +175,7 @@ namespace Windows
 		private void InitiateLocalStream(string path)
 		{
 			streamURL = path;
-			StreamMusic();
+			StreamMusic(path);
 			TagLib.File f = TagLib.File.Create(path);
 			string seconds = f.Properties.Duration.Seconds.ToString();
 			if (seconds.Length == 1)
@@ -128,14 +187,20 @@ namespace Windows
 		/// Create a new audio stream from URL.
 		/// </summary>
 		/// <param name="WebDAV URL"></param>
-		private void InitiateWebStream(string webDavURL)
+		private async void InitiateWebStream(string webDavURL)
 		{
 			PruneServer();
 			WebClient webClient = new WebClient();
 			string response = "";
 			try
 			{
-				response = webClient.DownloadString(streamServer + "stream.php?pass=AblosStream00&url=" + webDavURL);
+				if (PlaybackSettings.streamQuality == PlaybackSettings.StreamQuality.LOW)
+				{
+					response = webClient.DownloadString(streamServer + "stream.php?pass=AblosStream00&url=" + webDavURL + "/low.mp3");
+				}else
+				{
+					response = webClient.DownloadString(streamServer + "stream.php?pass=AblosStream00&url=" + webDavURL + "/high.mp3");
+				}
 			}
 			catch { }
 
@@ -152,7 +217,27 @@ namespace Windows
 					Console.WriteLine("Stream ID: " + parts[1]);
 					streamURL = streamServer + "streams/" + parts[1] + ".mp3";
 					streamID = parts[1];
-					StreamMusic();
+					StreamMusic(webDavURL);
+
+					//initializes a new WEBDAV client
+					WebDavClientParams clientParams = new WebDavClientParams()
+					{
+						BaseAddress = new Uri("https://ablos.stackstorage.com/remote.php/webdav/"),
+						Credentials = new NetworkCredential("ablos", "AblosStack00")
+					};
+					WebDavClient wClient = new WebDavClient(clientParams);
+
+					WebDavStreamResponse s = await wClient.GetRawFile(webDavURL + "/cover.png");
+
+					WebDavStreamResponse r = await wClient.GetRawFile(webDavURL + "/info.json");
+					SongInfo info = JsonConvert.DeserializeObject<SongInfo>(StreamToString(r.Stream));
+
+					TimeSpan totalTime = GetTotalTime();
+					string seconds = totalTime.Seconds.ToString();
+					if (seconds.Length == 1)
+						seconds = "0" + seconds;
+
+					OnNewSong?.Invoke(ConvertTitle(info.title), ConvertArtists(info.artists), Image.FromStream(s.Stream), totalTime.Minutes + ":" + seconds);
 				}
 				else
 				{
@@ -161,7 +246,7 @@ namespace Windows
 			}
 		}
 
-		private void StreamMusic()
+		private void StreamMusic(string originalURL)
 		{
 			new Thread(() =>
 			{
@@ -169,15 +254,26 @@ namespace Windows
 				mf = new MediaFoundationReader(streamURL);
 				wo.Init(mf);
 				wo.Play();
-				while (wo.PlaybackState == PlaybackState.Playing)
+				while (wo.PlaybackState == PlaybackState.Playing || wo.PlaybackState == PlaybackState.Paused)
 				{
-					OnTimeChanged?.Invoke(mf.CurrentTime);
+					if (wo.PlaybackState == PlaybackState.Playing)
+						try { OnTimeChanged?.Invoke(mf.CurrentTime); } catch { }
+
 					Thread.Sleep(1);
 				}
 
 				if (wo.PlaybackState == PlaybackState.Stopped)
 				{
+					
+					try { OnSongEnd?.Invoke(); }catch { }
 					DeleteStream();
+
+					if (PlaybackSettings.repeatState == PlaybackSettings.RepeatState.REPEAT_ONE && !stop)
+					{
+						StartNewSong(originalURL);
+					}
+
+					stop = false;
 				}
 			}).Start();
 		}
@@ -220,6 +316,73 @@ namespace Windows
 			else if (val.CompareTo(max) > 0) return max;
 			else return val;
 		}
+
+		private string StreamToString(Stream stream)
+		{
+			stream.Position = 0;
+			using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+			{
+				return reader.ReadToEnd();
+			}
+		}
+
+		private string ConvertArtists(string input)
+		{
+			string[] parts = input.Split(',');
+			if (parts.Length == 1) return ConvertTitle(input);
+			string returnstring = ConvertTitle(parts[0]);
+			for (int i = 1; i < parts.Length; i++)
+			{
+				returnstring += "," + ConvertTitle(parts[i]);
+			}
+			return returnstring;
+		}
+
+		private string ConvertTitle(string input)
+		{
+			string[] parts = input.Split(' ');
+			if (parts.Length == 1) return Capitalize(input);
+			string returnstring = Capitalize(parts[0]);
+			for (int i = 1; i < parts.Length; i++)
+			{
+				returnstring += " " + Capitalize(parts[i]);
+			}
+			return returnstring;
+		}
+
+		private string Capitalize(string input)
+		{
+			if (string.IsNullOrEmpty(input)) return null;
+			if (input.Length == 1) return input.ToUpper();
+			return input[0].ToString().ToUpper() + input.Substring(1);
+		}
 		#endregion
+	}
+
+	public class SongInfo
+	{
+		public string title;
+		public string artists;
+		public float duration;
+		public string genre;
+		public string album;
+
+		public SongInfo(string title, string artists, float duration, string genre, string album)
+		{
+			this.title = title;
+			this.artists = artists;
+			this.duration = duration;
+			this.genre = genre;
+			this.album = album;
+		}
+	}
+
+	public class PlaybackCache
+	{
+		public SongInfo info;
+		public Image cover;
+		public float currentTime;
+		public string webDavPath;
+		public string localPath;
 	}
 }
