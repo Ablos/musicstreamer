@@ -993,6 +993,9 @@ namespace Windows
 		// Button to maximize the application
 		private void MaximizeButton_Click(object sender, EventArgs e)
 		{
+			Rectangle rect = Screen.FromHandle(this.Handle).WorkingArea;
+			rect.Location = new Point(0, 0);
+			this.MaximizedBounds = rect;
 			this.WindowState = FormWindowState.Maximized;
 			bMaximizeButton.Visible = false;
 			bExitMaximizeButton.Visible = true;
@@ -1085,10 +1088,16 @@ namespace Windows
 		}
 		#endregion
 
+		bool differentSong = false;
+
 		private void button2_Click(object sender, EventArgs e)
 		{
-			//pe.StartNewSong("C:\\Users\\Abel\\Music\\Hardstyle\\Coone & Wildstylez - Here I Come.mp3");
-			pe.StartNewSong("music/dj_paul_elstak/demons");
+			if (differentSong)
+				pe.StartNewSong("C:\\Users\\Abel\\Music\\Hardstyle\\Coone & Wildstylez - Here I Come.mp3");
+			else
+				pe.StartNewSong("music/dj_paul_elstak/demons");
+
+			differentSong = !differentSong;
 		}
 
 		// Upload button
@@ -1128,23 +1137,59 @@ namespace Windows
 		}
 
 		// Update all information
-		private void loadNewSongInfo(string title, string artists, Image cover, string totaltime)
+		private void loadNewSongInfo(SongInfo info, Image cover)
 		{
 			StopTitleCarousel();
 			StopArtistsCarousel();
 
-			SetSongInfo(title, artists);
+			SetSongInfo(ConvertTitle(info.title), ConvertArtists(info.artists));
 			CutSongInfo();
 
 			pbSongCover.Image = cover;
-			lSongTotalTime.Text = totaltime;
+
+			string seconds = info.duration.Seconds.ToString();
+			if (seconds.Length == 1)
+				seconds = "0" + seconds;
+
+			lSongTotalTime.Text = info.duration.Minutes + ":" + seconds;
 
 			PlaybackSettings.isPaused = false;
 			bPlayPauseButton.BackgroundImage = ResourceLoader.loadImage(rPauseButton);
 			bPlayPauseButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rPauseButton);
 
-			SetSongInfo(title, artists);
+			SetSongInfo(ConvertTitle(info.title), ConvertArtists(info.artists));
 			CutSongInfo();
+		}
+
+		private string ConvertArtists(string input)
+		{
+			string[] parts = input.Split(',');
+			if (parts.Length == 1) return ConvertTitle(input);
+			string returnstring = ConvertTitle(parts[0]);
+			for (int i = 1; i < parts.Length; i++)
+			{
+				returnstring += "," + ConvertTitle(parts[i]);
+			}
+			return returnstring;
+		}
+
+		private string ConvertTitle(string input)
+		{
+			string[] parts = input.Split(' ');
+			if (parts.Length == 1) return Capitalize(input);
+			string returnstring = Capitalize(parts[0]);
+			for (int i = 1; i < parts.Length; i++)
+			{
+				returnstring += " " + Capitalize(parts[i]);
+			}
+			return returnstring;
+		}
+
+		private string Capitalize(string input)
+		{
+			if (string.IsNullOrEmpty(input)) return null;
+			if (input.Length == 1) return input.ToUpper();
+			return input[0].ToString().ToUpper() + input.Substring(1);
 		}
 
 		// Move the window

@@ -39,7 +39,7 @@ namespace Windows
 	public class PlaybackEngine
 	{
 		#region Delegates
-		public delegate void onNewSong(string title, string artists, Image cover, string totaltime);
+		public delegate void onNewSong(SongInfo info, Image cover);
 		public onNewSong OnNewSong;
 
 		public delegate void onTimeChanged(TimeSpan time);
@@ -57,6 +57,7 @@ namespace Windows
 		string streamURL = "";
 		const string streamServer = "http://ablos.square7.ch/";
 		bool stop = false;
+		bool startedPlaying = false;
 		#endregion
 
 		#region Constructor and Deconstructor
@@ -174,13 +175,19 @@ namespace Windows
 		/// <param name="Path"></param>
 		private void InitiateLocalStream(string path)
 		{
+			startedPlaying = false;
+
 			streamURL = path;
+			streamID = "no_id_for_local_file";
 			StreamMusic(path);
 			TagLib.File f = TagLib.File.Create(path);
-			string seconds = f.Properties.Duration.Seconds.ToString();
-			if (seconds.Length == 1)
-				seconds = "0" + seconds;
-			OnNewSong?.Invoke(f.Tag.Title, f.Tag.FirstPerformer, Image.FromStream(new MemoryStream(f.Tag.Pictures[0].Data.Data)), f.Properties.Duration.Minutes.ToString() + ":" + seconds);
+			SongInfo info = new SongInfo(f.Tag.Title, f.Tag.FirstPerformer, f.Properties.Duration, f.Tag.FirstGenre, f.Tag.Album);
+			Image cover = Image.FromStream(new MemoryStream(f.Tag.Pictures[0].Data.Data));
+
+			PlaybackCache.info = info;
+			PlaybackCache.cover = cover;
+
+			OnNewSong?.Invoke(info, cover);
 		}
 
 		/// <summary>
@@ -189,6 +196,8 @@ namespace Windows
 		/// <param name="WebDAV URL"></param>
 		private async void InitiateWebStream(string webDavURL)
 		{
+			startedPlaying = false;
+
 			PruneServer();
 			WebClient webClient = new WebClient();
 			string response = "";
@@ -217,6 +226,7 @@ namespace Windows
 					Console.WriteLine("Stream ID: " + parts[1]);
 					streamURL = streamServer + "streams/" + parts[1] + ".mp3";
 					streamID = parts[1];
+					Console.WriteLine("Starting stream");
 					StreamMusic(webDavURL);
 
 					//initializes a new WEBDAV client
@@ -231,13 +241,9 @@ namespace Windows
 
 					WebDavStreamResponse r = await wClient.GetRawFile(webDavURL + "/info.json");
 					SongInfo info = JsonConvert.DeserializeObject<SongInfo>(StreamToString(r.Stream));
+					Image cover = Image.FromStream(s.Stream);
 
-					TimeSpan totalTime = GetTotalTime();
-					string seconds = totalTime.Seconds.ToString();
-					if (seconds.Length == 1)
-						seconds = "0" + seconds;
-
-					OnNewSong?.Invoke(ConvertTitle(info.title), ConvertArtists(info.artists), Image.FromStream(s.Stream), totalTime.Minutes + ":" + seconds);
+					OnNewSong?.Invoke(info, cover);
 				}
 				else
 				{
@@ -254,8 +260,11 @@ namespace Windows
 				mf = new MediaFoundationReader(streamURL);
 				wo.Init(mf);
 				wo.Play();
+
 				while (wo.PlaybackState == PlaybackState.Playing || wo.PlaybackState == PlaybackState.Paused)
 				{
+					startedPlaying = true;
+
 					if (wo.PlaybackState == PlaybackState.Playing)
 						try { OnTimeChanged?.Invoke(mf.CurrentTime); } catch { }
 
@@ -266,7 +275,8 @@ namespace Windows
 				{
 					
 					try { OnSongEnd?.Invoke(); }catch { }
-					DeleteStream();
+					if (startedPlaying)
+						DeleteStream();
 
 					if (PlaybackSettings.repeatState == PlaybackSettings.RepeatState.REPEAT_ONE && !stop)
 					{
@@ -280,21 +290,22 @@ namespace Windows
 
 		private void DeleteStream()
 		{
+			string ID = streamID;
 			new Thread(() =>
 			{
-				if (!string.IsNullOrEmpty(streamID))
+				if (!string.IsNullOrEmpty(ID))
 				{
 					WebClient web = new WebClient();
 					try
 					{
-						web.DownloadString(streamServer + "delete.php?pass=AblosStream00&id=" + streamID);
+						web.DownloadString(streamServer + "delete.php?pass=AblosStream00&id=" + ID);
 					}
 					catch { }
 				}
-
-				streamURL = "";
-				streamID = "";
 			}).Start();
+
+			streamURL = "";
+			streamID = "";
 		}
 
 		private void PruneServer()
@@ -325,37 +336,6 @@ namespace Windows
 				return reader.ReadToEnd();
 			}
 		}
-
-		private string ConvertArtists(string input)
-		{
-			string[] parts = input.Split(',');
-			if (parts.Length == 1) return ConvertTitle(input);
-			string returnstring = ConvertTitle(parts[0]);
-			for (int i = 1; i < parts.Length; i++)
-			{
-				returnstring += "," + ConvertTitle(parts[i]);
-			}
-			return returnstring;
-		}
-
-		private string ConvertTitle(string input)
-		{
-			string[] parts = input.Split(' ');
-			if (parts.Length == 1) return Capitalize(input);
-			string returnstring = Capitalize(parts[0]);
-			for (int i = 1; i < parts.Length; i++)
-			{
-				returnstring += " " + Capitalize(parts[i]);
-			}
-			return returnstring;
-		}
-
-		private string Capitalize(string input)
-		{
-			if (string.IsNullOrEmpty(input)) return null;
-			if (input.Length == 1) return input.ToUpper();
-			return input[0].ToString().ToUpper() + input.Substring(1);
-		}
 		#endregion
 	}
 
@@ -363,11 +343,11 @@ namespace Windows
 	{
 		public string title;
 		public string artists;
-		public float duration;
+		public TimeSpan duration;
 		public string genre;
 		public string album;
 
-		public SongInfo(string title, string artists, float duration, string genre, string album)
+		public SongInfo(string title, string artists, TimeSpan duration, string genre, string album)
 		{
 			this.title = title;
 			this.artists = artists;
@@ -377,12 +357,12 @@ namespace Windows
 		}
 	}
 
-	public class PlaybackCache
+	public static class PlaybackCache
 	{
-		public SongInfo info;
-		public Image cover;
-		public float currentTime;
-		public string webDavPath;
-		public string localPath;
+		public static SongInfo info;
+		public static Image cover;
+		public static float currentTime;
+		public static string webDavPath;
+		public static string localPath;
 	}
 }

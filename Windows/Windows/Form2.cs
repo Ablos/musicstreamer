@@ -38,7 +38,7 @@ namespace Windows
         string artists = "";
         string album = "";
         string genre = "";
-        string duration = "";
+        TimeSpan duration = new TimeSpan();
 
         //notify icon for the messages
         NotifyIcon notifyIcon1 = new NotifyIcon();
@@ -211,7 +211,7 @@ namespace Windows
                     string[] tmp = titleYT.Split(new string[] { " - " }, StringSplitOptions.None);
                     artists = tmp[0].Replace(" & ", ",").Replace("&", ",").Trim();
                     title = tmp[tmp.Length == 1 ? 0 : 1].Split("(".ToCharArray())[0].Trim();
-                    duration = f.Properties.Duration.TotalSeconds.ToString();
+                    duration = f.Properties.Duration;
 
                     //checks if the bitrate is already 128kbps
                     sameBitrate = f.Properties.AudioBitrate == 128;
@@ -281,7 +281,7 @@ namespace Windows
             artists = artists.Replace(" & ", ",").Replace("&", ",");
             title = f.Tag.Title;
             album = f.Tag.Album;
-            duration = f.Properties.Duration.TotalSeconds.ToString();
+            duration = f.Properties.Duration;
 
             //if bitrate already 128kbps, copy the file and clear all tags
             if (f.Properties.AudioBitrate == 128)
@@ -521,8 +521,8 @@ namespace Windows
 
             //creates the folder on the server
             await wClient.Mkcol(firstArtist + "/" + saveName);
-
-			SongInfo info = new SongInfo(title, artists, float.Parse(duration), genre, album);
+			
+			SongInfo info = new SongInfo(title, artists, duration, genre, album);
 			File.WriteAllText(outgoingTemp + title + "\\songinfo.json", JsonConvert.SerializeObject(info));
 
             //uploads all file from the local folder to the folder on the server
