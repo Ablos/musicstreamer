@@ -31,6 +31,9 @@ namespace Windows
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
 			this.BackgroundImage = ResourceLoader.loadImage(rWindowBackground);
 			this.MinimumSize = new Size(800, 500);
+			this.FormClosed += new FormClosedEventHandler(onFormClosed);
+			this.FormClosing += new FormClosingEventHandler(onFormClosing);
+			this.Shown += new EventHandler(onFormShow);
 
 			#region Instantiate top bar contents
 			// Instatiate topbar title
@@ -449,6 +452,7 @@ namespace Windows
 			pe = new PlaybackEngine();
 			pe.OnNewSong += loadNewSongInfo;
 			pe.OnTimeChanged += updateTimebar;
+			pe.OnSongPause += onStreamPause;
 			OnVolumeBarValueChanged += pe.SetVolume;
 			OnTimeBarValueChanged += pe.GotoPercentage;
 		}
@@ -606,8 +610,10 @@ namespace Windows
 		public delegate void _OnVolumeBarValueChanged(float value);
 		public _OnVolumeBarValueChanged OnVolumeBarValueChanged;
 
-		public int songInfoCarouselSpeed = 40;
-		public string songInfoCarouselSpace = "        ";
+		public const int songInfoCarouselSpeed = 30;
+		public const string songInfoCarouselSpace = "        ";
+
+		private const double backTime = 1.5;
 
 		private PlaybackEngine pe;
 		#endregion
@@ -983,9 +989,6 @@ namespace Windows
 		// Button to quit the application
 		private void ExitButton_Click(object sender, EventArgs e)
 		{
-			StopTitleCarousel();
-			StopArtistsCarousel();
-			pe.StopStream();
 			this.Close();
 			//Application.Exit();
 		}
@@ -1026,7 +1029,13 @@ namespace Windows
 		// Press on the back button
 		private void BackButton_Click(object sender, EventArgs e)
 		{
-			Console.WriteLine("Back");
+			if (pe.GetCurrentTime().TotalSeconds < backTime)
+			{
+				Console.WriteLine("Back");
+			}else
+			{
+				pe.GotoPercentage(0f);
+			}
 		}
 
 		// Press on the play button
@@ -1115,6 +1124,43 @@ namespace Windows
 		#endregion
 
 		#region Custom functions
+		private void onFormShow(object o, EventArgs e)
+		{
+			FileManager fm = new FileManager();
+			PlaybackSettings.cache = fm.DeserializeFile<PlaybackCache>(Application.StartupPath + "/saves/playbackcache.save");
+
+			if (PlaybackSettings.cache != null)
+			{
+				SetVolumePercentage(PlaybackSettings.cache.volume * 100f);
+				loadNewSongInfo(PlaybackSettings.cache.songCache.info, PlaybackSettings.cache.songCache.cover, false);
+
+				Console.WriteLine(PlaybackSettings.cache.timebarPercentage);
+
+				if (!string.IsNullOrEmpty(PlaybackSettings.cache.songCache.localPath))
+					pe.StartNewSong(PlaybackSettings.cache.songCache.localPath, PlaybackSettings.cache.timebarPercentage, true);
+				else
+					pe.StartNewSong(PlaybackSettings.cache.songCache.webDavPath, PlaybackSettings.cache.timebarPercentage, true);
+			}
+			else
+			{
+				PlaybackSettings.cache = new PlaybackCache();
+			}
+		}
+
+		private void onFormClosing(object o, EventArgs e)
+		{
+			StopTitleCarousel();
+			StopArtistsCarousel();
+			pe.StopStream();
+		}
+
+		private void onFormClosed(object o, EventArgs e)
+		{
+			PlaybackSettings.cache.timebarPercentage = GetTimeBarValue();
+			FileManager fm = new FileManager();
+			fm.SerializeFile(PlaybackSettings.cache, Application.StartupPath + "/saves", "playbackcache.save");
+		}
+
 		// Update the timebar
 		private void updateTimebar(TimeSpan time)
 		{
@@ -1137,7 +1183,7 @@ namespace Windows
 		}
 
 		// Update all information
-		private void loadNewSongInfo(SongInfo info, Image cover)
+		private void loadNewSongInfo(SongInfo info, Image cover, bool unpause)
 		{
 			StopTitleCarousel();
 			StopArtistsCarousel();
@@ -1153,12 +1199,22 @@ namespace Windows
 
 			lSongTotalTime.Text = info.duration.Minutes + ":" + seconds;
 
-			PlaybackSettings.isPaused = false;
-			bPlayPauseButton.BackgroundImage = ResourceLoader.loadImage(rPauseButton);
-			bPlayPauseButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rPauseButton);
+			if (unpause)
+			{
+				PlaybackSettings.isPaused = false;
+				bPlayPauseButton.BackgroundImage = ResourceLoader.loadImage(rPauseButton);
+				bPlayPauseButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rPauseButton);
+			}
 
 			SetSongInfo(ConvertTitle(info.title), ConvertArtists(info.artists));
 			CutSongInfo();
+		}
+
+		private void onStreamPause()
+		{
+			PlaybackSettings.isPaused = true;
+			bPlayPauseButton.BackgroundImage = ResourceLoader.loadImage(rPlayButton);
+			bPlayPauseButtonUnhovered.BackgroundImage = ResourceLoader.loadImage(rPlayButton);
 		}
 
 		private string ConvertArtists(string input)
@@ -1225,6 +1281,7 @@ namespace Windows
 				if (PlaybackSettings.timeSelected)
 					pSliderHandle.Location = new Point(pTimeBarProgress.Location.X + pTimeBarProgress.Width - (pSliderHandle.Width / 2), pTimeBarProgress.Location.Y - (pSliderHandle.Height / 2) + (pTimeBarProgress.Height / 2));
 			}));
+			//OnTimeBarValueChanged?.Invoke(percentage);
 		}
 
 		private float GetVolumeBarValue()
@@ -1240,8 +1297,7 @@ namespace Windows
 				if (PlaybackSettings.volumeSelected)
 					pSliderHandle.Location = new Point(pVolumeBarVolume.Location.X + pVolumeBarVolume.Width - (pSliderHandle.Width / 2), pVolumeBarVolume.Location.Y - (pSliderHandle.Height / 2) + (pVolumeBarVolume.Height / 2));
 			}));
-			OnVolumeBarValueChanged?.Invoke(GetVolumeBarValue());
-			Console.WriteLine("Invoked");
+			OnVolumeBarValueChanged?.Invoke(percentage / 100f);
 		}
 
 		private void SetSongInfo(string title, string artists)

@@ -8,6 +8,8 @@ using System.Net;
 using System.Drawing;
 using System.Threading;
 using System.Text;
+using System.Collections.Generic;
+using System.Windows.Forms;
 using NAudio.Wave;
 using WebDav;
 using Newtonsoft.Json;
@@ -34,13 +36,18 @@ namespace Windows
 
 		public static string title = "";
 		public static string artists = "";
+
+		public static PlaybackCache cache;
 	}
 
 	public class PlaybackEngine
 	{
 		#region Delegates
-		public delegate void onNewSong(SongInfo info, Image cover);
+		public delegate void onNewSong(SongInfo info, Image cover, bool unpause);
 		public onNewSong OnNewSong;
+
+		public delegate void onSongPause();
+		public onSongPause OnSongPause;
 
 		public delegate void onTimeChanged(TimeSpan time);
 		public onTimeChanged OnTimeChanged;
@@ -73,14 +80,14 @@ namespace Windows
 		#endregion
 
 		#region Public functions
-		public void StartNewSong(string url)
+		public void StartNewSong(string url, float startPercentage = 0f, bool pauseOnStart = false)
 		{
 			StopStream();
 			stop = false;
 			if (File.Exists(url))
-				InitiateLocalStream(url);
+				InitiateLocalStream(url, startPercentage, pauseOnStart);
 			else
-				InitiateWebStream(url);
+				InitiateWebStream(url, startPercentage, pauseOnStart);
 		}
 
 		/// <summary>
@@ -88,7 +95,7 @@ namespace Windows
 		/// </summary>
 		public void PauseStream()
 		{
-			if (wo.PlaybackState == PlaybackState.Playing) wo.Pause();
+			if (wo.PlaybackState == PlaybackState.Playing) { wo.Pause(); OnSongPause?.Invoke(); }
 			else if (wo.PlaybackState == PlaybackState.Paused) wo.Play();
 		}
 
@@ -109,6 +116,7 @@ namespace Windows
 		public void SetVolume(float volume)
 		{
 			wo.Volume = Clamp(volume, 0f, 1f);
+			PlaybackSettings.cache.volume = volume;
 		}
 
 		/// <summary>
@@ -164,6 +172,7 @@ namespace Windows
 			float totalMilliseconds = (float)GetTotalTime().TotalSeconds;
 			int timeToGoto = (int)(totalMilliseconds * (percentage / 100f));
 			Skip(timeToGoto - (int)GetCurrentTime().TotalSeconds);
+			OnTimeChanged?.Invoke(GetCurrentTime());
 		}
 
 		#endregion
@@ -173,28 +182,28 @@ namespace Windows
 		/// Create a new audio stream from local file.
 		/// </summary>
 		/// <param name="Path"></param>
-		private void InitiateLocalStream(string path)
+		private void InitiateLocalStream(string path, float startPercentage, bool pauseOnStart)
 		{
 			startedPlaying = false;
 
 			streamURL = path;
 			streamID = "no_id_for_local_file";
-			StreamMusic(path);
+			StreamMusic(path, startPercentage, pauseOnStart);
 			TagLib.File f = TagLib.File.Create(path);
 			SongInfo info = new SongInfo(f.Tag.Title, f.Tag.FirstPerformer, f.Properties.Duration, f.Tag.FirstGenre, f.Tag.Album);
 			Image cover = Image.FromStream(new MemoryStream(f.Tag.Pictures[0].Data.Data));
 
-			PlaybackCache.info = info;
-			PlaybackCache.cover = cover;
+			PlaybackSettings.cache.songCache = new SongCache(info, cover, f.Tag.Lyrics, path);
+			PlaybackSettings.cache.timebarPercentage = 0f;
 
-			OnNewSong?.Invoke(info, cover);
+			OnNewSong?.Invoke(info, cover, !pauseOnStart);
 		}
 
 		/// <summary>
 		/// Create a new audio stream from URL.
 		/// </summary>
 		/// <param name="WebDAV URL"></param>
-		private async void InitiateWebStream(string webDavURL)
+		private async void InitiateWebStream(string webDavURL, float startPercentage, bool pauseOnStart)
 		{
 			startedPlaying = false;
 
@@ -227,7 +236,7 @@ namespace Windows
 					streamURL = streamServer + "streams/" + parts[1] + ".mp3";
 					streamID = parts[1];
 					Console.WriteLine("Starting stream");
-					StreamMusic(webDavURL);
+					StreamMusic(webDavURL, startPercentage, pauseOnStart);
 
 					//initializes a new WEBDAV client
 					WebDavClientParams clientParams = new WebDavClientParams()
@@ -241,9 +250,13 @@ namespace Windows
 
 					WebDavStreamResponse r = await wClient.GetRawFile(webDavURL + "/info.json");
 					SongInfo info = JsonConvert.DeserializeObject<SongInfo>(StreamToString(r.Stream));
+					info.duration = GetTotalTime();
 					Image cover = Image.FromStream(s.Stream);
 
-					OnNewSong?.Invoke(info, cover);
+					PlaybackSettings.cache.songCache = new SongCache(info, cover, webDavURL);
+					PlaybackSettings.cache.timebarPercentage = 0f;
+
+					OnNewSong?.Invoke(info, cover, !pauseOnStart);
 				}
 				else
 				{
@@ -252,7 +265,7 @@ namespace Windows
 			}
 		}
 
-		private void StreamMusic(string originalURL)
+		private void StreamMusic(string originalURL, float startPercentage, bool pauseOnStart)
 		{
 			new Thread(() =>
 			{
@@ -260,6 +273,9 @@ namespace Windows
 				mf = new MediaFoundationReader(streamURL);
 				wo.Init(mf);
 				wo.Play();
+				GotoPercentage(startPercentage);
+				if (pauseOnStart)
+					PauseStream();
 
 				while (wo.PlaybackState == PlaybackState.Playing || wo.PlaybackState == PlaybackState.Paused)
 				{
@@ -339,6 +355,7 @@ namespace Windows
 		#endregion
 	}
 
+	[Serializable]
 	public class SongInfo
 	{
 		public string title;
@@ -357,12 +374,29 @@ namespace Windows
 		}
 	}
 
-	public static class PlaybackCache
+	[Serializable]
+	public class SongCache
 	{
-		public static SongInfo info;
-		public static Image cover;
-		public static float currentTime;
-		public static string webDavPath;
-		public static string localPath;
+		public SongInfo info;
+		public Image cover;
+		public string webDavPath;
+		public string localPath;
+
+		public SongCache(SongInfo info, Image cover, string webDavPath, string localPath = null)
+		{
+			this.info = info;
+			this.cover = cover;
+			this.webDavPath = webDavPath;
+			this.localPath = localPath;
+		}
+	}
+
+	[Serializable]
+	public class PlaybackCache
+	{
+		public SongCache songCache;
+		public List<SongCache> queue;
+		public float volume;
+		public float timebarPercentage;
 	}
 }
