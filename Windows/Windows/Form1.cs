@@ -9,6 +9,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Threading;
 using System.Diagnostics;
+using System.IO;
+using NAudio.Wave;
+using WebDav;
+using System.Net;
 
 namespace Windows
 {
@@ -454,7 +458,7 @@ namespace Windows
 			pe.OnTimeChanged += updateTimebar;
 			pe.OnSongPause += onStreamPause;
 			OnVolumeBarValueChanged += pe.SetVolume;
-			OnTimeBarValueChanged += pe.GotoPercentage;
+			OnTimeBarValueChanged += pe.GotoPercentage;			
 		}
 
 		#region Resize constants
@@ -1101,7 +1105,7 @@ namespace Windows
 
 		private void button2_Click(object sender, EventArgs e)
 		{
-			if (differentSong)
+			if (!differentSong)
 				pe.StartNewSong("C:\\Users\\Abel\\Music\\Hardstyle\\Coone & Wildstylez - Here I Come.mp3");
 			else
 				pe.StartNewSong("music/dj_paul_elstak/demons");

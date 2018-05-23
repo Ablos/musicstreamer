@@ -9,7 +9,6 @@ using System.Drawing;
 using System.Threading;
 using System.Text;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using NAudio.Wave;
 using WebDav;
 using Newtonsoft.Json;
@@ -58,13 +57,9 @@ namespace Windows
 
 		#region Variables
 		public float currentPosition = 0f;
-		MediaFoundationReader mf;
+		StreamMediaFoundationReader mf;
 		WaveOutEvent wo;
-		string streamID = "";
-		string streamURL = "";
-		const string streamServer = "http://ablos.square7.ch/";
 		bool stop = false;
-		bool startedPlaying = false;
 		#endregion
 
 		#region Constructor and Deconstructor
@@ -106,7 +101,6 @@ namespace Windows
 		{
 			stop = true;
 			wo.Stop();
-			DeleteStream();
 		}
 
 		/// <summary>
@@ -132,11 +126,7 @@ namespace Windows
 		/// </summary>
 		public TimeSpan GetTotalTime()
 		{
-			if (mf != null)
-			{
-				return mf.TotalTime;
-			}
-			return new TimeSpan(0, 0, 0);
+			return PlaybackSettings.cache.songCache.info.duration;
 		}
 
 		/// <summary>
@@ -184,11 +174,7 @@ namespace Windows
 		/// <param name="Path"></param>
 		private void InitiateLocalStream(string path, float startPercentage, bool pauseOnStart)
 		{
-			startedPlaying = false;
-
-			streamURL = path;
-			streamID = "no_id_for_local_file";
-			StreamMusic(path, startPercentage, pauseOnStart);
+			StreamMusic(path, startPercentage, pauseOnStart, true);
 			TagLib.File f = TagLib.File.Create(path);
 			SongInfo info = new SongInfo(f.Tag.Title, f.Tag.FirstPerformer, f.Properties.Duration, f.Tag.FirstGenre, f.Tag.Album);
 			Image cover = Image.FromStream(new MemoryStream(f.Tag.Pictures[0].Data.Data));
@@ -205,38 +191,42 @@ namespace Windows
 		/// <param name="WebDAV URL"></param>
 		private async void InitiateWebStream(string webDavURL, float startPercentage, bool pauseOnStart)
 		{
-			startedPlaying = false;
+			StreamMusic(webDavURL, startPercentage, pauseOnStart, false);
 
-			PruneServer();
-			WebClient webClient = new WebClient();
-			string response = "";
-			try
+			//initializes a new WEBDAV client
+			WebDavClientParams clientParams = new WebDavClientParams()
 			{
-				if (PlaybackSettings.streamQuality == PlaybackSettings.StreamQuality.LOW)
-				{
-					response = webClient.DownloadString(streamServer + "stream.php?pass=AblosStream00&url=" + webDavURL + "/low.mp3");
-				}else
-				{
-					response = webClient.DownloadString(streamServer + "stream.php?pass=AblosStream00&url=" + webDavURL + "/high.mp3");
-				}
-			}
-			catch { }
+				BaseAddress = new Uri("https://ablos.stackstorage.com/remote.php/webdav/"),
+				Credentials = new NetworkCredential("ablos", "AblosStack00")
+			};
+			WebDavClient wClient = new WebDavClient(clientParams);
 
-			if (!string.IsNullOrEmpty(response))
+			WebDavStreamResponse s = await wClient.GetRawFile(webDavURL + "/cover.png");
+
+			WebDavStreamResponse r = await wClient.GetRawFile(webDavURL + "/info.json");
+			SongInfo info = JsonConvert.DeserializeObject<SongInfo>(StreamToString(r.Stream));
+			Image cover = Image.FromStream(s.Stream);
+
+			PlaybackSettings.cache.songCache = new SongCache(info, cover, webDavURL);
+			PlaybackSettings.cache.timebarPercentage = 0f;
+
+			OnNewSong?.Invoke(info, cover, !pauseOnStart);
+		}
+
+		private void StreamMusic(string URL, float startPercentage, bool pauseOnStart, bool isLocal)
+		{
+			new Thread(() =>
 			{
-				string[] parts = response.Split(':');
-				if (parts[0] == "ERROR")
+				Console.WriteLine("Starting stream at: " + URL);
+
+				if (!isLocal)
 				{
-					Console.WriteLine("ERROR while trying to stream: " + parts[1]);
-				}
-				else if (parts[0] == "StreamID")
-				{
-					parts[1] = parts[1].Trim();
-					Console.WriteLine("Stream ID: " + parts[1]);
-					streamURL = streamServer + "streams/" + parts[1] + ".mp3";
-					streamID = parts[1];
-					Console.WriteLine("Starting stream");
-					StreamMusic(webDavURL, startPercentage, pauseOnStart);
+					string url = URL;
+
+					if (PlaybackSettings.streamQuality == PlaybackSettings.StreamQuality.HIGH)
+						url += "/high.mp3";
+					else
+						url += "/low.mp3";
 
 					//initializes a new WEBDAV client
 					WebDavClientParams clientParams = new WebDavClientParams()
@@ -246,31 +236,15 @@ namespace Windows
 					};
 					WebDavClient wClient = new WebDavClient(clientParams);
 
-					WebDavStreamResponse s = await wClient.GetRawFile(webDavURL + "/cover.png");
-
-					WebDavStreamResponse r = await wClient.GetRawFile(webDavURL + "/info.json");
-					SongInfo info = JsonConvert.DeserializeObject<SongInfo>(StreamToString(r.Stream));
-					info.duration = GetTotalTime();
-					Image cover = Image.FromStream(s.Stream);
-
-					PlaybackSettings.cache.songCache = new SongCache(info, cover, webDavURL);
-					PlaybackSettings.cache.timebarPercentage = 0f;
-
-					OnNewSong?.Invoke(info, cover, !pauseOnStart);
+					//DateTime s = DateTime.Now; // Save the time
+					mf = new StreamMediaFoundationReader(wClient.GetRawFile(url).Result.Stream);
+					//Console.WriteLine(DateTime.Now - s); // Subtract the old time from current time and write out to see how long it took to load stream
 				}
 				else
 				{
-					Console.WriteLine("Unknown response: " + response);
+					mf = new StreamMediaFoundationReader(File.OpenRead(URL));
 				}
-			}
-		}
 
-		private void StreamMusic(string originalURL, float startPercentage, bool pauseOnStart)
-		{
-			new Thread(() =>
-			{
-				Console.WriteLine("Starting stream at: " + streamURL);
-				mf = new MediaFoundationReader(streamURL);
 				wo.Init(mf);
 				wo.Play();
 				GotoPercentage(startPercentage);
@@ -279,61 +253,21 @@ namespace Windows
 
 				while (wo.PlaybackState == PlaybackState.Playing || wo.PlaybackState == PlaybackState.Paused)
 				{
-					startedPlaying = true;
-
 					if (wo.PlaybackState == PlaybackState.Playing)
 						try { OnTimeChanged?.Invoke(mf.CurrentTime); } catch { }
-
-					Thread.Sleep(1);
 				}
 
 				if (wo.PlaybackState == PlaybackState.Stopped)
 				{
-					
 					try { OnSongEnd?.Invoke(); }catch { }
-					if (startedPlaying)
-						DeleteStream();
 
 					if (PlaybackSettings.repeatState == PlaybackSettings.RepeatState.REPEAT_ONE && !stop)
 					{
-						StartNewSong(originalURL);
+						StartNewSong(URL);
 					}
 
 					stop = false;
 				}
-			}).Start();
-		}
-
-		private void DeleteStream()
-		{
-			string ID = streamID;
-			new Thread(() =>
-			{
-				if (!string.IsNullOrEmpty(ID))
-				{
-					WebClient web = new WebClient();
-					try
-					{
-						web.DownloadString(streamServer + "delete.php?pass=AblosStream00&id=" + ID);
-					}
-					catch { }
-				}
-			}).Start();
-
-			streamURL = "";
-			streamID = "";
-		}
-
-		private void PruneServer()
-		{
-			new Thread(() =>
-			{
-				WebClient web = new WebClient();
-				try
-				{
-					web.DownloadString(streamServer + "prune.php?pass=AblosStream00");
-				}
-				catch { }
 			}).Start();
 		}
 
