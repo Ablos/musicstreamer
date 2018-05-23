@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 
 namespace Windows
 {
+	// Settings for playback
 	public static class PlaybackSettings
 	{
 		public enum RepeatState { NONE, REPEAT_ALL, REPEAT_ONE };
