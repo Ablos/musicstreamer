@@ -6,13 +6,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
 using System.Threading;
-using System.Diagnostics;
-using System.IO;
-using NAudio.Wave;
-using WebDav;
-using System.Net;
 
 namespace Windows
 {
