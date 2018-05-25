@@ -1,0 +1,4 @@
+empty_value = username, email or password is not filled in
+success = sent email successfully
+false_email = email address doesn't exist
+user_exists = the selected username already exists

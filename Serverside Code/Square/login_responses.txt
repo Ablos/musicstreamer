@@ -1,0 +1,4 @@
+empty_value = username or password not filled in
+success = successfully logged in
+incorrect = password is incorrect
+user_not_found = user was not found in the database

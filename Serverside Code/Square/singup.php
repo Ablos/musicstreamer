@@ -1,8 +1,8 @@
 <?php
 
-  $username = "ablos";//$_POST['username'];
-  $email = "a.dieterich2002@gmail.com"; //$_POST['email'];
-  $password = "test"; //$_POST['password'];
+  $username = $_POST['username'];
+  $email = $_POST['email'];
+  $password = $_POST['password'];
 
   if (empty($username) || empty($email) || empty($password)) {
     die("empty_value");
@@ -16,7 +16,7 @@
 
     $subject = "Verification VIBES account";
 
-    $message = str_replace("INSERTUSERNAMEHERE", $username, str_replace("INSERTLINKHERE", "http://ablos.square7.ch/accounts/addaccount.php?username=$username&password=$hash&email=$email", file_get_contents("http://ablos.square7.ch/accounts/singupmail.html")));
+    $message = str_replace("INSERTUSERNAMEHERE", $username, str_replace("INSERTLINKHERE", "http://vibesmusic.cf/accounts/create.php?username=$username&password=$hash&email=$email", file_get_contents("http://ablos.square7.ch/accounts/singupmail.html")));
 
     $headers = "MIME-Version: 1.0" . "\r\n";
     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
