@@ -22,11 +22,11 @@
       }
     }
 
-    $result = $mysqli->query("SELECT password FROM users WHERE ID = '$ID'");
+    $result = $mysqli->query("SELECT username, password FROM users WHERE ID = '$ID'");
 
     while ($row = $result->fetch_assoc()) {
       if (password_verify($password, $row['password'])) {
-        echo "success";
+        echo "success " . $row['username'];
       }else {
         echo "incorrect";
       }

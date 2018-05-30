@@ -29,6 +29,7 @@ namespace Windows
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
 			this.BackgroundImage = ResourceLoader.loadImage(rWindowBackground);
 			this.MinimumSize = new Size(800, 500);
+			this.StartPosition = FormStartPosition.CenterScreen;
 			this.FormClosed += new FormClosedEventHandler(onFormClosed);
 			this.FormClosing += new FormClosingEventHandler(onFormClosing);
 			this.Shown += new EventHandler(onFormShow);
@@ -445,14 +446,7 @@ namespace Windows
 			lSongTitle.SendToBack();
 			lSongArtist.SendToBack();
 			pbSongCover.BringToFront();
-			#endregion
-
-			pe = new PlaybackEngine();
-			pe.OnNewSong += loadNewSongInfo;
-			pe.OnTimeChanged += updateTimebar;
-			pe.OnSongPause += onStreamPause;
-			OnVolumeBarValueChanged += pe.SetVolume;
-			OnTimeBarValueChanged += pe.GotoPercentage;			
+			#endregion	
 		}
 
 		#region Resize constants
@@ -1124,6 +1118,13 @@ namespace Windows
 		#region Custom functions
 		private void onFormShow(object o, EventArgs e)
 		{
+			pe = new PlaybackEngine();
+			pe.OnNewSong += loadNewSongInfo;
+			pe.OnTimeChanged += updateTimebar;
+			pe.OnSongPause += onStreamPause;
+			OnVolumeBarValueChanged += pe.SetVolume;
+			OnTimeBarValueChanged += pe.GotoPercentage;
+
 			FileManager fm = new FileManager();
 			PlaybackSettings.cache = fm.DeserializeFile<PlaybackCache>(Application.StartupPath + "/saves/playbackcache.save");
 

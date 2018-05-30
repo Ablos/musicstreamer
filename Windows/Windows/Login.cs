@@ -30,6 +30,7 @@ namespace Windows
 			this.MinimumSize = new Size(400, 500);
 			this.StartPosition = FormStartPosition.CenterScreen;
 			this.MouseClick += new MouseEventHandler(OnFormMouseClick);
+			this.Shown += new EventHandler(onFormShow);
 
 			#region Instantiate top bar contents
 			// Instantiate exit button
@@ -97,6 +98,111 @@ namespace Windows
 			Controls.Add(tbPasswordBox);
 			PasswordTextBoxBackground = new Rectangle(new Point(tbPasswordBox.Location.X - TextBoxBorderSize, tbPasswordBox.Location.Y - TextBoxBorderSize), new Size(tbPasswordBox.Width + (2 * TextBoxBorderSize), tbPasswordBox.Height + (2 * TextBoxBorderSize)));
 			#endregion
+
+			#region Instantate remember me
+			// Instantiate remember me label
+			lRememberMe.AutoSize = true;
+			lRememberMe.BackColor = Color.Transparent;
+			lRememberMe.Font = new Font("Roboto", 9f, FontStyle.Regular);
+			lRememberMe.ForeColor = cRememberMe;
+			lRememberMe.Text = "Remember me";
+			lRememberMe.Location = new Point(tbPasswordBox.Location.X, tbPasswordBox.Location.Y + tbPasswordBox.Height + 15);
+			lRememberMe.TextAlign = ContentAlignment.MiddleLeft;
+			Controls.Add(lRememberMe);
+
+			// Instantiate remember me checkbox
+			cbRememberMe.Appearance = Appearance.Button;
+			cbRememberMe.BackgroundImage = ResourceLoader.loadImage(rUncheckedCheckbox);
+			cbRememberMe.BackgroundImageLayout = ImageLayout.Stretch;
+			cbRememberMe.BackColor = Color.Transparent;
+			cbRememberMe.FlatStyle = FlatStyle.Flat;
+			cbRememberMe.FlatAppearance.BorderSize = 0;
+			cbRememberMe.FlatAppearance.MouseDownBackColor = Color.Transparent;
+			cbRememberMe.FlatAppearance.MouseOverBackColor = Color.Transparent;
+			cbRememberMe.FlatAppearance.CheckedBackColor = Color.Transparent;
+			cbRememberMe.Text = "";
+			cbRememberMe.TextImageRelation = TextImageRelation.ImageBeforeText;
+			cbRememberMe.ImageIndex = 0;
+			cbRememberMe.Size = new Size(lRememberMe.Height, lRememberMe.Height);
+			cbRememberMe.Location = new Point(tbPasswordBox.Location.X + tbPasswordBox.Width - cbRememberMe.Width, lRememberMe.Location.Y);
+			cbRememberMe.CheckedChanged += new EventHandler(OnRememberMeChanged);
+			Controls.Add(cbRememberMe);
+			#endregion
+
+			#region Instantiate login button
+
+			bLoginButton.BackColor = cUnhoveredButton;
+			bLoginButton.FlatStyle = FlatStyle.Flat;
+			bLoginButton.FlatAppearance.BorderSize = 0;
+			bLoginButton.FlatAppearance.MouseOverBackColor = cHoveredButton;
+			bLoginButton.FlatAppearance.MouseDownBackColor = cMouseDownButton;
+			bLoginButton.ForeColor = Color.White;
+			bLoginButton.Font = new Font("Roboto Light", 12f, FontStyle.Regular);
+			bLoginButton.Text = "LOGIN";
+			bLoginButton.TextAlign = ContentAlignment.MiddleCenter;
+			bLoginButton.Size = new Size(250, 30);
+			bLoginButton.Location = new Point(this.Width / 2 - bLoginButton.Width / 2, lRememberMe.Location.Y + lRememberMe.Height + 25);
+			bLoginButton.MouseClick += new MouseEventHandler(OnLoginButtonClicked);
+			Controls.Add(bLoginButton);
+
+			#endregion
+
+			#region Instantiate error label
+			lErrorLabel.AutoSize = false;
+			lErrorLabel.Size = new Size(300, 24);
+			lErrorLabel.BackColor = cErrorBackground;
+			lErrorLabel.Font = new Font("Roboto", 10f, FontStyle.Regular);
+			lErrorLabel.ForeColor = Color.White;
+			lErrorLabel.Location = new Point(this.Width / 2 - lErrorLabel.Width / 2, bLoginButton.Location.Y + bLoginButton.Height + 25);
+			lErrorLabel.Text = "Please fill in both fields!";
+			lErrorLabel.TextAlign = ContentAlignment.MiddleCenter;
+			lErrorLabel.Visible = false;
+			Controls.Add(lErrorLabel);
+
+			lErrorFlag.AutoSize = true;
+			lErrorFlag.BackColor = cErrorBackground;
+			lErrorFlag.Font = new Font("Roboto", 15f, FontStyle.Regular);
+			lErrorFlag.ForeColor = Color.White;
+			lErrorFlag.Location = lErrorLabel.Location;
+			lErrorFlag.Text = "⚑";
+			lErrorFlag.Visible = false;
+			Controls.Add(lErrorFlag);
+			lErrorFlag.BringToFront();
+			#endregion
+
+			#region Instantiate bottombuttons
+
+			// Instantiate signup button
+			bSignupButton.BackColor = Color.Transparent;
+			bSignupButton.FlatStyle = FlatStyle.Flat;
+			bSignupButton.FlatAppearance.BorderSize = 0;
+			bSignupButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(64, 64, 64);
+			bSignupButton.FlatAppearance.MouseOverBackColor = Color.Gray;
+			bSignupButton.ForeColor = Color.White;
+			bSignupButton.Font = new Font("Roboto Light", 10f, FontStyle.Regular);
+			bSignupButton.Text = "SIGN UP";
+			bSignupButton.TextAlign = ContentAlignment.MiddleCenter;
+			bSignupButton.Size = new Size(150, 30);
+			bSignupButton.Location = new Point(this.Width / 2 - bSignupButton.Width - 10, this.Height - bSignupButton.Height - 5);
+			bSignupButton.MouseClick += new MouseEventHandler(OnSignupButtonClicked);
+			Controls.Add(bSignupButton);
+
+			// Instantiate reset password button
+			bPasswordResetButton.BackColor = Color.Transparent;
+			bPasswordResetButton.FlatStyle = FlatStyle.Flat;
+			bPasswordResetButton.FlatAppearance.BorderSize = 0;
+			bPasswordResetButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(64, 64, 64);
+			bPasswordResetButton.FlatAppearance.MouseOverBackColor = Color.Gray;
+			bPasswordResetButton.ForeColor = Color.White;
+			bPasswordResetButton.Font = new Font("Roboto Light", 10f, FontStyle.Regular);
+			bPasswordResetButton.Text = "RESET PASSWORD";
+			bPasswordResetButton.TextAlign = ContentAlignment.MiddleCenter;
+			bPasswordResetButton.Size = new Size(150, 30);
+			bPasswordResetButton.Location = new Point(this.Width / 2 + 10, this.Height - bPasswordResetButton.Height - 5);
+			bPasswordResetButton.MouseClick += new MouseEventHandler(OnPasswordResetButtonClicked);
+			Controls.Add(bPasswordResetButton);
+
+			#endregion
 		}
 
 		#region Resize constants
@@ -114,8 +220,13 @@ namespace Windows
 
 		#region Colors
 		Color cTextBox = Color.FromArgb(55, 55, 55);
-
+		Color cRememberMe = Color.FromArgb(200, 200, 200);
 		Color cInactiveText = Color.FromArgb(168, 168, 168);
+		Color cUnhoveredButton = Color.FromArgb(237, 4, 4);
+		Color cHoveredButton = Color.FromArgb(199, 5, 5);
+		Color cMouseDownButton = Color.FromArgb(182, 6, 6);
+		Color cErrorBackground = Color.FromArgb(179, 39, 39);
+		Color cMessageBackground = Color.FromArgb(39, 179, 39);
 		#endregion
 
 		#region Resource name constants
@@ -128,8 +239,14 @@ namespace Windows
 
 		const string rLogoBanner = "logo-banner";
 
+		const string rUncheckedCheckbox = "checkbox-unchecked";
+		const string rCheckedCheckbox = "checkbox-checked";
+
 		const string loginPlaceholder = "Email or Username";
 		const string passwordPlaceholder = "Password ";
+		const string loginURL = "http://ablos.square7.ch/accounts/login.php";
+		const string emptyFieldError = "Please fill in both fields!";
+		const string wrongCredentialsError = "Username or Password incorrect!";
 		#endregion
 
 		#region Sizes and offsets
@@ -147,10 +264,6 @@ namespace Windows
 		Rectangle PasswordTextBoxBackground = new Rectangle();
 		#endregion
 
-		#region Colors
-		Color cTopBar = Color.FromArgb(22, 22, 22);
-		#endregion
-
 		#region Controls
 		// Buttons
 		Button bExitButton = new Button();
@@ -158,12 +271,29 @@ namespace Windows
 		Button bExitMaximizeButton = new Button();
 		Button bMinimizeButton = new Button();
 
+		Button bLoginButton = new Button();
+
+		Button bSignupButton = new Button();
+		Button bPasswordResetButton = new Button();
+
 		// Picuture box
 		PictureBox pbLogoBanner = new PictureBox();
 
 		// Input fields
 		TextBox tbLoginBox = new TextBox();
 		TextBox tbPasswordBox = new TextBox();
+
+		// Labels
+		Label lRememberMe = new Label();
+		Label lErrorLabel = new Label();
+		Label lErrorFlag = new Label();
+
+		// Checkboxes
+		CheckBox cbRememberMe = new CheckBox();
+		#endregion
+
+		#region Variables
+		LoginInfo loginInfo;
 		#endregion
 
 		#region Forms functions
@@ -202,6 +332,13 @@ namespace Windows
 			#endregion
 			base.OnResize(e);
 		}
+
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			base.OnKeyDown(e);
+			if (e.KeyCode == Keys.Return)
+				OnLoginButtonClicked(null, null);
+		}
 		#endregion
 
 		#region Buttons
@@ -225,6 +362,8 @@ namespace Windows
 
 		private void OnLoginEnter(object sender, EventArgs e)
 		{
+			DisableErrorMessage();
+
 			if (tbLoginBox.Text == loginPlaceholder)
 			{
 				tbLoginBox.Text = "";
@@ -238,11 +377,16 @@ namespace Windows
 			{
 				tbLoginBox.ForeColor = cInactiveText;
 				tbLoginBox.Text = loginPlaceholder;
+			}else
+			{
+				loginInfo.username = tbLoginBox.Text.ToLower();
 			}
 		}
 
 		private void OnPasswordEnter(object sender, EventArgs e)
 		{
+			DisableErrorMessage();
+
 			if (tbPasswordBox.Text == passwordPlaceholder)
 			{
 				tbPasswordBox.Text = "";
@@ -258,6 +402,9 @@ namespace Windows
 				tbPasswordBox.ForeColor = cInactiveText;
 				tbPasswordBox.UseSystemPasswordChar = false;
 				tbPasswordBox.Text = passwordPlaceholder;
+			}else
+			{
+				loginInfo.password = tbPasswordBox.Text;
 			}
 		}
 
@@ -265,23 +412,129 @@ namespace Windows
 		{
 			if (e.KeyChar.ToString() == " ")
 				e.Handled = true;
+			if (e.KeyChar == (char)13)
+			{
+				this.ActiveControl = null;
+				OnLoginButtonClicked(null, null);
+			}
 		}
 
 		private void OnPasswordKeyPress(object sender, KeyPressEventArgs e)
 		{
 			if (e.KeyChar.ToString() == " ")
 				e.Handled = true;
+			if (e.KeyChar == (char)13)
+			{
+				this.ActiveControl = null;
+				OnLoginButtonClicked(null, null);
+			}
 		}
 
 		private void OnFormMouseClick(object sender, EventArgs e)
 		{
-			tbPasswordBox.UseSystemPasswordChar = false;
+			if (tbPasswordBox.Text == "")
+			{
+				tbPasswordBox.UseSystemPasswordChar = false;
+			}
+			this.ActiveControl = null;
+		}
+
+		private void OnRememberMeChanged(object sender, EventArgs e)
+		{
+			DisableErrorMessage();
+
+			loginInfo.rememberme = cbRememberMe.Checked;
+
+			if (cbRememberMe.Checked)
+				cbRememberMe.BackgroundImage = ResourceLoader.loadImage(rCheckedCheckbox);
+			else
+				cbRememberMe.BackgroundImage = ResourceLoader.loadImage(rUncheckedCheckbox);
+
+			this.ActiveControl = null;
+		}
+
+		private void OnLoginButtonClicked(object sender, MouseEventArgs e)
+		{
+			DisableErrorMessage();
+
+			if (string.IsNullOrEmpty(loginInfo.username) || string.IsNullOrEmpty(loginInfo.password))
+			{
+				DisplayErrorMessage(emptyFieldError, cErrorBackground);
+				return;
+			}
+
+			ServerCommunication sc = new ServerCommunication();
+			string response = sc.SendPost(loginURL, String.Format("username={0}&password={1}", loginInfo.username, loginInfo.password));
+			response = response.Trim();
+			string[] splittedResponse = response.Split(' ');
+			switch (splittedResponse[0])
+			{
+				case "empty_value":
+					DisplayErrorMessage(emptyFieldError, cErrorBackground);
+					return;
+				case "incorrect":
+					DisplayErrorMessage(wrongCredentialsError, cErrorBackground);
+					return;
+				case "user_not_found":
+					DisplayErrorMessage(wrongCredentialsError, cErrorBackground);
+					return;
+				case "success":
+					break;
+				default:
+					Console.WriteLine("ERROR FROM SERVER: " + response);
+					return;
+			}
+
+			if (!loginInfo.rememberme)
+				loginInfo.password = "";
+
+			loginInfo.username = splittedResponse[1];
+
+			FileManager fm = new FileManager();
+			fm.SerializeFile(loginInfo, Application.StartupPath + "/saves", "session.save");
+
+			LoginUser();
+		}
+
+		private void OnSignupButtonClicked(object sender, MouseEventArgs e)
+		{
+
+		}
+
+		private void OnPasswordResetButtonClicked(object sender, MouseEventArgs e)
+		{
+
+		}
+
+		private void onFormShow(object sender, EventArgs e)
+		{
+			FileManager fm = new FileManager();
+			loginInfo = fm.DeserializeFile<LoginInfo>(Application.StartupPath + "/saves/session.save");
+
+			if (loginInfo == null)
+				loginInfo = new LoginInfo();
+
+			if (loginInfo.rememberme)
+			{
+				LoginUser();
+				return;
+			}
+
+			tbLoginBox.Focus();
+			tbLoginBox.Text = loginInfo.username;
 			this.ActiveControl = null;
 		}
 
 		#endregion
 
 		#region Custom functions
+		private void LoginUser()
+		{
+			Userinfo.username = loginInfo.username;
+			Console.WriteLine("Logged in as user: " + loginInfo.username);
+			this.Close();
+		}
+
 		// Move the window
 		private void Mover(object sender, MouseEventArgs e)
 		{
@@ -291,6 +544,35 @@ namespace Windows
 				SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
 			}
 		}
+
+		private void DisableErrorMessage()
+		{
+			lErrorLabel.Visible = false;
+			lErrorFlag.Visible = false;
+		}
+
+		private void DisplayErrorMessage(string message, Color background)
+		{
+			lErrorLabel.BackColor = background;
+			lErrorFlag.BackColor = background;
+			lErrorLabel.Visible = true;
+			lErrorFlag.Visible = true;
+
+			lErrorLabel.Text = message;
+		}
 		#endregion
+	}
+
+	[Serializable]
+	public class LoginInfo
+	{
+		public string username = "";
+		public string password = "";
+		public bool rememberme = false;
+	}
+
+	public static class Userinfo
+	{
+		public static string username;
 	}
 }

@@ -17,6 +17,8 @@ namespace Windows
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new Login());
+			if (!string.IsNullOrEmpty(Userinfo.username))
+				Application.Run(new Form1());
 		}
 	}
 }

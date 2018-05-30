@@ -40,8 +40,6 @@ namespace Windows
 		/// <param name="Filename for the save file"></param>
 		public void SerializeFile<T>(T classToSave, string directory, string filename)
 		{
-			Console.WriteLine(directory);
-
 			if (!Directory.Exists(directory))
 			{
 				Console.WriteLine("Directory does not exist, creating now");
