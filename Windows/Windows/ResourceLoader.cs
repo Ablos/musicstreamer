@@ -16,5 +16,10 @@ namespace Windows
 		{
 			return Image.FromFile(resourcePath + "/" + filename + ".resource");
 		}
+
+		public static Icon loadIcon (string filename)
+		{
+			return Icon.ExtractAssociatedIcon(resourcePath + "/" + filename + ".resource");
+		}
 	}
 }

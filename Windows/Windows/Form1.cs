@@ -24,6 +24,7 @@ namespace Windows
 		public Form1()
 		{
 			InitializeComponent();
+			this.Icon = ResourceLoader.loadIcon("logo-icon");
 			this.FormBorderStyle = FormBorderStyle.None;
 			this.DoubleBuffered = true;
 			this.SetStyle(ControlStyles.ResizeRedraw, true);

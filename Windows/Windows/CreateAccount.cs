@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Windows
 {
-	public partial class Login : Form
+	public partial class CreateAccount : Form
 	{
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
@@ -19,8 +19,10 @@ namespace Windows
 		[DllImport("user32.dll")]
 		public static extern bool ReleaseCapture();
 
-		public Login()
+		public CreateAccount(Login l)
 		{
+			login = l;
+
 			InitializeComponent();
 			this.Icon = ResourceLoader.loadIcon("logo-icon");
 			this.FormBorderStyle = FormBorderStyle.None;
@@ -73,78 +75,75 @@ namespace Windows
 			#endregion
 
 			#region Instantiate text boxes
-			tbLoginBox.BackColor = cTextBox;
-			tbLoginBox.BorderStyle = BorderStyle.None;
-			tbLoginBox.Font = new Font("Roboto", 10f, FontStyle.Regular);
-			tbLoginBox.ForeColor = cInactiveText;
-			tbLoginBox.Text = loginPlaceholder;
-			tbLoginBox.Size = new Size(300, 15);
-			tbLoginBox.Location = new Point(this.Width / 2 - tbLoginBox.Width / 2, pbLogoBanner.Location.Y + pbLogoBanner.Height + 60);
-			tbLoginBox.Enter += new EventHandler(OnLoginEnter);
-			tbLoginBox.Leave += new EventHandler(OnLoginLeave);
-			tbLoginBox.KeyPress += new KeyPressEventHandler(OnLoginKeyPress);
-			Controls.Add(tbLoginBox);
-			LoginTextBoxBackground = new Rectangle(new Point(tbLoginBox.Location.X - TextBoxBorderSize, tbLoginBox.Location.Y - TextBoxBorderSize), new Size(tbLoginBox.Width + (2 * TextBoxBorderSize), tbLoginBox.Height + (2 * TextBoxBorderSize)));
+			tbUsernameBox.BackColor = cTextBox;
+			tbUsernameBox.BorderStyle = BorderStyle.None;
+			tbUsernameBox.Font = new Font("Roboto", 10f, FontStyle.Regular);
+			tbUsernameBox.ForeColor = cInactiveText;
+			tbUsernameBox.Text = usernamePlaceholder;
+			tbUsernameBox.Size = new Size(300, 15);
+			tbUsernameBox.Location = new Point(this.Width / 2 - tbUsernameBox.Width / 2, pbLogoBanner.Location.Y + pbLogoBanner.Height + 60);
+			tbUsernameBox.Enter += new EventHandler(OnUsernameEnter);
+			tbUsernameBox.Leave += new EventHandler(OnUsernameLeave);
+			tbUsernameBox.KeyPress += new KeyPressEventHandler(OnUsernameKeyPress);
+			Controls.Add(tbUsernameBox);
+			UsernameTextBoxBackground = new Rectangle(new Point(tbUsernameBox.Location.X - TextBoxBorderSize, tbUsernameBox.Location.Y - TextBoxBorderSize), new Size(tbUsernameBox.Width + (2 * TextBoxBorderSize), tbUsernameBox.Height + (2 * TextBoxBorderSize)));
+
+			tbEmailBox.BackColor = cTextBox;
+			tbEmailBox.BorderStyle = BorderStyle.None;
+			tbEmailBox.Font = new Font("Roboto", 10f, FontStyle.Regular);
+			tbEmailBox.ForeColor = cInactiveText;
+			tbEmailBox.Text = emailPlaceholder;
+			tbEmailBox.Size = tbUsernameBox.Size;
+			tbEmailBox.Location = new Point(this.Width / 2 - tbUsernameBox.Width / 2, tbUsernameBox.Location.Y + tbUsernameBox.Height + 25);
+			tbEmailBox.Enter += new EventHandler(OnEmailEnter);
+			tbEmailBox.Leave += new EventHandler(OnEmailLeave);
+			tbEmailBox.KeyPress += new KeyPressEventHandler(OnEmailKeyPress);
+			Controls.Add(tbEmailBox);
+			EmailTextBoxBackground = new Rectangle(new Point(tbEmailBox.Location.X - TextBoxBorderSize, tbEmailBox.Location.Y - TextBoxBorderSize), new Size(tbEmailBox.Width + (2 * TextBoxBorderSize), tbEmailBox.Height + (2 * TextBoxBorderSize)));
 
 			tbPasswordBox.BackColor = cTextBox;
 			tbPasswordBox.BorderStyle = BorderStyle.None;
 			tbPasswordBox.Font = new Font("Roboto", 10f, FontStyle.Regular);
 			tbPasswordBox.ForeColor = cInactiveText;
 			tbPasswordBox.Text = passwordPlaceholder;
-			tbPasswordBox.Size = new Size(300, 15);
-			tbPasswordBox.Location = new Point(this.Width / 2 - tbLoginBox.Width / 2, tbLoginBox.Location.Y + tbLoginBox.Height + 25);
+			tbPasswordBox.Size = tbEmailBox.Size;
+			tbPasswordBox.Location = new Point(this.Width / 2 - tbEmailBox.Width / 2, tbEmailBox.Location.Y + tbEmailBox.Height + 25);
 			tbPasswordBox.Enter += new EventHandler(OnPasswordEnter);
 			tbPasswordBox.Leave += new EventHandler(OnPasswordLeave);
 			tbPasswordBox.KeyPress += new KeyPressEventHandler(OnPasswordKeyPress);
 			Controls.Add(tbPasswordBox);
 			PasswordTextBoxBackground = new Rectangle(new Point(tbPasswordBox.Location.X - TextBoxBorderSize, tbPasswordBox.Location.Y - TextBoxBorderSize), new Size(tbPasswordBox.Width + (2 * TextBoxBorderSize), tbPasswordBox.Height + (2 * TextBoxBorderSize)));
-			#endregion
 
-			#region Instantate remember me
-			// Instantiate remember me label
-			lRememberMe.AutoSize = true;
-			lRememberMe.BackColor = Color.Transparent;
-			lRememberMe.Font = new Font("Roboto", 9f, FontStyle.Regular);
-			lRememberMe.ForeColor = cRememberMe;
-			lRememberMe.Text = "Remember me";
-			lRememberMe.Location = new Point(tbPasswordBox.Location.X, tbPasswordBox.Location.Y + tbPasswordBox.Height + 15);
-			lRememberMe.TextAlign = ContentAlignment.MiddleLeft;
-			Controls.Add(lRememberMe);
+			tbPasswordConfirmBox.BackColor = cTextBox;
+			tbPasswordConfirmBox.BorderStyle = BorderStyle.None;
+			tbPasswordConfirmBox.Font = new Font("Roboto", 10f, FontStyle.Regular);
+			tbPasswordConfirmBox.ForeColor = cInactiveText;
+			tbPasswordConfirmBox.Text = passwordConfirmPlaceholder;
+			tbPasswordConfirmBox.Size = tbPasswordBox.Size;
+			tbPasswordConfirmBox.Location = new Point(this.Width / 2 - tbPasswordBox.Width / 2, tbPasswordBox.Location.Y + tbPasswordBox.Height + 25);
+			tbPasswordConfirmBox.Enter += new EventHandler(OnPasswordConfirmEnter);
+			tbPasswordConfirmBox.Leave += new EventHandler(OnPasswordConfirmLeave);
+			tbPasswordConfirmBox.KeyPress += new KeyPressEventHandler(OnPasswordConfirmKeyPress);
+			Controls.Add(tbPasswordConfirmBox);
+			PasswordConfirmTexBoxBackground = new Rectangle(new Point(tbPasswordConfirmBox.Location.X - TextBoxBorderSize, tbPasswordConfirmBox.Location.Y - TextBoxBorderSize), new Size(tbPasswordConfirmBox.Width + (2 * TextBoxBorderSize), tbPasswordConfirmBox.Height + (2 * TextBoxBorderSize)));
 
-			// Instantiate remember me checkbox
-			cbRememberMe.Appearance = Appearance.Button;
-			cbRememberMe.BackgroundImage = ResourceLoader.loadImage(rUncheckedCheckbox);
-			cbRememberMe.BackgroundImageLayout = ImageLayout.Stretch;
-			cbRememberMe.BackColor = Color.Transparent;
-			cbRememberMe.FlatStyle = FlatStyle.Flat;
-			cbRememberMe.FlatAppearance.BorderSize = 0;
-			cbRememberMe.FlatAppearance.MouseDownBackColor = Color.Transparent;
-			cbRememberMe.FlatAppearance.MouseOverBackColor = Color.Transparent;
-			cbRememberMe.FlatAppearance.CheckedBackColor = Color.Transparent;
-			cbRememberMe.Text = "";
-			cbRememberMe.TextImageRelation = TextImageRelation.ImageBeforeText;
-			cbRememberMe.ImageIndex = 0;
-			cbRememberMe.Size = new Size(lRememberMe.Height, lRememberMe.Height);
-			cbRememberMe.Location = new Point(tbPasswordBox.Location.X + tbPasswordBox.Width - cbRememberMe.Width, lRememberMe.Location.Y);
-			cbRememberMe.CheckedChanged += new EventHandler(OnRememberMeChanged);
-			Controls.Add(cbRememberMe);
 			#endregion
 
 			#region Instantiate login button
 
-			bLoginButton.BackColor = cUnhoveredButton;
-			bLoginButton.FlatStyle = FlatStyle.Flat;
-			bLoginButton.FlatAppearance.BorderSize = 0;
-			bLoginButton.FlatAppearance.MouseOverBackColor = cHoveredButton;
-			bLoginButton.FlatAppearance.MouseDownBackColor = cMouseDownButton;
-			bLoginButton.ForeColor = Color.White;
-			bLoginButton.Font = new Font("Roboto Light", 12f, FontStyle.Regular);
-			bLoginButton.Text = "LOGIN";
-			bLoginButton.TextAlign = ContentAlignment.MiddleCenter;
-			bLoginButton.Size = new Size(250, 30);
-			bLoginButton.Location = new Point(this.Width / 2 - bLoginButton.Width / 2, lRememberMe.Location.Y + lRememberMe.Height + 25);
-			bLoginButton.MouseClick += new MouseEventHandler(OnLoginButtonClicked);
-			Controls.Add(bLoginButton);
+			bCreateAccountButton.BackColor = cUnhoveredButton;
+			bCreateAccountButton.FlatStyle = FlatStyle.Flat;
+			bCreateAccountButton.FlatAppearance.BorderSize = 0;
+			bCreateAccountButton.FlatAppearance.MouseOverBackColor = cHoveredButton;
+			bCreateAccountButton.FlatAppearance.MouseDownBackColor = cMouseDownButton;
+			bCreateAccountButton.ForeColor = Color.White;
+			bCreateAccountButton.Font = new Font("Roboto Light", 12f, FontStyle.Regular);
+			bCreateAccountButton.Text = "CREATE ACCOUNT";
+			bCreateAccountButton.TextAlign = ContentAlignment.MiddleCenter;
+			bCreateAccountButton.Size = new Size(250, 30);
+			bCreateAccountButton.Location = new Point(this.Width / 2 - bCreateAccountButton.Width / 2, tbPasswordConfirmBox.Location.Y + tbPasswordConfirmBox.Height + 25);
+			bCreateAccountButton.MouseClick += new MouseEventHandler(OnCreateAccountButtonClicked);
+			Controls.Add(bCreateAccountButton);
 
 			#endregion
 
@@ -154,7 +153,7 @@ namespace Windows
 			lErrorLabel.BackColor = cErrorBackground;
 			lErrorLabel.Font = new Font("Roboto", 10f, FontStyle.Regular);
 			lErrorLabel.ForeColor = Color.White;
-			lErrorLabel.Location = new Point(this.Width / 2 - lErrorLabel.Width / 2, bLoginButton.Location.Y + bLoginButton.Height + 25);
+			lErrorLabel.Location = new Point(this.Width / 2 - lErrorLabel.Width / 2, bCreateAccountButton.Location.Y + bCreateAccountButton.Height + 25);
 			lErrorLabel.Text = "Please fill in both fields!";
 			lErrorLabel.TextAlign = ContentAlignment.MiddleCenter;
 			lErrorLabel.Visible = false;
@@ -181,28 +180,12 @@ namespace Windows
 			bSignupButton.FlatAppearance.MouseOverBackColor = Color.Gray;
 			bSignupButton.ForeColor = Color.White;
 			bSignupButton.Font = new Font("Roboto Light", 10f, FontStyle.Regular);
-			bSignupButton.Text = "SIGN UP";
+			bSignupButton.Text = "LOGIN";
 			bSignupButton.TextAlign = ContentAlignment.MiddleCenter;
 			bSignupButton.Size = new Size(150, 30);
-			bSignupButton.Location = new Point(this.Width / 2 - bSignupButton.Width - 10, this.Height - bSignupButton.Height - 5);
-			bSignupButton.MouseClick += new MouseEventHandler(OnSignupButtonClicked);
+			bSignupButton.Location = new Point(this.Width / 2 - (bSignupButton.Width / 2), this.Height - bSignupButton.Height - 5);
+			bSignupButton.MouseClick += new MouseEventHandler(OnLoginButtonClicked);
 			Controls.Add(bSignupButton);
-
-			// Instantiate reset password button
-			bPasswordResetButton.BackColor = Color.Transparent;
-			bPasswordResetButton.FlatStyle = FlatStyle.Flat;
-			bPasswordResetButton.FlatAppearance.BorderSize = 0;
-			bPasswordResetButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(64, 64, 64);
-			bPasswordResetButton.FlatAppearance.MouseOverBackColor = Color.Gray;
-			bPasswordResetButton.ForeColor = Color.White;
-			bPasswordResetButton.Font = new Font("Roboto Light", 10f, FontStyle.Regular);
-			bPasswordResetButton.Text = "RESET PASSWORD";
-			bPasswordResetButton.TextAlign = ContentAlignment.MiddleCenter;
-			bPasswordResetButton.Size = new Size(150, 30);
-			bPasswordResetButton.Location = new Point(this.Width / 2 + 10, this.Height - bPasswordResetButton.Height - 5);
-			bPasswordResetButton.MouseClick += new MouseEventHandler(OnPasswordResetButtonClicked);
-			Controls.Add(bPasswordResetButton);
-
 			#endregion
 		}
 
@@ -243,11 +226,15 @@ namespace Windows
 		const string rUncheckedCheckbox = "checkbox-unchecked";
 		const string rCheckedCheckbox = "checkbox-checked";
 
-		const string loginPlaceholder = "Email or Username";
+		const string usernamePlaceholder = "Username ";
+		const string emailPlaceholder = "E-mail ";
 		const string passwordPlaceholder = "Password ";
-		const string loginURL = "http://ablos.square7.ch/accounts/login.php";
-		const string emptyFieldError = "Please fill in both fields!";
-		const string wrongCredentialsError = "Username or Password incorrect!";
+		const string passwordConfirmPlaceholder = "Confirm password";
+		const string createAccountURL = "http://ablos.square7.ch/accounts/signup.php";
+		const string emptyFieldError = "Please fill in all fields!";
+		const string noPasswordMatchError = "The passwords don't match!";
+		const string falseEmailError = "Please fill in valid e-mail!";
+		const string userExistsError = "This username is already taken!";
 		#endregion
 
 		#region Sizes and offsets
@@ -256,13 +243,15 @@ namespace Windows
 		const int ControlButtonsOffset = 2;             // Offset of controlbuttons
 		const int ControlButtonsResize = 4;             // How much pixels the control buttons should be smaller
 
-		const int TextBoxBorderSize = 5;				// How much pixels should the border of the text boxes be
+		const int TextBoxBorderSize = 5;                // How much pixels should the border of the text boxes be
 		#endregion
 
 		#region Control Rectangles
 		Rectangle TopBar { get { return new Rectangle(0, 0, this.ClientSize.Width, TopSize); } }
-		Rectangle LoginTextBoxBackground = new Rectangle();
+		Rectangle UsernameTextBoxBackground = new Rectangle();
+		Rectangle EmailTextBoxBackground = new Rectangle();
 		Rectangle PasswordTextBoxBackground = new Rectangle();
+		Rectangle PasswordConfirmTexBoxBackground = new Rectangle();
 		#endregion
 
 		#region Controls
@@ -272,36 +261,36 @@ namespace Windows
 		Button bExitMaximizeButton = new Button();
 		Button bMinimizeButton = new Button();
 
-		Button bLoginButton = new Button();
+		Button bCreateAccountButton = new Button();
 
 		Button bSignupButton = new Button();
-		Button bPasswordResetButton = new Button();
 
 		// Picuture box
 		PictureBox pbLogoBanner = new PictureBox();
 
 		// Input fields
-		TextBox tbLoginBox = new TextBox();
+		TextBox tbUsernameBox = new TextBox();
+		TextBox tbEmailBox = new TextBox();
 		TextBox tbPasswordBox = new TextBox();
+		TextBox tbPasswordConfirmBox = new TextBox();
 
 		// Labels
-		Label lRememberMe = new Label();
 		Label lErrorLabel = new Label();
 		Label lErrorFlag = new Label();
-
-		// Checkboxes
-		CheckBox cbRememberMe = new CheckBox();
 		#endregion
 
 		#region Variables
-		LoginInfo loginInfo;
+		AccountInfo accountInfo = new AccountInfo();
+		Login login;
 		#endregion
 
 		#region Forms functions
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			e.Graphics.FillRectangle(new SolidBrush(cTextBox), LoginTextBoxBackground);
+			e.Graphics.FillRectangle(new SolidBrush(cTextBox), UsernameTextBoxBackground);
+			e.Graphics.FillRectangle(new SolidBrush(cTextBox), EmailTextBoxBackground);
 			e.Graphics.FillRectangle(new SolidBrush(cTextBox), PasswordTextBoxBackground);
+			e.Graphics.FillRectangle(new SolidBrush(cTextBox), PasswordConfirmTexBoxBackground);
 
 			base.OnPaint(e);
 		}
@@ -338,7 +327,7 @@ namespace Windows
 		{
 			base.OnKeyDown(e);
 			if (e.KeyCode == Keys.Return)
-				OnLoginButtonClicked(null, null);
+				OnCreateAccountButtonClicked(null, null);
 		}
 		#endregion
 
@@ -347,6 +336,7 @@ namespace Windows
 		// Button to quit the application
 		private void ExitButton_Click(object sender, EventArgs e)
 		{
+			login.Close();
 			this.Close();
 			//Application.Exit();
 		}
@@ -361,27 +351,28 @@ namespace Windows
 
 		#region Events
 
-		private void OnLoginEnter(object sender, EventArgs e)
+		private void OnUsernameEnter(object sender, EventArgs e)
 		{
 			DisableErrorMessage();
 
-			if (tbLoginBox.Text == loginPlaceholder)
+			if (tbUsernameBox.Text == usernamePlaceholder)
 			{
-				tbLoginBox.Text = "";
-				tbLoginBox.ForeColor = Color.White;
+				tbUsernameBox.Text = "";
+				tbUsernameBox.ForeColor = Color.White;
 			}
 		}
 
-		private void OnLoginLeave(object sender, EventArgs e)
+		private void OnUsernameLeave(object sender, EventArgs e)
 		{
-			if (tbLoginBox.Text == "")
+			if (tbUsernameBox.Text == "")
 			{
-				loginInfo.username = null;
-				tbLoginBox.ForeColor = cInactiveText;
-				tbLoginBox.Text = loginPlaceholder;
-			}else
+				accountInfo.username = null;
+				tbUsernameBox.ForeColor = cInactiveText;
+				tbUsernameBox.Text = usernamePlaceholder;
+			}
+			else
 			{
-				loginInfo.username = tbLoginBox.Text.ToLower();
+				accountInfo.username = tbUsernameBox.Text.ToLower();
 			}
 		}
 
@@ -401,24 +392,75 @@ namespace Windows
 		{
 			if (tbPasswordBox.Text == "")
 			{
-				loginInfo.password = null;
+				accountInfo.password = null;
 				tbPasswordBox.ForeColor = cInactiveText;
 				tbPasswordBox.UseSystemPasswordChar = false;
 				tbPasswordBox.Text = passwordPlaceholder;
-			}else
+			}
+			else
 			{
-				loginInfo.password = tbPasswordBox.Text;
+				accountInfo.password = tbPasswordBox.Text;
 			}
 		}
 
-		private void OnLoginKeyPress(object sender, KeyPressEventArgs e)
+		private void OnEmailEnter(object sender, EventArgs e)
+		{
+			DisableErrorMessage();
+
+			if (tbEmailBox.Text == emailPlaceholder)
+			{
+				tbEmailBox.Text = "";
+				tbEmailBox.ForeColor = Color.White;
+			}
+		}
+
+		private void OnEmailLeave(object sender, EventArgs e)
+		{
+			if (tbEmailBox.Text == "")
+			{
+				accountInfo.email = null;
+				tbEmailBox.ForeColor = cInactiveText;
+				tbEmailBox.Text = emailPlaceholder;
+			}else
+			{
+				accountInfo.email = tbEmailBox.Text.ToLower();
+			}
+		}
+
+		private void OnPasswordConfirmEnter(object sender, EventArgs e)
+		{
+			DisableErrorMessage();
+
+			if (tbPasswordConfirmBox.Text == passwordConfirmPlaceholder)
+			{
+				tbPasswordConfirmBox.Text = "";
+				tbPasswordConfirmBox.ForeColor = Color.White;
+				tbPasswordConfirmBox.UseSystemPasswordChar = true;
+			}
+		}
+
+		private void OnPasswordConfirmLeave(object sender, EventArgs e)
+		{
+			if (tbPasswordConfirmBox.Text == "")
+			{
+				accountInfo.passwordconfirm = null;
+				tbPasswordConfirmBox.ForeColor = cInactiveText;
+				tbPasswordConfirmBox.UseSystemPasswordChar = false;
+				tbPasswordConfirmBox.Text = passwordConfirmPlaceholder;
+			}else
+			{
+				accountInfo.passwordconfirm = tbPasswordConfirmBox.Text;
+			}
+		}
+
+		private void OnUsernameKeyPress(object sender, KeyPressEventArgs e)
 		{
 			if (e.KeyChar.ToString() == " ")
 				e.Handled = true;
 			if (e.KeyChar == (char)13)
 			{
 				this.ActiveControl = null;
-				OnLoginButtonClicked(null, null);
+				OnCreateAccountButtonClicked(null, null);
 			}
 		}
 
@@ -429,7 +471,29 @@ namespace Windows
 			if (e.KeyChar == (char)13)
 			{
 				this.ActiveControl = null;
-				OnLoginButtonClicked(null, null);
+				OnCreateAccountButtonClicked(null, null);
+			}
+		}
+
+		private void OnEmailKeyPress(object sender, KeyPressEventArgs e)
+		{
+			if (e.KeyChar.ToString() == " ")
+				e.Handled = true;
+			if (e.KeyChar == (char)13)
+			{
+				this.ActiveControl = null;
+				OnCreateAccountButtonClicked(null, null);
+			}
+		}
+
+		private void OnPasswordConfirmKeyPress(object sender, KeyPressEventArgs e)
+		{
+			if (e.KeyChar.ToString() == " ")
+				e.Handled = true;
+			if (e.KeyChar == (char)13)
+			{
+				this.ActiveControl = null;
+				OnCreateAccountButtonClicked(null, null);
 			}
 		}
 
@@ -439,35 +503,33 @@ namespace Windows
 			{
 				tbPasswordBox.UseSystemPasswordChar = false;
 			}
-			this.ActiveControl = null;
-		}
 
-		private void OnRememberMeChanged(object sender, EventArgs e)
-		{
-			DisableErrorMessage();
-
-			loginInfo.rememberme = cbRememberMe.Checked;
-
-			if (cbRememberMe.Checked)
-				cbRememberMe.BackgroundImage = ResourceLoader.loadImage(rCheckedCheckbox);
-			else
-				cbRememberMe.BackgroundImage = ResourceLoader.loadImage(rUncheckedCheckbox);
+			if (tbPasswordConfirmBox.Text == "")
+			{
+				tbPasswordConfirmBox.UseSystemPasswordChar = false;
+			}
 
 			this.ActiveControl = null;
 		}
 
-		private void OnLoginButtonClicked(object sender, MouseEventArgs e)
+		private void OnCreateAccountButtonClicked(object sender, MouseEventArgs e)
 		{
 			DisableErrorMessage();
 
-			if (string.IsNullOrEmpty(loginInfo.username) || string.IsNullOrEmpty(loginInfo.password))
+			if (string.IsNullOrEmpty(accountInfo.username) || string.IsNullOrEmpty(accountInfo.email) || string.IsNullOrEmpty(accountInfo.password) || string.IsNullOrEmpty(accountInfo.passwordconfirm))
 			{
 				DisplayErrorMessage(emptyFieldError, cErrorBackground);
 				return;
 			}
 
+			if (accountInfo.password != accountInfo.passwordconfirm)
+			{
+				DisplayErrorMessage(noPasswordMatchError, cErrorBackground);
+				return;
+			}
+
 			ServerCommunication sc = new ServerCommunication();
-			string response = sc.SendPost(loginURL, String.Format("username={0}&password={1}", loginInfo.username, loginInfo.password));
+			string response = sc.SendPost(createAccountURL, String.Format("username={0}&email={1}&password={2}", accountInfo.username, accountInfo.email, accountInfo.password));
 			response = response.Trim();
 			string[] splittedResponse = response.Split(' ');
 			switch (splittedResponse[0])
@@ -475,11 +537,11 @@ namespace Windows
 				case "empty_value":
 					DisplayErrorMessage(emptyFieldError, cErrorBackground);
 					return;
-				case "incorrect":
-					DisplayErrorMessage(wrongCredentialsError, cErrorBackground);
+				case "false_email":
+					DisplayErrorMessage(falseEmailError, cErrorBackground);
 					return;
-				case "user_not_found":
-					DisplayErrorMessage(wrongCredentialsError, cErrorBackground);
+				case "user_exists":
+					DisplayErrorMessage(userExistsError, cErrorBackground);
 					return;
 				case "success":
 					break;
@@ -488,56 +550,30 @@ namespace Windows
 					return;
 			}
 
-			if (!loginInfo.rememberme)
-				loginInfo.password = "";
-
-			loginInfo.username = splittedResponse[1];
-
-			FileManager fm = new FileManager();
-			fm.SerializeFile(loginInfo, Application.StartupPath + "/saves", "session.save");
-
-			LoginUser();
+			CreateUser();
 		}
 
-		private void OnSignupButtonClicked(object sender, MouseEventArgs e)
+		private void OnLoginButtonClicked(object sender, MouseEventArgs e)
 		{
-			CreateAccount ca = new CreateAccount(this);
-			ca.Show();
-			ca.Location = this.Location;
-			this.Visible = false;
-		}
-
-		private void OnPasswordResetButtonClicked(object sender, MouseEventArgs e)
-		{
-
+			login.Location = this.Location;
+			login.Visible = true;
+			this.Close();
 		}
 
 		private void onFormShow(object sender, EventArgs e)
 		{
-			FileManager fm = new FileManager();
-			loginInfo = fm.DeserializeFile<LoginInfo>(Application.StartupPath + "/saves/session.save");
-
-			if (loginInfo == null)
-				loginInfo = new LoginInfo();
-
-			if (loginInfo.rememberme)
-			{
-				LoginUser();
-				return;
-			}
-
-			tbLoginBox.Focus();
-			tbLoginBox.Text = loginInfo.username;
-			this.ActiveControl = null;
+			
 		}
 
 		#endregion
 
 		#region Custom functions
-		private void LoginUser()
+		private void CreateUser()
 		{
-			Userinfo.username = loginInfo.username;
-			Console.WriteLine("Logged in as user: " + loginInfo.username);
+			Console.WriteLine("Sent confirmation mail to: " + accountInfo.email);
+			login.Location = this.Location;
+			login.DisplayErrorMessage("Sent confirmation mail!", cMessageBackground);
+			login.Visible = true;
 			this.Close();
 		}
 
@@ -557,7 +593,7 @@ namespace Windows
 			lErrorFlag.Visible = false;
 		}
 
-		public void DisplayErrorMessage(string message, Color background)
+		private void DisplayErrorMessage(string message, Color background)
 		{
 			lErrorLabel.BackColor = background;
 			lErrorFlag.BackColor = background;
@@ -567,18 +603,13 @@ namespace Windows
 			lErrorLabel.Text = message;
 		}
 		#endregion
-	}
 
-	[Serializable]
-	public class LoginInfo
-	{
-		public string username = "";
-		public string password = "";
-		public bool rememberme = false;
-	}
-
-	public static class Userinfo
-	{
-		public static string username;
+		private class AccountInfo
+		{
+			public string username;
+			public string email;
+			public string password;
+			public string passwordconfirm;
+		}
 	}
 }
